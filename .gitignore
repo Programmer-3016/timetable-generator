@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv*/
+
+# IDE / Editor
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test / Debug artifacts
+.pytest_cache/
+coverage/
+
+# Build outputs
+*.log

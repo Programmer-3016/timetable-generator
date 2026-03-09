@@ -1,0 +1,186 @@
+/**
+ * @file src/css/skeleton.css
+ * @description Skeleton loading shimmer placeholders shown while timetable is being computed.
+ *   Includes keyframes, table structure, shimmer bars, and fade-out transitions.
+ */
+
+/* ═══════════════════════════════════════════════════════
+   SKELETON LOADING — Premium Shimmer Placeholders
+   Shows animated placeholder rows while the timetable
+   is being computed. Fades out smoothly when done.
+═══════════════════════════════════════════════════════ */
+
+/* Section: Keyframes */
+@keyframes skeletonShimmer {
+  0%   { background-position: -800px 0; }
+  100% { background-position: 800px 0; }
+}
+
+@keyframes fadeSlideIn {
+  0%   { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes skeletonFadeOut {
+  0%   { opacity: 1; transform: scale(1); filter: blur(0); }
+  60%  { opacity: 0.4; transform: scale(0.985); filter: blur(1px); }
+  100% { opacity: 0; transform: scale(0.97); filter: blur(3px); }
+}
+
+@keyframes skeletonPulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+  50%      { box-shadow: 0 0 20px 2px rgba(59, 130, 246, 0.08); }
+}
+
+@keyframes skeletonRowFade {
+  0%   { opacity: 0; transform: translateX(-6px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes skeletonSpinner {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes skeletonDotPulse {
+  0%, 80%, 100% { opacity: 0.3; }
+  40%           { opacity: 1; }
+}
+
+/* Section: Skeleton Container */
+.skeleton-wrap {
+  padding: 14px 18px 18px;
+  border-radius: 14px;
+  background: linear-gradient(160deg, #ffffff 0%, #f8faff 100%);
+  animation:
+    fadeSlideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    skeletonPulseGlow 3s ease-in-out infinite;
+  transition: opacity 0.4s ease, transform 0.4s ease, filter 0.4s ease;
+}
+
+/* Fade-out class — applied by JS before removal */
+.skeleton-wrap.skeleton-fade-out {
+  animation: skeletonFadeOut 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  pointer-events: none;
+}
+
+/* Section: Title Bar */
+.skeleton-title-bar {
+  display: block;
+  height: 16px;
+  width: 48%;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: linear-gradient(90deg, #dbeafe 25%, #eff6ff 45%, #dbeafe 65%);
+  background-size: 800px 100%;
+  animation: skeletonShimmer 1.6s ease-in-out infinite;
+}
+
+/* Section: Table Structure */
+.skeleton-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #dbeafe;
+  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.06);
+}
+
+.skeleton-table thead tr {
+  background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.skeleton-table th,
+.skeleton-table td {
+  padding: 10px 14px;
+  border-right: 1px solid #e0e7ff;
+  border-bottom: 1px solid #e0e7ff;
+}
+
+.skeleton-table th:last-child,
+.skeleton-table td:last-child {
+  border-right: 0;
+}
+
+.skeleton-table tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Staggered row entrance */
+.skeleton-table tbody tr {
+  animation: skeletonRowFade 0.35s ease-out both;
+}
+.skeleton-table tbody tr:nth-child(1) { animation-delay: 0.04s; }
+.skeleton-table tbody tr:nth-child(2) { animation-delay: 0.10s; }
+.skeleton-table tbody tr:nth-child(3) { animation-delay: 0.16s; }
+.skeleton-table tbody tr:nth-child(4) { animation-delay: 0.22s; }
+.skeleton-table tbody tr:nth-child(5) { animation-delay: 0.28s; }
+.skeleton-table tbody tr:nth-child(6) { animation-delay: 0.34s; }
+
+/* Staggered shimmer per row */
+.skeleton-table tbody tr:nth-child(1) .skeleton-bar { animation-delay: 0s; }
+.skeleton-table tbody tr:nth-child(2) .skeleton-bar { animation-delay: 0.08s; }
+.skeleton-table tbody tr:nth-child(3) .skeleton-bar { animation-delay: 0.16s; }
+.skeleton-table tbody tr:nth-child(4) .skeleton-bar { animation-delay: 0.24s; }
+.skeleton-table tbody tr:nth-child(5) .skeleton-bar { animation-delay: 0.32s; }
+.skeleton-table tbody tr:nth-child(6) .skeleton-bar { animation-delay: 0.40s; }
+
+/* Day column placeholder */
+.skeleton-table tbody td:first-child .skeleton-bar {
+  width: 65%;
+  background: linear-gradient(90deg, #bfdbfe 25%, #dbeafe 50%, #bfdbfe 75%);
+  background-size: 800px 100%;
+  animation: skeletonShimmer 1.6s ease-in-out infinite;
+  height: 10px;
+  border-radius: 5px;
+}
+
+/* Header placeholder bars */
+.skeleton-table thead th .skeleton-bar {
+  height: 6px;
+  width: 80%;
+  opacity: 0.7;
+}
+
+/* Section: Shimmer Bars */
+.skeleton-bar {
+  display: block;
+  height: 7px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #dbeafe 25%, #eff6ff 45%, #dbeafe 65%);
+  background-size: 800px 100%;
+  animation: skeletonShimmer 1.6s ease-in-out infinite;
+}
+
+/* Section: Generating Label */
+.skeleton-generating-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #2563eb;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-top: 16px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Spinner circle */
+.skeleton-generating-label::before {
+  content: "";
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 2.5px solid #bfdbfe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: skeletonSpinner 0.65s linear infinite;
+}
+
+/* Trailing dots */
+.skeleton-generating-label::after {
+  content: "•••";
+  letter-spacing: 4px;
+  animation: skeletonDotPulse 1.2s ease-in-out infinite;
+}

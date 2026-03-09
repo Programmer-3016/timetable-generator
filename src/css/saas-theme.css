@@ -1,0 +1,1939 @@
+/**
+ * @file src/css/saas-theme.css
+ * @description Clean SaaS theme — Salesforce Trailhead-inspired palette.
+ *   Overrides components.css visuals only. No logic, no IDs, no structure changed.
+ */
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 1: DESIGN TOKENS (OVERRIDE)
+═══════════════════════════════════════════════════════ */
+:root {
+  --bg:           #f4f6f9;
+  --card:         #ffffff;
+  --border:       #d8dde6;
+  --border-focus: #0176d3;
+  --text:         #181818;
+  --muted:        #706e6b;
+  --primary:      #0176d3;
+  --primary-dark: #014486;
+  --primary-light:#eaf5fe;
+  --primary-ring: rgba(1, 118, 211, 0.15);
+  --radius-card:  8px;
+  --radius-input: 4px;
+  --radius-btn:   4px;
+  --shadow-sm:    0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md:    0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-lg:    0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --transition:   0.15s ease;
+  font-size: 14px;
+}
+
+body {
+  background: var(--bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 2: APP LAYOUT
+═══════════════════════════════════════════════════════ */
+.app {
+  gap: 20px;
+  padding: 20px 20px 20px 0;
+  grid-template-columns: 272px 1fr;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 3: SIDEBAR (SETTINGS PANEL)
+═══════════════════════════════════════════════════════ */
+.controls {
+  position: sticky;
+  top: 20px;
+  align-self: start;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 0;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+/* Sidebar header */
+.controls h3 {
+  margin: 0;
+  padding: 16px 18px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #3e3e3c;
+  border-bottom: 1px solid var(--border);
+  background: #f4f6f9;
+}
+
+/* Settings body — add internal padding wrapper */
+.controls > label,
+.controls > input,
+.controls > select,
+.controls > .actions,
+.controls > .import-hint,
+.controls > #sidebarCollapseWrap,
+.controls > .class-count-label {
+  display: block;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.controls > label,
+.controls > .class-count-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 14px 0 5px;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+.controls > label:first-of-type {
+  margin-top: 14px;
+}
+
+/* Sidebar inputs */
+.controls input[type="text"],
+.controls input[type="number"],
+.controls input[type="time"],
+.controls select {
+  width: calc(100% - 36px);
+  margin: 0 18px;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: #f4f6f9;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.controls input[type="text"]:focus,
+.controls input[type="number"]:focus,
+.controls input[type="time"]:focus,
+.controls select:focus,
+.controls input[type="text"]:focus,
+.controls input[type="number"]:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+.controls select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+/* Actions row */
+.controls .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.controls .actions button {
+  flex: none;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Import hint */
+.import-hint {
+  margin: 8px 18px 0;
+  padding: 0;
+  color: #b0adab;
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+/* Collapse button wrapper */
+#sidebarCollapseWrap {
+  margin: 14px 18px 18px;
+  padding: 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 4: BUTTONS
+═══════════════════════════════════════════════════════ */
+button, .primary, .secondary, .link-btn, .pager-btn {
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: var(--radius-btn);
+  padding: 9px 16px;
+  cursor: pointer;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform 100ms ease,
+    opacity var(--transition);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* Primary button */
+.primary {
+  background: var(--primary);
+  color: #ffffff;
+  border: 1px solid var(--primary);
+  box-shadow: 0 1px 3px rgba(37,99,235,0.2), 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  box-shadow: 0 4px 10px rgba(37,99,235,0.28);
+}
+
+.primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+/* Generate button — clean SaaS style */
+#generateBtn {
+  width: 100%;
+  padding: 11px 16px;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  box-shadow:
+    0 1px 3px rgba(1,118,211,0.25),
+    0 2px 8px rgba(1,118,211,0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+#generateBtn::before {
+  content: "⚡";
+  margin-right: 4px;
+  font-size: 15px;
+}
+
+#generateBtn:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+  box-shadow:
+    0 2px 6px rgba(1,118,211,0.3),
+    0 4px 14px rgba(1,118,211,0.18);
+  transform: translateY(-1px);
+}
+
+#generateBtn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 1px 3px rgba(1,118,211,0.2),
+    inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Secondary button */
+.secondary {
+  background: #ffffff;
+  color: #3e3e3c;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.secondary:hover {
+  background: #f4f6f9;
+  border-color: #b0adab;
+}
+
+.secondary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(112,110,107,0.15);
+}
+
+/* Link / export button */
+.link-btn {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid #b9daff;
+  box-shadow: var(--shadow-sm);
+}
+
+.link-btn:hover {
+  background: #d4ebfe;
+  border-color: #0176d3;
+}
+
+/* Pager buttons */
+.pager-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 18px;
+  background: #ffffff;
+  color: #3e3e3c;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.pager-btn:hover {
+  background: #ecebea;
+}
+
+.pager-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Collapse sidebar toggle */
+#sidebarToggleBtn {
+  width: 100%;
+  background: #f4f6f9;
+  color: #3e3e3c;
+  border: 1px solid #d8dde6;
+  box-shadow: none;
+  font-size: 13px;
+  padding: 9px 14px;
+}
+
+#sidebarToggleBtn:hover {
+  background: #e8edf3;
+  color: #014486;
+}
+
+/* disabled buttons */
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 5: TAB BAR
+═══════════════════════════════════════════════════════ */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: #f4f6f9;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 18px;
+  width: fit-content;
+  position: relative;
+}
+
+/* Sliding pill behind the active tab */
+.tab-pill {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  height: calc(100% - 8px);
+  border-radius: 4px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition:
+    left 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px 9px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  transition:
+    color var(--transition),
+    background var(--transition),
+    box-shadow var(--transition);
+}
+
+.tab-btn:hover:not(.tab-btn--active):not([disabled]) {
+  color: #3e3e3c;
+  background: rgba(255,255,255,0.5);
+}
+
+.tab-btn--active {
+  color: var(--text);
+  /* Background/border handled by the sliding pill */
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.tab-btn[disabled] {
+  color: #d8dde6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.tab-btn-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+/* Tab bar — final overrides (layout & sticky positioning) */
+.tab-bar {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 4px;
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: #64748b;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+}
+
+.tab-btn:hover:not(.tab-btn--active):not(:disabled) {
+  color: #334155;
+  background: #f1f5f9;
+}
+
+.tab-btn--active {
+  color: #1d4ed8;
+  background: linear-gradient(180deg, #eef3ff 0%, #dbeafe 100%);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.12);
+}
+
+.tab-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+/* Tab badge counters */
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  font-size: 10px;
+  font-weight: 700;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.tab-btn--active .tab-badge {
+  background: rgba(37, 99, 235, 0.15);
+  color: #1d4ed8;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 6: MAIN CONTENT AREA
+═══════════════════════════════════════════════════════ */
+.timetable-area {
+  min-width: 0;
+  padding-top: 0;
+}
+
+/* Teacher toolbar — better grouping (#9) */
+#ttToolbar {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 14px !important;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 14px;
+  gap: 12px;
+}
+
+#ttToolbar .toolbar-group {
+  border: 1px solid #d8dde6;
+  border-radius: 8px;
+  padding: 5px 10px;
+  background: #f4f6f9;
+  gap: 8px;
+  box-shadow: none;
+}
+
+#ttToolbar .toolbar-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #706e6b;
+  white-space: nowrap;
+}
+
+#ttToolbar .toolbar-group select {
+  padding: 5px 28px 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12.5px;
+  background-color: #ffffff;
+  cursor: pointer;
+  min-width: 160px;
+}
+
+#ttToolbar .toolbar-group button {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: #3e3e3c;
+  font-weight: 600;
+}
+
+#ttToolbar .toolbar-group button:hover {
+  background: #f4f6f9;
+  border-color: #d8dde6;
+}
+
+#ttToolbar .toolbar-group button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 7: CLASS INPUTS PANEL & TABLE
+═══════════════════════════════════════════════════════ */
+#classInputsPanel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* Topbar inside the input panel */
+.class-inputs-topbar {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #f4f6f9;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+}
+
+/* Table inside inputs panel */
+#classInputsPanel table {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  font-size: 13px;
+}
+
+#classInputsPanel table thead th {
+  background: #f4f6f9;
+  color: #706e6b;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+#classInputsPanel table tbody td {
+  padding: 10px 14px;
+  vertical-align: middle;
+}
+
+#classInputsPanel table tbody td:nth-child(3) {
+  vertical-align: top;
+  padding-top: 12px;
+}
+
+#classInputsPanel table tbody tr:hover td {
+  background: #eaf5fe;
+}
+
+#classInputsPanel table tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Row index cell */
+#classInputsPanel td:first-child {
+  background: #f4f6f9;
+  color: #b0adab;
+  font-size: 13px;
+  font-weight: 600;
+  width: 48px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+
+/* Inputs inside the table */
+#classInputsPanel input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: #f4f6f9;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text);
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+#classInputsPanel input[type="text"]:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+#classInputsPanel textarea {
+  width: calc(100% - 8px);
+  margin: 2px 4px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: #f4f6f9;
+  padding: 9px 11px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text);
+  min-height: 100px;
+  max-height: 200px;
+  resize: vertical;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+#classInputsPanel textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+/* Inputs note */
+.inputs-note {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: #b0adab;
+  border-top: 1px solid var(--border);
+  background: #f4f6f9;
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+  line-height: 1.5;
+}
+
+/* Search input */
+.inputs-search-wrap input[type="search"] {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: #ffffff;
+  padding: 7px 11px;
+  font-size: 13px;
+  color: var(--text);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.inputs-search-wrap input[type="search"]:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+/* Pager label */
+.pager-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #706e6b;
+}
+
+/* Class column width in input table header */
+.th-col-class {
+  width: 220px;
+  min-width: 200px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 8: TIMETABLE DISPLAY TABLES
+═══════════════════════════════════════════════════════ */
+#timetableWrap {
+  display: grid;
+  gap: 24px;
+}
+
+/* Grid cell — subgrid so timetable rows and subject rows align across columns */
+.class-grid-cell {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 2;
+}
+
+/* Timetable card fills its grid row */
+.class-grid-cell > .class-block:first-child {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Table content stretches to fill the card */
+.class-grid-cell > .class-block:first-child .placeholder-panel {
+  flex: 1;
+}
+
+/* Class block — the card container */
+.class-block {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Remove the pseudo-divider that was used before */
+.class-block::after {
+  display: none;
+}
+
+/* Class block title — header of the card */
+.class-block-title {
+  margin: 0;
+  padding: 14px 18px 13px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #032d60;
+  border-bottom: 1px solid #014486;
+  letter-spacing: 0.01em;
+}
+
+/* The actual timetable table */
+.class-block table {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 13px;
+}
+
+.class-block table thead th {
+  background: #f4f6f9;
+  color: #3e3e3c;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  border-bottom: 1px solid #d8dde6;
+}
+
+.class-block table tbody td,
+.class-block table thead th {
+  border-color: #d8dde6;
+}
+
+.class-block table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.class-block table tbody tr:hover td {
+  background: #eaf5fe;
+}
+
+/* Day label column — fix overflow (#3) */
+.class-block table tbody td:first-child,
+.class-block table thead th:first-child {
+  background: #f4f6f9;
+  border-right: 1px solid #d8dde6;
+  width: 110px;
+  min-width: 110px;
+  max-width: 120px;
+}
+
+/* Let the header 'DAY / PERIOD' wrap gracefully into TWO lines if narrow */
+.class-block table thead th:first-child {
+  color: #3e3e3c;
+  font-weight: 700;
+  font-size: 11px;
+  white-space: normal;
+  word-wrap: break-word;
+  padding-left: 8px;
+  padding-right: 8px;
+  line-height: 1.3;
+}
+
+/* Day names like 'Wednesday' stay on one line, use ellipsis if completely squashed */
+.class-block table tbody td:first-child {
+  color: #3e3e3c;
+  font-weight: 700;
+  font-size: 11.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Lunch cell */
+td.break {
+  background: #fffbeb;
+  color: #92400e;
+  font-weight: 700;
+  text-align: center;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  border: none;
+}
+
+/* Subject cells */
+.subject-cell {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #032d60;
+  padding: 6px 10px;
+  line-height: 1.35;
+}
+
+/* Empty timetable cells — show "—" (#2) */
+.class-block table tbody td:not(:first-child):not(.break) {
+  position: relative;
+}
+
+.class-block table tbody td:not(:first-child):not(.break):empty::before {
+  content: "—";
+  color: #b0adab;
+  font-weight: 400;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Subject info section (now a standalone card) */
+.section-info {
+  /* Removed padding, margin, border-top, background to let .class-block handle it */
+  background: var(--card);
+}
+
+/* Subject info card header — matches timetable header */
+.section-info.class-block .class-block-title {
+  background: #032d60;
+  border-bottom: 1px solid #014486;
+  font-size: 13px;
+  padding: 11px 18px 10px;
+}
+
+/* Subject info table inside the card */
+.section-info table {
+  border: none;
+  border-radius: 0;
+  font-size: 11.5px;
+  box-shadow: none;
+}
+
+.section-info table thead th {
+  background: #f4f6f9;
+  color: #3e3e3c;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  border-bottom: 1px solid #d8dde6;
+  border-right: 1px solid #d8dde6;
+}
+
+.section-info table thead th:last-child {
+  border-right: none;
+}
+
+.section-info table tbody td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #d8dde6;
+  border-right: 1px solid #d8dde6;
+}
+
+.section-info table tbody td:last-child {
+  border-right: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 9: EMPTY STATES
+═══════════════════════════════════════════════════════ */
+/* Empty states — enhanced (#5) */
+.placeholder-panel {
+  padding: 0;
+}
+
+.empty-state {
+  padding: 64px 24px;
+  gap: 14px;
+}
+
+.empty-state-icon {
+  width: 56px;
+  height: 56px;
+  color: #032d60;
+  filter: none;
+  opacity: 0.85;
+}
+
+.empty-state-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #181818;
+  margin: 8px 0 0;
+  letter-spacing: -0.01em;
+}
+
+.empty-state-text {
+  font-size: 13.5px;
+  color: #706e6b;
+  max-width: 300px;
+  line-height: 1.6;
+  margin: 0;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 10: FACULTY & LAB PANELS
+═══════════════════════════════════════════════════════ */
+#facultyPanel,
+#labPanelWrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  margin-top: 24px;
+}
+
+.faculty-panel-title,
+.lab-panel-title {
+  margin: 0;
+  padding: 14px 18px 13px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  background: #f4f6f9;
+}
+
+.faculty-toolbar {
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f4f6f9;
+  margin: 0;
+}
+
+.faculty-toolbar label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.faculty-toolbar select {
+  padding: 7px 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  font-size: 13px;
+  background: #ffffff;
+  color: var(--text);
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.faculty-toolbar select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+#facultyTT,
+#labPanel {
+  padding: 0;
+}
+
+#labUsageWrap {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  margin: 0;
+  background: #f4f6f9;
+}
+
+.lab-panel-actions {
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border);
+  background: #f4f6f9;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 11: REPORT PANEL
+═══════════════════════════════════════════════════════ */
+#reportPanel {
+  margin-top: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+/* Clash dashboard sits inside reportPanel */
+.clash-dashboard {
+  padding: 16px;
+  gap: 10px;
+}
+
+.clash-card {
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.clash-card-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.clash-card-value {
+  font-size: 24px;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 12: EXPORT FOOTER
+═══════════════════════════════════════════════════════ */
+/* Export footer — styled as a compact bar (#14 prep) */
+#globalExport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 16px;
+  margin: 8px 0 0;
+  background: #f4f6f9;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+#globalExport .link-btn {
+  font-size: 12.5px;
+  padding: 7px 14px;
+  gap: 6px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 13: MODALS (QUICK FILL + TEACHER REVIEW)
+═══════════════════════════════════════════════════════ */
+#quickFillOverlay,
+#teacherNameReviewOverlay {
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+#quickFillModal,
+#teacherNameReviewModal {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow:
+    0 24px 64px rgba(15,23,42,0.14),
+    0 0 0 1px rgba(255,255,255,0.6) inset;
+  padding: 24px;
+}
+
+#quickFillModal h3,
+#teacherNameReviewModal h3 {
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin: 0 0 4px;
+}
+
+.qf-subtitle,
+.tnr-subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 4px 0 16px;
+}
+
+.qf-col textarea {
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f4f6f9;
+  color: var(--text);
+  padding: 12px;
+  line-height: 1.55;
+  min-height: 200px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.qf-col textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+.qf-actions,
+.tnr-actions {
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.tnr-rows {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f4f6f9;
+  max-height: 42vh;
+}
+
+.tnr-row {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+
+.tnr-row:last-child {
+  border-bottom: 0;
+}
+
+.tnr-correct-wrap {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f4f6f9;
+  padding: 12px;
+}
+
+.tnr-correct-input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 8px 11px;
+  font-size: 13px;
+  color: var(--text);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.tnr-correct-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 14: TOAST
+═══════════════════════════════════════════════════════ */
+.toast {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(15,23,42,0.12), 0 2px 6px rgba(15,23,42,0.06);
+  padding: 11px 14px;
+  font-size: 13px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 15: TOOLBAR (TEACHER HIGHLIGHT)
+═══════════════════════════════════════════════════════ */
+.toolbar-group {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  gap: 6px;
+  padding: 5px 8px;
+}
+
+.toolbar-group input[type="search"] {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: #f4f6f9;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: var(--text);
+  transition: border-color var(--transition);
+}
+
+.toolbar-group input[type="search"]:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: #ffffff;
+}
+
+.toolbar-group button {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: #f4f6f9;
+  color: #3e3e3c;
+  padding: 6px 10px;
+  font-size: 12.5px;
+}
+
+.toolbar-group button:hover {
+  background: #ecebea;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 16: GENERATION OVERLAY (keep existing, minor polish)
+═══════════════════════════════════════════════════════ */
+.generate-card {
+  border-radius: 16px;
+  padding: 36px 32px 28px;
+  background: linear-gradient(160deg, #ffffff 0%, #f0f4ff 100%);
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 32px 80px rgba(15,23,42,0.2);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 17: LAB TABLE — color-coded slots (#8)
+═══════════════════════════════════════════════════════ */
+.lab-table-wrap {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  padding: 0;
+  overflow: hidden;
+}
+
+.lab-table-wrap table caption {
+  padding: 12px 14px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.lab-table-wrap table thead th {
+  background: #f4f6f9;
+}
+
+/* Lab occupied slots — subtle colored left border + background */
+.lab-table-wrap table tbody td:not(:first-child) {
+  font-size: 11.5px;
+  line-height: 1.4;
+  transition: background var(--transition);
+}
+
+/* Free slots in lab view */
+.lab-table-wrap table tbody td .lab-free-text {
+  color: #059669;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* Occupied lab slots — add subtle blue-green background */
+.lab-table-wrap table tbody td:not(:first-child):not(:empty) {
+  border-left: 2px solid transparent;
+}
+
+/* Lab slots that have content (not "Free") */
+.lab-table-wrap table tbody td.lab-slot-occupied {
+  background: #f0f7ff;
+  border-left: 2px solid #0176d3;
+}
+
+.lab-table-wrap table tbody td.lab-slot-free {
+  background: #f0fdf4;
+  color: #059669;
+  font-weight: 600;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* Day column in lab tables — fix overflow */
+.lab-table-wrap table tbody td:first-child,
+.lab-table-wrap table thead th:first-child {
+  width: 110px;
+  min-width: 110px;
+  max-width: 120px;
+}
+
+.lab-table-wrap table thead th:first-child {
+  white-space: normal;
+  word-wrap: break-word;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.lab-table-wrap table tbody td:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 18: FULLWIDE (SIDEBAR COLLAPSED) MODE
+═══════════════════════════════════════════════════════ */
+body.fullwide .controls {
+  padding: 0;
+  border-radius: var(--radius-card);
+}
+
+body.fullwide #sidebarToggleBtn {
+  border-radius: 10px;
+  margin: 8px;
+  width: calc(100% - 16px);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 19: SUBJECT COLOR CODING IN TIMETABLE CELLS
+   Pastel-coded by slot number — automatically applied
+═══════════════════════════════════════════════════════ */
+.subject-cell:not(.tt-clash):not(.tt-dim) {
+  position: relative;
+}
+
+/* The JS in render.js sets a --slot-idx CSS var or we use nth-child tricks. */
+/* Fallback: light blue for all subjects so they read cleanly */
+.subject-cell:not(:empty):not(.tt-clash):not(.tt-dim) {
+  background: #f0f7ff;
+  border-left: 2px solid #0176d3;
+}
+
+/* If teacher highlight is active, green overrides */
+.subject-cell.tt-highlight {
+  background: #ecfdf5 !important;
+  border-left: 2px solid #34d399 !important;
+  outline: none;
+}
+
+.subject-cell.tt-dim {
+  opacity: 0.28;
+  background: transparent;
+  border-left: none;
+}
+
+.subject-cell.tt-clash {
+  background: #fef2f2 !important;
+  border-left: 2px solid #f87171 !important;
+  outline: none !important;
+}
+
+/* Lab cells — slightly different hue */
+td[data-lab] .subject-cell,
+.subject-cell[data-lab] {
+  background: #f0fdf4;
+  border-left: 2px solid #6ee7b7;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 20: MISC UI POLISH
+═══════════════════════════════════════════════════════ */
+/* Smooth, consistent focus ring for all interactive elements */
+*:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Better link-style text */
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Scrollbar improvement */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #b0adab transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #b0adab;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #706e6b;
+}
+
+/* Pill badges */
+.pill {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+/* Faculty panel day column — fix overflow */
+#facultyTT table tbody td:first-child,
+#facultyTT table thead th:first-child {
+  width: 110px;
+  min-width: 110px;
+  max-width: 120px;
+}
+#facultyTT table thead th:first-child {
+  white-space: normal;
+  word-wrap: break-word;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+#facultyTT table tbody td:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Lab usage heatmap day column — fix overflow */
+#labUsageWrap table tbody td:first-child,
+#labUsageWrap table thead th:first-child {
+  width: 110px;
+  min-width: 110px;
+  max-width: 120px;
+}
+#labUsageWrap table thead th:first-child {
+  white-space: normal;
+  word-wrap: break-word;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+#labUsageWrap table tbody td:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 21: PREMIUM SKELETON LOADERS
+   Overrides skeleton.css for a polished SaaS look.
+═══════════════════════════════════════════════════════ */
+
+/* Blue-wave sweep for shimmer bars */
+@keyframes gentleBlueWave {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Skeleton fade-out */
+@keyframes skeletonFadeOut {
+  0%   { opacity: 1; transform: scale(1); filter: blur(0); }
+  60%  { opacity: 0.3; transform: scale(0.985); filter: blur(1px); }
+  100% { opacity: 0; transform: scale(0.97); filter: blur(3px); }
+}
+
+.skeleton-wrap {
+  padding: 14px 18px 18px;
+  background: var(--card);
+  border-radius: var(--radius-card);
+  animation: fadeSlideIn 0.3s ease-out;
+  transition: opacity 0.4s ease, transform 0.4s ease, filter 0.4s ease;
+}
+
+/* Fade-out class — applied by JS before skeleton removal */
+.skeleton-wrap.skeleton-fade-out {
+  animation: skeletonFadeOut 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  pointer-events: none;
+}
+
+.skeleton-title-bar {
+  height: 16px;
+  width: 48%;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.skeleton-table {
+  position: relative;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.skeleton-table thead tr {
+  background: #f4f6f9;
+}
+
+.skeleton-table th,
+.skeleton-table td {
+  padding: 10px 14px;
+}
+
+.skeleton-table th:last-child,
+.skeleton-table td:last-child {
+  border-right: 0;
+}
+
+.skeleton-table tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Day column placeholder — match real table style */
+.skeleton-table tbody td:first-child {
+  background: #f4f6f9;
+}
+
+/* Header placeholder bars */
+.skeleton-table thead th .skeleton-bar {
+  height: 6px;
+  width: 80%;
+  opacity: 0.8;
+}
+
+/* "Generating" label */
+.skeleton-generating-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--primary);
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-top: 16px;
+  letter-spacing: 0.03em;
+}
+
+.skeleton-generating-label::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #b9daff;
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: skeletonSpinner 0.65s linear infinite;
+}
+
+.skeleton-generating-label::after {
+  content: "";
+  animation: none;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 22: SIDEBAR GROUPED SECTIONS
+   Visual grouping of related sidebar settings
+═══════════════════════════════════════════════════════ */
+.sidebar-group {
+  padding: 12px 18px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-group:last-of-type {
+  border-bottom: none;
+}
+
+.sidebar-group-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #b0adab;
+  border: none;
+  background: none;
+}
+
+.sidebar-group-title .sidebar-group-icon {
+  font-size: 13px;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+.sidebar-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 10px 0 5px;
+}
+
+.sidebar-group label:first-of-type {
+  margin-top: 0;
+}
+
+.sidebar-group input[type="text"],
+.sidebar-group input[type="number"],
+.sidebar-group input[type="time"],
+.sidebar-group select {
+  width: 100%;
+  margin: 0;
+  padding: 8px 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-input);
+  background: #f4f6f9;
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.sidebar-group input:focus,
+.sidebar-group select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px var(--primary-ring);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 23: MICRO-INTERACTIONS & POLISH
+═══════════════════════════════════════════════════════ */
+
+/* Smooth hover lift for cards */
+.class-block {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.class-block:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+}
+
+/* Button press ripple effect */
+@keyframes btnRipple {
+  0% { transform: scale(0); opacity: 0.4; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Keyboard shortcut badges on buttons */
+.kbd-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  margin-left: 6px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.75);
+  font-size: 10px;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+.secondary .kbd-hint,
+.link-btn .kbd-hint {
+  background: rgba(0,0,0,0.06);
+  color: rgba(0,0,0,0.4);
+}
+
+/* Tab transition — smooth press effect */
+.tab-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* Input focus glow — enhanced */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--border-focus) !important;
+  box-shadow: 0 0 0 3px var(--primary-ring), 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+/* Hover effect on table rows — smooth */
+tbody tr {
+  transition: background 0.1s ease;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 24: ENHANCED EMPTY STATES
+═══════════════════════════════════════════════════════ */
+.empty-state {
+  padding: 72px 24px;
+  background: linear-gradient(180deg, transparent 0%, rgba(241, 245, 249, 0.5) 100%);
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+}
+
+.empty-state-icon {
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  color: #032d60;
+  box-shadow: none;
+  opacity: 0.8;
+}
+
+.empty-state-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #032d60;
+  letter-spacing: -0.02em;
+}
+
+.empty-state-text {
+  font-size: 13.5px;
+  color: #706e6b;
+  max-width: 320px;
+  line-height: 1.65;
+}
+
+.empty-state-text strong {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 25: STICKY EXPORT BAR
+═══════════════════════════════════════════════════════ */
+#globalExport {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(248, 250, 252, 0.85);
+  border: 1px solid var(--border);
+  border-radius: 12px 12px 0 0;
+  padding: 12px 20px;
+  margin: 0;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+}
+
+#globalExport .link-btn {
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform 100ms ease;
+}
+
+#globalExport .link-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.12);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 26: SCROLL TO TOP BUTTON
+═══════════════════════════════════════════════════════ */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 76px;
+  right: 20px;
+  z-index: 1999;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  transition: all 0.25s ease;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  padding: 0;
+}
+
+.scroll-top-btn.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.scroll-top-btn:hover {
+  background: var(--primary-light);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
+}
+
+.scroll-top-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 27: APP HEADER / BRANDING BAR
+═══════════════════════════════════════════════════════ */
+.app-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: #032d60;
+  border-radius: var(--radius-card);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.16);
+  margin-bottom: 4px;
+}
+
+.app-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-logo {
+  width: 36px;
+  height: 36px;
+  background: #0176d3;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.app-logo svg {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+}
+
+.app-title {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.app-subtitle {
+  color: #b0adab;
+  font-size: 11.5px;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.app-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.06);
+  color: #b0adab;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.header-action-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: #d8dde6;
+  transform: scale(1.05);
+}
+
+.header-action-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 28: TOOLTIP ON HOVER (for sidebar labels)
+═══════════════════════════════════════════════════════ */
+[data-tooltip] {
+  position: relative;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: #032d60;
+  color: #f4f6f9;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 100;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+

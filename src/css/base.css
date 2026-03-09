@@ -1,0 +1,54 @@
+/**
+ * @file src/css/base.css
+ * @description Base styles — CSS custom properties (theme tokens), resets, and app layout grid.
+ */
+
+/* Section: Theme Tokens */
+:root {
+  --border: #d8dde6;
+  --bg: #f4f6f9;
+  --card: #ffffff;
+  --text: #181818;
+  --muted: #706e6b;
+  --primary: #0176d3;
+  --primary-dark: #014486;
+}
+
+/* Section: Base */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    "Apple Color Emoji",
+    "Segoe UI Emoji";
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.35;
+}
+
+/* Section: App Layout */
+.app {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 16px 16px 16px 0;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+}
+

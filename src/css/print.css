@@ -1,0 +1,105 @@
+/**
+ * @file src/css/print.css
+ * @description Print-friendly styles. Hides interactive UI and forces crisp borders.
+ */
+
+/* Section: Print-Friendly Rules */
+@media print {
+  /* Hide non-printable UI elements */
+  .controls,
+  #ttToolbar,
+  #viewToggleBtn,
+  #exportAllClassesBtn,
+  #exportPdfBtn,
+  #exportExcelBtn,
+  #sidebarToggleBtn,
+  .skeleton-wrap,
+  #quickFillOverlay,
+  .toast-container,
+  .swap-controls,
+  .toolbar-group,
+  .inputs-search-snippet {
+    display: none !important;
+  }
+
+  /* Full-width layout — remove sidebar grid */
+  .app {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .timetable-area {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Force crisp white background and black text */
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11pt !important;
+  }
+
+  /* Tables: keep rows together, use thin black borders */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  th,
+  td {
+    border: 1px solid #333 !important;
+    background: #fff !important;
+    color: #000 !important;
+    padding: 4px 6px !important;
+    font-size: 10pt !important;
+  }
+
+  th {
+    background: #f0f0f0 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Lunch column keeps a subtle fill */
+  .lunch-cell,
+  td[style*="background:#FEF9C3"],
+  td[style*="background: #FEF9C3"] {
+    background: #f5f5dc !important;
+  }
+
+  /* Each class block starts on a fresh page (except the first) */
+  .class-block + .class-block {
+    page-break-before: always;
+  }
+
+  /* Remove interactive highlights and shadows in print */
+  .subject-cell {
+    box-shadow: none !important;
+  }
+
+  .tt-highlight,
+  .tt-dim,
+  .tt-clash {
+    background: transparent !important;
+    opacity: 1 !important;
+  }
+
+  .clash-badge {
+    display: none !important;
+  }
+
+  /* Caption and heading styles */
+  .class-block h2,
+  .class-block h3,
+  caption {
+    color: #000 !important;
+    font-size: 13pt !important;
+  }
+}

@@ -1,0 +1,524 @@
+/**
+ * @file src/css/animations.css
+ * @description Timetable generation overlay animations, grid assembly effects, and keyframes.
+ */
+
+/* Section: Generation Animation */
+#generateOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(30, 58, 138, 0.18) 0%, rgba(15, 23, 42, 0.45) 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+#generateOverlay.active {
+  display: flex;
+}
+
+.generate-card {
+  width: min(420px, 90vw);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.92) 0%, rgba(238, 242, 255, 0.96) 100%);
+  padding: 32px 28px 28px;
+  box-shadow:
+    0 24px 64px rgba(15, 23, 42, 0.18),
+    0 0 0 1px rgba(59, 130, 246, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.generate-live-loader {
+  margin-bottom: 20px;
+  display: grid;
+  gap: 18px;
+  place-items: center;
+}
+
+#generateOverlay.active .generate-card {
+  animation: generateCardIn 0.4s cubic-bezier(0.2, 0.85, 0.28, 1.1) both;
+}
+
+/* --- Timetable Grid Icon Assembly (Looping) --- */
+.tt-icon {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+/* Outer frame */
+.tt-frame {
+  position: absolute;
+  inset: 0;
+  border: 2.5px solid #3b82f6;
+  border-radius: 10px;
+  opacity: 0;
+}
+#generateOverlay.active .tt-frame {
+  animation: ttAssemble 3.5s ease-in-out infinite;
+}
+
+/* Blue header row */
+.tt-header-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 18px;
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  border-radius: 8px 8px 0 0;
+  opacity: 0;
+}
+.tt-header-bar::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 20px;
+  height: 5px;
+  background: rgba(255,255,255,0.45);
+  border-radius: 3px;
+}
+.tt-header-bar::after {
+  content: "• • •";
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  color: rgba(255,255,255,0.5);
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+#generateOverlay.active .tt-header-bar {
+  animation: ttFlyFromLeft 3.5s cubic-bezier(0.2, 0.8, 0.3, 1.1) 0.08s infinite;
+}
+
+/* Vertical column dividers */
+.tt-col {
+  position: absolute;
+  top: 20px;
+  bottom: 4px;
+  width: 1.5px;
+  background: rgba(59, 130, 246, 0.25);
+  opacity: 0;
+}
+.tt-col-1 { left: 27px; }
+.tt-col-2 { left: 54px; }
+
+#generateOverlay.active .tt-col-1 {
+  animation: ttFlyFromBottom 3.5s ease-in-out 0.18s infinite;
+}
+#generateOverlay.active .tt-col-2 {
+  animation: ttFlyFromBottom 3.5s ease-in-out 0.22s infinite;
+}
+
+/* Horizontal row dividers */
+.tt-row {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 1.5px;
+  background: rgba(59, 130, 246, 0.25);
+  opacity: 0;
+}
+.tt-row-1 { top: 34px; }
+.tt-row-2 { top: 50px; }
+.tt-row-3 { top: 66px; }
+
+#generateOverlay.active .tt-row-1 {
+  animation: ttFlyFromRight 3.5s ease-in-out 0.15s infinite;
+}
+#generateOverlay.active .tt-row-2 {
+  animation: ttFlyFromRight 3.5s ease-in-out 0.20s infinite;
+}
+#generateOverlay.active .tt-row-3 {
+  animation: ttFlyFromRight 3.5s ease-in-out 0.25s infinite;
+}
+
+/* Colored cells filling the grid */
+.tt-cell {
+  position: absolute;
+  border-radius: 3px;
+  opacity: 0;
+}
+
+/* Row 1 cells */
+.tt-cell-1 { top: 21px; left: 5px;  width: 20px; height: 12px; background: #93c5fd; }
+.tt-cell-2 { top: 21px; left: 29px; width: 23px; height: 12px; background: #bfdbfe; }
+.tt-cell-3 { top: 21px; left: 56px; width: 20px; height: 12px; background: #93c5fd; }
+
+/* Row 2 cells */
+.tt-cell-4 { top: 36px; left: 5px;  width: 20px; height: 12px; background: #bfdbfe; }
+.tt-cell-5 { top: 36px; left: 29px; width: 23px; height: 12px; background: #93c5fd; }
+.tt-cell-6 { top: 36px; left: 56px; width: 20px; height: 12px; background: #bfdbfe; }
+
+#generateOverlay.active .tt-cell-1 { animation: ttCellFromTopLeft 3.5s ease-in-out 0.30s infinite; }
+#generateOverlay.active .tt-cell-2 { animation: ttCellFromTop 3.5s ease-in-out 0.35s infinite; }
+#generateOverlay.active .tt-cell-3 { animation: ttCellFromTopRight 3.5s ease-in-out 0.40s infinite; }
+#generateOverlay.active .tt-cell-4 { animation: ttCellFromLeft 3.5s ease-in-out 0.45s infinite; }
+#generateOverlay.active .tt-cell-5 { animation: ttCellFromBottom 3.5s ease-in-out 0.50s infinite; }
+#generateOverlay.active .tt-cell-6 { animation: ttCellFromRight 3.5s ease-in-out 0.55s infinite; }
+
+/* Small clock badge */
+.tt-clock {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  border-radius: 50%;
+  border: 2px solid #fff;
+  opacity: 0;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+}
+/* Minute hand */
+.tt-clock::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 9px;
+  width: 1.5px;
+  height: 7px;
+  background: #fff;
+  border-radius: 1px;
+  transform-origin: bottom center;
+}
+/* Hour hand */
+.tt-clock::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 9px;
+  width: 1.5px;
+  height: 5px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 1px;
+  transform-origin: bottom center;
+}
+#generateOverlay.active .tt-clock {
+  animation: ttClockFlyIn 3.5s ease-in-out 0.62s infinite;
+}
+#generateOverlay.active .tt-clock::before {
+  animation: ttHandSpin 1.2s linear infinite;
+}
+#generateOverlay.active .tt-clock::after {
+  animation: ttHandSpin 3.6s linear infinite;
+}
+
+/* ---- Assembly Keyframes ---- */
+
+/* Frame: drop from top with bounce */
+@keyframes ttAssemble {
+  0%        { opacity: 0; transform: translateY(-50px) scale(0.5) rotate(-5deg); }
+  8%        { opacity: 1; transform: translateY(4px) scale(1.03) rotate(1deg); }
+  14%, 92%  { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+  100%      { opacity: 0; transform: translateY(0) scale(1) rotate(0deg); }
+}
+
+/* Header: fly from left */
+@keyframes ttFlyFromLeft {
+  0%        { opacity: 0; transform: translateX(-60px) rotate(-3deg); }
+  8%        { opacity: 1; transform: translateX(5px) rotate(0.5deg); }
+  14%, 92%  { opacity: 1; transform: translateX(0) rotate(0deg); }
+  100%      { opacity: 0; transform: translateX(0) rotate(0deg); }
+}
+
+/* Rows: fly from right */
+@keyframes ttFlyFromRight {
+  0%        { opacity: 0; transform: translateX(50px); }
+  10%       { opacity: 1; transform: translateX(-3px); }
+  14%, 92%  { opacity: 1; transform: translateX(0); }
+  100%      { opacity: 0; transform: translateX(0); }
+}
+
+/* Columns: fly from bottom */
+@keyframes ttFlyFromBottom {
+  0%        { opacity: 0; transform: translateY(45px); }
+  10%       { opacity: 1; transform: translateY(-3px); }
+  14%, 92%  { opacity: 1; transform: translateY(0); }
+  100%      { opacity: 0; transform: translateY(0); }
+}
+
+/* Cell from top-left */
+@keyframes ttCellFromTopLeft {
+  0%        { opacity: 0; transform: translate(-35px, -30px) scale(0.4); }
+  10%       { opacity: 1; transform: translate(2px, 2px) scale(1.1); }
+  14%, 92%  { opacity: 1; transform: translate(0, 0) scale(1); }
+  100%      { opacity: 0; transform: translate(0, 0) scale(1); }
+}
+
+/* Cell from top */
+@keyframes ttCellFromTop {
+  0%        { opacity: 0; transform: translateY(-40px) scale(0.4); }
+  10%       { opacity: 1; transform: translateY(3px) scale(1.1); }
+  14%, 92%  { opacity: 1; transform: translateY(0) scale(1); }
+  100%      { opacity: 0; transform: translateY(0) scale(1); }
+}
+
+/* Cell from top-right */
+@keyframes ttCellFromTopRight {
+  0%        { opacity: 0; transform: translate(35px, -30px) scale(0.4); }
+  10%       { opacity: 1; transform: translate(-2px, 2px) scale(1.1); }
+  14%, 92%  { opacity: 1; transform: translate(0, 0) scale(1); }
+  100%      { opacity: 0; transform: translate(0, 0) scale(1); }
+}
+
+/* Cell from left */
+@keyframes ttCellFromLeft {
+  0%        { opacity: 0; transform: translateX(-40px) scale(0.4); }
+  10%       { opacity: 1; transform: translateX(3px) scale(1.1); }
+  14%, 92%  { opacity: 1; transform: translateX(0) scale(1); }
+  100%      { opacity: 0; transform: translateX(0) scale(1); }
+}
+
+/* Cell from bottom */
+@keyframes ttCellFromBottom {
+  0%        { opacity: 0; transform: translateY(40px) scale(0.4); }
+  10%       { opacity: 1; transform: translateY(-3px) scale(1.1); }
+  14%, 92%  { opacity: 1; transform: translateY(0) scale(1); }
+  100%      { opacity: 0; transform: translateY(0) scale(1); }
+}
+
+/* Cell from right */
+@keyframes ttCellFromRight {
+  0%        { opacity: 0; transform: translateX(40px) scale(0.4); }
+  10%       { opacity: 1; transform: translateX(-3px) scale(1.1); }
+  14%, 92%  { opacity: 1; transform: translateX(0) scale(1); }
+  100%      { opacity: 0; transform: translateX(0) scale(1); }
+}
+
+/* Clock: fly from bottom-right */
+@keyframes ttClockFlyIn {
+  0%        { opacity: 0; transform: translate(30px, 30px) scale(0.3); }
+  8%        { opacity: 1; transform: translate(-2px, -2px) scale(1.15); }
+  14%, 92%  { opacity: 1; transform: translate(0, 0) scale(1); }
+  100%      { opacity: 0; transform: translate(0, 0) scale(1); }
+}
+
+/* Clock hand rotation */
+@keyframes ttHandSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* --- Letter Jump Animation --- */
+.generate-text {
+  color: #1e40af;
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 0.5px;
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  min-height: 28px;
+}
+
+.gen-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(30px) scale(0.3) rotate(15deg);
+  filter: blur(4px);
+  animation: letterJumpIn 0.5s cubic-bezier(0.2, 0.8, 0.3, 1.2) forwards,
+             letterFloat 2.4s ease-in-out 0.6s infinite;
+}
+
+@keyframes letterJumpIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.3) rotate(15deg);
+    filter: blur(4px);
+    color: #93c5fd;
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.15) rotate(-3deg);
+    filter: blur(0);
+    color: #2563eb;
+  }
+  80% {
+    transform: translateY(3px) scale(0.95) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: blur(0);
+    color: #1e40af;
+  }
+}
+
+@keyframes letterFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  25% {
+    transform: translateY(-3px) scale(1.04);
+  }
+  75% {
+    transform: translateY(2px) scale(0.97);
+  }
+}
+
+/* --- Floating Shape-Shift Particles --- */
+.generate-shapes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.gen-shape {
+  position: absolute;
+  opacity: 0;
+}
+
+#generateOverlay.active .gen-shape {
+  opacity: 1;
+}
+
+.gen-shape-1 {
+  width: 18px;
+  height: 18px;
+  top: 12%;
+  left: 8%;
+  background: rgba(59, 130, 246, 0.15);
+  animation: shapeOrbit1 6s ease-in-out infinite, shapeMorph 3s ease-in-out infinite;
+}
+
+.gen-shape-2 {
+  width: 12px;
+  height: 12px;
+  top: 70%;
+  right: 10%;
+  background: rgba(139, 92, 246, 0.2);
+  animation: shapeOrbit2 5s ease-in-out infinite, shapeMorph 4s ease-in-out 0.5s infinite;
+}
+
+.gen-shape-3 {
+  width: 8px;
+  height: 8px;
+  top: 20%;
+  right: 15%;
+  background: rgba(14, 165, 233, 0.18);
+  animation: shapeOrbit3 7s ease-in-out infinite, shapeMorph 3.5s ease-in-out 1s infinite;
+}
+
+.gen-shape-4 {
+  width: 14px;
+  height: 14px;
+  bottom: 18%;
+  left: 15%;
+  background: rgba(99, 102, 241, 0.14);
+  animation: shapeOrbit2 8s ease-in-out 0.3s infinite, shapeMorph 5s ease-in-out 0.8s infinite;
+}
+
+.gen-shape-5 {
+  width: 6px;
+  height: 6px;
+  top: 50%;
+  left: 5%;
+  background: rgba(59, 130, 246, 0.22);
+  animation: shapeOrbit3 4.5s ease-in-out 0.6s infinite, shapeMorph 2.5s ease-in-out 0.2s infinite;
+}
+
+.gen-shape-6 {
+  width: 10px;
+  height: 10px;
+  bottom: 12%;
+  right: 20%;
+  background: rgba(168, 85, 247, 0.16);
+  animation: shapeOrbit1 5.5s ease-in-out 1s infinite, shapeMorph 4s ease-in-out 1.5s infinite;
+}
+
+@keyframes shapeMorph {
+  0% {
+    border-radius: 50%;
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    border-radius: 4px;
+    transform: rotate(90deg) scale(1.3);
+  }
+  50% {
+    border-radius: 50% 4px 50% 4px;
+    transform: rotate(180deg) scale(0.8);
+  }
+  75% {
+    border-radius: 4px;
+    transform: rotate(270deg) scale(1.2);
+  }
+  100% {
+    border-radius: 50%;
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes shapeOrbit1 {
+  0%, 100% {
+    translate: 0 0;
+    opacity: 0.6;
+  }
+  25% {
+    translate: 20px -15px;
+    opacity: 1;
+  }
+  50% {
+    translate: -10px -25px;
+    opacity: 0.4;
+  }
+  75% {
+    translate: 15px 10px;
+    opacity: 0.9;
+  }
+}
+
+@keyframes shapeOrbit2 {
+  0%, 100% {
+    translate: 0 0;
+    opacity: 0.5;
+  }
+  33% {
+    translate: -18px 12px;
+    opacity: 1;
+  }
+  66% {
+    translate: 12px -20px;
+    opacity: 0.3;
+  }
+}
+
+@keyframes shapeOrbit3 {
+  0%, 100% {
+    translate: 0 0;
+    opacity: 0.7;
+  }
+  50% {
+    translate: 25px 18px;
+    opacity: 0.2;
+  }
+}
+
+
+/* Card needs relative for shapes */
+.generate-card {
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes generateCardIn {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

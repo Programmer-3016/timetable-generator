@@ -1,0 +1,50 @@
+{
+  "env": {
+    "browser": true,
+    "es2020": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "script"
+  },
+  "globals": {
+    "showToast": "readonly",
+    "generateTimetable": "readonly",
+    "validateAndGenerate": "readonly",
+    "undoTimetableSwap": "readonly",
+    "redoTimetableSwap": "readonly",
+    "CLASS_KEYS": "readonly",
+    "gEnabledKeys": "writable",
+    "gClassLabels": "writable",
+    "gSchedules": "writable",
+    "gSubjectByShort": "writable",
+    "gWeeklyQuotaByClass": "writable",
+    "gCanonFoldMap": "writable",
+    "parsePairs": "readonly",
+    "schedulerIsFullyValid": "readonly",
+    "schedulerScoreCandidateObjective": "readonly",
+    "schedulerNormalizeList": "readonly",
+    "canonicalTeacherName": "readonly",
+    "normalizeTeacherName": "readonly",
+    "periodTimings": "readonly",
+    "aggregateStats": "readonly",
+    "reportData": "writable",
+    "clearHighlight": "readonly",
+    "highlightByTeacher": "readonly",
+    "updateDragSwapControls": "readonly",
+    "XLSX": "readonly",
+    "html2canvas": "readonly",
+    "pdfjsLib": "readonly",
+    "Tesseract": "readonly"
+  },
+  "rules": {
+    "no-unused-vars": ["warn", { "args": "none", "caughtErrors": "none" }],
+    "no-undef": "warn",
+    "no-empty": "warn",
+    "no-extra-semi": "error",
+    "no-unreachable": "error",
+    "eqeqeq": ["warn", "smart"],
+    "no-var": "off",
+    "prefer-const": "off"
+  }
+}

@@ -1,0 +1,369 @@
+/**
+ * @file src/css/responsive.css
+ * @description Responsive breakpoints for mobile, tablet, and desktop layouts.
+ *   Handles sidebar collapse, table scrolling, input card layout, and touch targets.
+ */
+
+/* Section: Responsive */
+@media (max-width: 1200px) {
+  .timetable-area.view-timetable #timetableWrap {
+    grid-template-columns: 1fr;
+  }
+
+  .timetable-area.view-timetable #timetableWrap::before {
+    display: none;
+  }
+
+  .toolbar-group {
+    flex-wrap: wrap;
+  }
+
+  .toolbar-group input[type="search"] {
+    width: 180px;
+  }
+
+  .inputs-search-wrap input[type="search"] {
+    width: min(320px, 42vw);
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 900px) {
+  .class-inputs-topbar {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  #inputsPager {
+    margin-left: auto;
+  }
+
+  .clash-dashboard {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+}
+
+/* Section: Mobile Layout (< 768px) */
+@media (max-width: 768px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .app {
+    grid-template-columns: 1fr;
+    padding: 10px;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .controls {
+    position: static;
+    border-radius: 10px;
+  }
+
+  .timetable-area {
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  table,
+  th,
+  td {
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  /* Keep generated timetable/faculty/lab tables readable on small screens. */
+  .class-block,
+  .class-block .placeholder-panel,
+  #facultyTT,
+  #labUsage,
+  #labPanel,
+  .lab-table-wrap,
+  #reportPanel {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .class-block table,
+  #facultyTT table,
+  #labUsage table {
+    min-width: 720px;
+    width: 100%;
+    table-layout: auto;
+  }
+
+  .lab-table-wrap table {
+    min-width: 980px;
+    width: 100%;
+    table-layout: auto;
+  }
+
+  #reportPanel table {
+    min-width: 760px;
+    width: 100%;
+    table-layout: auto;
+  }
+
+  /* Prevent day labels and slot timing text from splitting letter-by-letter. */
+  .class-block table thead th:first-child,
+  .class-block table tbody td:first-child {
+    width: 92px;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  #facultyTT table thead th:first-child,
+  #facultyTT table tbody td:first-child,
+  #labUsage table thead th:first-child,
+  #labUsage table tbody td:first-child,
+  .lab-table-wrap table thead th:first-child,
+  .lab-table-wrap table tbody td:first-child {
+    width: 120px;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .class-block table thead th small,
+  #facultyTT table thead th small,
+  #labUsage table thead th small,
+  .lab-table-wrap table thead th small {
+    white-space: nowrap;
+  }
+
+  .class-block table th,
+  .class-block table td,
+  #facultyTT table th,
+  #facultyTT table td,
+  #labUsage table th,
+  #labUsage table td,
+  .lab-table-wrap table th,
+  .lab-table-wrap table td {
+    line-height: 1.3;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+  }
+
+  /* Timetable 2-col grid → single col */
+  .timetable-area.view-timetable #timetableWrap {
+    grid-template-columns: 1fr;
+  }
+
+  .timetable-area.view-timetable #timetableWrap::before {
+    display: none;
+  }
+
+  /* Export buttons stack */
+  #globalExport {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #globalExport .link-btn {
+    text-align: center;
+  }
+
+  /* Quick Fill modal full-width */
+  #quickFillModal {
+    width: 96vw;
+    padding: 12px;
+  }
+
+  /* Toolbar wraps */
+  .timetable-toolbar {
+    overflow-x: visible;
+    flex-wrap: wrap;
+  }
+
+  /* Font size tweaks */
+  .controls h3 {
+    font-size: 15px;
+  }
+
+  .class-block-title {
+    font-size: 14px;
+  }
+
+  table {
+    font-size: 11px;
+  }
+
+  th,
+  td {
+    padding: 5px 6px;
+  }
+
+  /* Input table: convert rows into mobile cards to avoid distortion. */
+  #classInputsPanel table {
+    border: 0;
+    background: transparent;
+  }
+
+  #classInputsPanel table thead {
+    display: none;
+  }
+
+  #classInputsPanel table,
+  #classInputsPanel table tbody,
+  #classInputsPanel table tr,
+  #classInputsPanel table td {
+    display: block;
+    width: 100%;
+  }
+
+  #classInputsPanel table tbody tr {
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background: #ffffff;
+    margin-bottom: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+  }
+
+  #classInputsPanel table tbody td {
+    border: 0;
+    padding: 6px 0;
+  }
+
+  #classInputsPanel table thead th:nth-child(3),
+  #classInputsPanel table tbody td:nth-child(3) {
+    border-left: 0;
+    border-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  #classInputsPanel td:first-child {
+    width: 100%;
+    background: transparent;
+    color: #0f172a;
+    text-align: left;
+    font-size: 12px;
+    font-family: inherit;
+    letter-spacing: 0;
+    padding: 0;
+  }
+
+  #classInputsPanel table tbody td:first-child::before,
+  #classInputsPanel table tbody td:nth-child(2)::before,
+  #classInputsPanel table tbody td:nth-child(3)::before,
+  #classInputsPanel table tbody td:nth-child(4)::before,
+  #classInputsPanel table tbody td:nth-child(5)::before {
+    display: block;
+    margin-bottom: 4px;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  #classInputsPanel table tbody td:first-child::before {
+    content: "Class #";
+  }
+
+  #classInputsPanel table tbody td:nth-child(2)::before {
+    content: "Class";
+  }
+
+  #classInputsPanel table tbody td:nth-child(3)::before {
+    content: "Subjects";
+  }
+
+  #classInputsPanel table tbody td:nth-child(4)::before {
+    content: "Fillers";
+  }
+
+  #classInputsPanel table tbody td:nth-child(5)::before {
+    content: "Mains";
+  }
+
+  #classInputsPanel tbody td:nth-child(3) textarea {
+    width: 100%;
+    margin: 0;
+    min-height: 118px;
+  }
+
+  #classInputsPanel input[type="text"],
+  #classInputsPanel textarea {
+    font-size: 14px;
+  }
+
+  .class-inputs-tools {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .inputs-search-wrap {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .inputs-search-wrap .inputs-search-meta {
+    grid-column: 1 / -1;
+    white-space: normal;
+  }
+
+  /* Sidebar collapse button full-width */
+  #sidebarToggleBtn {
+    width: 100%;
+  }
+
+  /* Report panel */
+  #reportPanel {
+    overflow-x: auto;
+  }
+
+  #reportPanel table {
+    min-width: 760px;
+    width: 100%;
+    table-layout: auto;
+  }
+}
+
+/* Section: Small Mobile (< 640px) */
+@media (max-width: 640px) {
+  .class-inputs-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .class-inputs-tools {
+    width: 100%;
+  }
+
+  .inputs-search-wrap {
+    width: 100%;
+  }
+
+  .inputs-search-wrap input[type="search"] {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+  }
+
+  #inputsPager {
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0;
+  }
+
+  .clash-dashboard {
+    grid-template-columns: 1fr;
+  }
+}
