@@ -1,3 +1,4 @@
+/* exported pdfImportDurationMinutes, pdfImportExtractTimeRanges, pdfImportLooksLikeClassHeader, pdfImportNormalizeClassLabel, pdfImportParseSubjectLine, pdfImportDeriveShortFromSubject, pdfImportSplitLineBySubjectCode, pdfImportSplitTabularColumns, pdfImportSplitMergedDashEntries, pdfImportFinalizeEntry, pdfImportExtractShortFromTail */
 /**
  * @module ui/pdf-import/text-utils.js
  * @description General normalization and parsing utilities for PDF import.

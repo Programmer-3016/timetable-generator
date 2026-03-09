@@ -1,3 +1,4 @@
+/* exported parsePairs */
 /**
  * @module core/parser.js
  * @description Input parser for subject-teacher lines and normalization helpers.

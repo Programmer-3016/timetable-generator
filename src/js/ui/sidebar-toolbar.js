@@ -1,3 +1,4 @@
+/* exported toggleSidebarLayout, buildToolbar */
 /**
  * @module ui/sidebar-toolbar.js
  * @description Sidebar collapse/expand controls and teacher highlight toolbar.

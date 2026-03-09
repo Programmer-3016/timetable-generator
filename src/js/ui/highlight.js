@@ -1,3 +1,4 @@
+/* exported highlightByTeacher */
 /**
  * @module ui/highlight.js
  * @description Teacher highlight and clash indication helpers.

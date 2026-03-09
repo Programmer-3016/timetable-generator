@@ -1,3 +1,4 @@
+/* exported schedulerPickTeacherForSlot, schedulerCanAssign */
 /**
  * @module core/scheduler/assignment.js
  * @description Assignment-layer helpers for scheduling decisions.

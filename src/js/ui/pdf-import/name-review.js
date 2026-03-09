@@ -1,3 +1,4 @@
+/* exported pdfImportReviewTeacherNamesAfterImport */
 /**
  * @module ui/pdf-import/name-review.js
  * @description Post-import teacher-name ambiguity review (same vs different teacher).

@@ -1,3 +1,4 @@
+/* exported renderReport */
 /**
  * @module ui/report-render.js
  * @description Report table UI rendering and sorting interactions.
@@ -118,7 +119,7 @@ function buildClashDashboardMetrics() {
       if (result && Array.isArray(result.violations)) {
         strictViolations = result.violations.slice();
       }
-    } catch (_e) {}
+    } catch (_e) { /* no-op */ }
   }
   metrics.strictViolations = strictViolations.length;
   metrics.strictTeacherClashes = strictViolations.filter((line) =>
@@ -347,7 +348,7 @@ document.addEventListener("DOMContentLoaded", function() {
     exportLabsBtn.addEventListener("click", () => {
       try {
         renderLabTimetables();
-      } catch {}
+      } catch { /* no-op */ }
       exportLabJPG();
     });
 
@@ -359,10 +360,10 @@ document.addEventListener("DOMContentLoaded", function() {
           setTimeout(() => {
             try {
               generateTimetable();
-            } catch (e) {}
+            } catch (e) { /* no-op */ }
           }, 50);
         }
-      } catch (e) {}
+      } catch (e) { /* no-op */ }
     });
   }
 });

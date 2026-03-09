@@ -1,3 +1,4 @@
+/* exported exportAllTimetablesAsOneJPG, exportAllTimetablesAsPDF */
 /**
  * @module export/bulk.js
  * @description Bulk JPG/PDF export for all class timetable blocks.

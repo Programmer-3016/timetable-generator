@@ -1,3 +1,4 @@
+/* exported decidePdfFormatAndWidth, withStickyDisabled */
 /**
  * @module export/capture-helpers.js
  * @description Capture formatting helpers for PNG/PDF exports.
@@ -75,14 +76,14 @@ function withStickyDisabled(fn) {
   } catch (e) {
     try {
       style.remove();
-    } catch {}
+    } catch { /* no-op */ }
     throw e;
   }
   // Removes the temporary export stylesheet after capture completes
   const finalize = () => {
     try {
       style.remove();
-    } catch {}
+    } catch { /* no-op */ }
   };
   if (result && typeof result.then === "function") {
     return result.finally(finalize);

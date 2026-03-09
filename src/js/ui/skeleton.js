@@ -127,7 +127,7 @@
       if (typeof enablePostGenerateTabs === "function") {
         enablePostGenerateTabs();
       }
-    } catch (_) {}
+    } catch (_) { /* no-op */ }
 
     return injected;
   }

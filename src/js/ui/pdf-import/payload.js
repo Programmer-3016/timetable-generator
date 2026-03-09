@@ -1,3 +1,4 @@
+/* exported pdfImportDetectDays, pdfImportDetectLabCount, pdfImportDetectTimingSettings, pdfImportExtractPdfLines, pdfImportBuildClassPayloads, pdfImportAssessImportQuality */
 /**
  * @module ui/pdf-import/payload.js
  * @description Page/text extraction and class payload construction for PDF import.
