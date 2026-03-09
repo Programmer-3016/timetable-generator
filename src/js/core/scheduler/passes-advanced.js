@@ -1,3 +1,4 @@
+/* exported schedulerPassFillRemaining, schedulerPassAggressiveFill, schedulerPassPostLunchFillerSweep, schedulerPassGapSealFill, schedulerPassFinalPostLunchGapFix, schedulerPassFillPostLunchGaps, schedulerPassEnsureSubjectDailyFive, schedulerPassEnsureAtLeastOneMainPerDay, schedulerPassFillSparseSchedule, schedulerPassUltimateForceFill, schedulerPassPromoteMainsBeforeLunch, schedulerPassFillEmptyPreLunch, schedulerPassCompactPostLunch, schedulerPassCompactPreLunch, schedulerPassCompactDayGaps */
 /**
  * @module core/scheduler/passes-advanced.js
  * @description Advanced fill/balance pass helpers extracted from scheduler core.
@@ -9,6 +10,7 @@
 // Section: AGGRESSIVE FILL PASS
 
 function schedulerPassFillRemaining({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -51,6 +53,7 @@ function schedulerPassFillRemaining({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     for (let d = 0; d < days; d++) {
       for (let c = 0; c < classesPerDay; c++) {
@@ -86,6 +89,7 @@ function schedulerPassFillRemaining({ ctx, key }) {
 
 /** Aggressively fills empty slots by trying remaining lectures first, then filler subjects ranked by deficit. */
 function schedulerPassAggressiveFill({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -127,6 +131,7 @@ function schedulerPassAggressiveFill({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     const fillerShorts = fillerShortsByClass[key] || new Set();
     const fillerPerDayCount = Array.from({
@@ -246,6 +251,7 @@ function schedulerPassAggressiveFill({ ctx, key }) {
 
 /** Sweeps post-lunch trailing slots and fills them with filler subjects, ranked by target deficit. */
 function schedulerPassPostLunchFillerSweep({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -287,6 +293,7 @@ function schedulerPassPostLunchFillerSweep({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     const fillerShorts = fillerShortsByClass[key] || new Set();
     if (!fillerShorts || fillerShorts.size === 0) return;
@@ -353,6 +360,7 @@ function schedulerPassPostLunchFillerSweep({ ctx, key }) {
 
 /** Seals remaining schedule gaps by placing available lectures, relaxing constraints for the first post-lunch slot. */
 function schedulerPassGapSealFill({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -394,6 +402,7 @@ function schedulerPassGapSealFill({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     for (let d = 0; d < days; d++) {
       for (let c = 0; c < classesPerDay; c++) {
@@ -470,6 +479,7 @@ function schedulerPassGapSealFill({ ctx, key }) {
  * into the first post-lunch period, back-filling vacated slots with fillers.
  */
 function schedulerPassFinalPostLunchGapFix({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -511,6 +521,7 @@ function schedulerPassFinalPostLunchGapFix({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     const fillerShorts = fillerShortsByClass[key] || new Set();
     const fillerWindowStart = Math.max(0, classesPerDay - 2);
@@ -779,6 +790,7 @@ function schedulerPassFinalPostLunchGapFix({ ctx, key }) {
 
 /** Fills remaining null post-lunch slots with filler subjects ranked by target deficit. */
 function schedulerPassFillPostLunchGaps({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -820,6 +832,7 @@ function schedulerPassFillPostLunchGaps({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     const fillerShorts =
       (fillerShortsByClass && fillerShortsByClass[key]) || new Set();
@@ -891,6 +904,7 @@ function schedulerPassFillPostLunchGaps({ ctx, key }) {
  * displacing fillers if necessary to meet daily coverage.
  */
 function schedulerPassEnsureSubjectDailyFive({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -932,10 +946,12 @@ function schedulerPassEnsureSubjectDailyFive({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     const fillerShorts =
       (fillerShortsByClass && fillerShortsByClass[key]) || new Set();
     /** Returns true if the short is a main (non-filler, non-lab) subject. */
+    // eslint-disable-next-line no-unused-vars
     const isMain = (sh) =>
       sh && !fillerShorts.has(sh) && !isLabShort[key][sh];
     const fillerStart = Math.max(lunchClassIndex + 1, classesPerDay - 2);
@@ -1046,6 +1062,7 @@ function schedulerPassEnsureSubjectDailyFive({ ctx, key }) {
 
 /** Guarantees every day has at least one main subject, placing into empty or filler-occupied slots. */
 function schedulerPassEnsureAtLeastOneMainPerDay({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -1087,6 +1104,7 @@ function schedulerPassEnsureAtLeastOneMainPerDay({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     const fillerShorts =
       (fillerShortsByClass && fillerShortsByClass[key]) || new Set();
@@ -1222,6 +1240,7 @@ function schedulerPassEnsureAtLeastOneMainPerDay({ ctx, key }) {
  * and force-promotes mains into empty, filler, or over-represented main slots.
  */
 function schedulerPassFillSparseSchedule({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -1263,6 +1282,7 @@ function schedulerPassFillSparseSchedule({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     const totalSlots = days * classesPerDay;
     const mainSet =
@@ -1332,6 +1352,7 @@ function schedulerPassFillSparseSchedule({ ctx, key }) {
         let placed = false;
         for (const bucket of slotBuckets) {
           while (bucket.length) {
+            /* eslint-disable no-unused-vars */
             const {
               d,
               p
@@ -1413,6 +1434,7 @@ function schedulerPassUltimateForceFill({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+            /* eslint-enable no-unused-vars */
 
     const empties = [];
     for (let d = 0; d < days; d++) {
@@ -1514,6 +1536,7 @@ function schedulerPassUltimateForceFill({ ctx, key }) {
  * improving schedule balance by keeping academic subjects before lunch.
  */
 function schedulerPassPromoteMainsBeforeLunch({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -1555,6 +1578,7 @@ function schedulerPassPromoteMainsBeforeLunch({ ctx, key }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     const fillerSet =
       (fillerShortsByClass && fillerShortsByClass[key]) || new Set();
@@ -1617,6 +1641,7 @@ function schedulerPassPromoteMainsBeforeLunch({ ctx, key }) {
 
 /** Fills remaining empty pre-lunch slots across all classes with under-target mains or fillers. */
 function schedulerPassFillEmptyPreLunch({ ctx }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -1659,6 +1684,7 @@ function schedulerPassFillEmptyPreLunch({ ctx }) {
     periodTimings,
     classIndices,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
     let changed = false;
     for (const key of keys) {
@@ -1737,6 +1763,7 @@ function schedulerPassFillEmptyPreLunch({ ctx }) {
  * post-lunch slots and pushing gaps/fillers toward the end of the day.
  */
 function schedulerPassCompactPostLunch({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -1749,6 +1776,7 @@ function schedulerPassCompactPostLunch({ ctx, key }) {
     isLabShort,
     postLunchCompactDebugByClass,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
   const fillerSet =
     (fillerShortsByClass && fillerShortsByClass[key]) || new Set();
@@ -1931,6 +1959,7 @@ function schedulerPassCompactPostLunch({ ctx, key }) {
 
 /** Compacts the pre-lunch portion of the schedule by bubbling mains/labs toward earlier slots. */
 function schedulerPassCompactPreLunch({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     lunchClassIndex,
@@ -1941,6 +1970,7 @@ function schedulerPassCompactPreLunch({ ctx, key }) {
     assignedTeacher,
     isLabShort,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
   if (!Number.isFinite(lunchClassIndex) || lunchClassIndex <= 1) return false;
 
@@ -2086,6 +2116,7 @@ function schedulerPassCompactPreLunch({ ctx, key }) {
 
 /** Compacts the full-day schedule by shifting filled cells left to eliminate mid-day gaps, preserving lab block integrity. */
 function schedulerPassCompactDayGaps({ ctx, key }) {
+  /* eslint-disable no-unused-vars */
   const {
     days,
     classesPerDay,
@@ -2097,6 +2128,7 @@ function schedulerPassCompactDayGaps({ ctx, key }) {
     isLabShort,
     labNumberAssigned,
   } = ctx;
+  /* eslint-enable no-unused-vars */
 
   const fillerSet =
     (fillerShortsByClass && fillerShortsByClass[key]) || new Set();

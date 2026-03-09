@@ -1,3 +1,4 @@
+/* exported schedulerRenderMultiClassesEngine */
 /**
  * @module core/scheduler/engine.js
  * @description Core scheduling engine (renderMultiClasses).
@@ -92,7 +93,7 @@ function schedulerRenderMultiClassesEngine({
   const seededRandom = createSeededRandom(resolvedSeed);
   try {
     window.__ttLastSeed = resolvedSeed;
-  } catch (_e) {}
+  } catch (_e) { /* no-op */ }
   const teacherFoldMapLocal = schedulerBuildTeacherFoldMapFromData({
     data,
     buildTeacherFoldMapFromRawNames,
@@ -326,6 +327,7 @@ function schedulerRenderMultiClassesEngine({
       col,
     });
   /** Normalizes a subject string for adjacency comparison (strips lab suffixes). */
+  // eslint-disable-next-line no-unused-vars
   const normalizeForAdjacency = (s) => schedulerNormalizeForAdjacency(s);
   /** Checks if two short codes refer to the same base subject. */
   const sameSubjectCode = (a, b) => schedulerSameSubjectCode(a, b);
@@ -588,7 +590,7 @@ function schedulerRenderMultiClassesEngine({
           "Teacherless fillers (allowed; placed only in last two periods):\n" +
           lines.join("\n")
         );
-      } catch {}
+      } catch { /* no-op */ }
     }
   })();
 
@@ -801,6 +803,7 @@ function fillRemaining(key) {
               (teacherAssignedPerDayByClass[key][d][t] || 0) + 1;
             ensureTP(key, t)[c < lunchClassIndex ? "pre" : "post"]++;
             recordMainPostLunchIfNeeded(key, pick.short, c);
+            // eslint-disable-next-line no-unused-vars
             placed = true;
             break;
           }
@@ -1512,7 +1515,7 @@ function fillRemaining(key) {
           placed = true;
           break;
         }
-        if (!placed) {}
+        if (!placed) { /* no-op */ }
       }
     }
     for (const k of keys) emergencyP5FillerIfNeeded(k);
@@ -1601,6 +1604,7 @@ function fillRemaining(key) {
           }
           if (getFillerTotal(key) > getFillerCap(key))
             usedOverflow = true;
+          // eslint-disable-next-line no-unused-vars
           placed = true;
           break;
         }
@@ -2501,7 +2505,7 @@ function fillRemaining(key) {
 
     try {
       window.__ttPostLunchCompactReport = summary;
-    } catch {}
+    } catch { /* no-op */ }
     try {
       console.info("Post-lunch compaction summary:", summary);
       if (issues.length) {
@@ -2510,7 +2514,7 @@ function fillRemaining(key) {
           summary.sampleIssues
         );
       }
-    } catch {}
+    } catch { /* no-op */ }
   }
 
   validatePostLunchCompaction();
@@ -2591,7 +2595,7 @@ function fillRemaining(key) {
   try {
     window.__ttLastScheduleState = strictSnapshot;
     window.__ttLastValidation = schedulerIsFullyValid(strictSnapshot);
-  } catch (_e) {}
+  } catch (_e) { /* no-op */ }
   gSchedules = publishedState.schedulesByClass;
   gTeacherForShort = publishedState.teacherForShortByClass;
   gSubjectByShort = publishedState.subjectByShortByClass;

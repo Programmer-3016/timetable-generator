@@ -1,3 +1,4 @@
+/* exported pdfImportParseSubjectTableLines */
 /**
  * @module ui/pdf-import/subject-parse.js
  * @description Subject-row reconstruction and dedupe from extracted PDF lines.

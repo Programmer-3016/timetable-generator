@@ -1,3 +1,4 @@
+/* exported renderSubjectInfo */
 /**
  * @module ui/subject-info.js
  * @description Per-class subject info table rendering.

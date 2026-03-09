@@ -1,3 +1,4 @@
+/* exported renderMultiClasses */
 /**
  * @module core/scheduler.js
  * @description Scheduler orchestrator bridge preserving render API.

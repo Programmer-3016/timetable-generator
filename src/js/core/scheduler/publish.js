@@ -1,3 +1,4 @@
+/* exported schedulerMergeTeacherAggregateStats, schedulerBuildPublishedState */
 /**
  * @module core/scheduler/publish.js
  * @description Post-schedule helpers for aggregate teacher stats and global state publish.

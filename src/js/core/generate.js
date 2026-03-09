@@ -477,7 +477,7 @@ function generateTimetable(options = {}) {
         strictValidation.violations.slice() :
         [],
     };
-  } catch (_e) {}
+  } catch (_e) { /* no-op */ }
 
   if (scheduleRenderOk) {
     try {
@@ -507,7 +507,7 @@ function generateTimetable(options = {}) {
         ttArea.classList.remove("view-inputs");
       }
     }
-  } catch {}
+  } catch { /* no-op */ }
   buildToolbar();
   enableDragAndDrop();
   generated = true;
@@ -577,7 +577,7 @@ function generateMultipleCandidates(count = 5) {
   candidates.sort((a, b) => b.score - a.score);
   try {
     window.__ttLastCandidates = candidates;
-  } catch (_e) {}
+  } catch (_e) { /* no-op */ }
   return candidates;
 }
 

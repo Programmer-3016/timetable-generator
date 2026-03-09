@@ -99,7 +99,7 @@
     }
 
     // -- Persist --
-    try { localStorage.setItem(TAB_STORAGE_KEY, tabName); } catch (_) {}
+    try { localStorage.setItem(TAB_STORAGE_KEY, tabName); } catch (_) { /* no-op */ }
   }
 
   /**

@@ -1,3 +1,4 @@
+/* exported schedulerEnsureTeacherPrePostBucket, schedulerGetFillerTotal, schedulerGetFillerCap, schedulerGetFillerSubjectCap */
 /**
  * @module core/scheduler/caps.js
  * @description Small cap/bucket helpers used across scheduler passes.

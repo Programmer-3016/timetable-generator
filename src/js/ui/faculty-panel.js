@@ -1,3 +1,4 @@
+/* exported buildFacultyPanel */
 /**
  * @module ui/faculty-panel.js
  * @description Faculty selector and faculty timetable rendering.

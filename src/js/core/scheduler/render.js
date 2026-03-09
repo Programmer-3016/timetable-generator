@@ -1,3 +1,4 @@
+/* exported schedulerRenderClassToDOM */
 /**
  * @module core/scheduler/render.js
  * @description DOM render helper for class timetable cells.

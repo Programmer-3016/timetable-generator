@@ -1,3 +1,4 @@
+/* exported renderLabUsage, renderLabTimetables */
 /**
  * @module ui/lab-panel.js
  * @description Lab usage and per-lab timetable rendering.

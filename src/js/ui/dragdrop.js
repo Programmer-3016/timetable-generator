@@ -1,3 +1,4 @@
+/* exported enableDragAndDrop */
 /**
  * @module ui/dragdrop.js
  * @description Drag-and-drop swap with clash-safe validation.
@@ -60,7 +61,7 @@ function refreshViewsAfterScheduleShift() {
       if (activeTeacher && typeof highlightByTeacher === "function") {
         highlightByTeacher(activeTeacher);
       }
-    } catch (_e) {}
+    } catch (_e) { /* no-op */ }
   }, 0);
 }
 

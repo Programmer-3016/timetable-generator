@@ -1,3 +1,4 @@
+/* exported validateAndGenerate */
 /**
  * @module core/input-validator.js
  * @description Pre-generate input validation and error boundary wrapper.
@@ -35,6 +36,7 @@ function validateInputsBeforeGenerate() {
   );
 
   let classesWithSubjects = 0;
+  // eslint-disable-next-line no-unused-vars
   let classesWithMissingTeachers = 0;
   const warnings = [];
 
@@ -66,7 +68,7 @@ function validateInputsBeforeGenerate() {
     });
 
     if (missingTeacher > 0) {
-      classesWithMissingTeachers++;
+      classesWithMissingTeachers++; // eslint-disable-line no-unused-vars
       warnings.push(
         `Class ${i + 1}: ${missingTeacher} subject(s) may be missing teacher names.`
       );
