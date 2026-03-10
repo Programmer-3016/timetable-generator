@@ -1,5 +1,5 @@
 /**
- * @file tests/scoring.test.js
+ * @file tests/unit/scoring.test.js
  * @description Tests for schedulerScoreCandidateObjective — the quality scoring function.
  */
 

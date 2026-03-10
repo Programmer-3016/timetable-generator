@@ -325,8 +325,6 @@ function schedulerRenderMultiClassesEngine({
       day,
       col,
     });
-  /** Normalizes a subject string for adjacency comparison (strips lab suffixes). */
-  const normalizeForAdjacency = (s) => schedulerNormalizeForAdjacency(s);
   /** Checks if two short codes refer to the same base subject. */
   const sameSubjectCode = (a, b) => schedulerSameSubjectCode(a, b);
   const postLunchCompactDebugByClass = {};

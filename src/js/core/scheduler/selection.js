@@ -1,5 +1,5 @@
 /**
- * @module core/scheduler/selection
+ * @module core/scheduler/selection.js
  * @description Slot/lecture selection helpers used by scheduler core.
  */
 

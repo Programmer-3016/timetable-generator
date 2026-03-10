@@ -1,5 +1,5 @@
 /**
- * @file tests/validation.test.js
+ * @file tests/unit/validation.test.js
  * @description Tests for schedulerIsFullyValid — the schedule validation engine.
  */
 

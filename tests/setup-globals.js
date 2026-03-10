@@ -44,9 +44,16 @@ function loadScript(relPath) {
   indirectEval(code);
 }
 
-// Load validation and scoring (extracted from engine.js)
+// Load helpers first (provides utility functions used by other modules)
+loadScript("src/js/core/helpers.js");
+
+// Update CLASS_KEYS with real generated values now that helpers.js is loaded
+if (typeof generateClassKeys === "function") {
+  global.CLASS_KEYS = generateClassKeys(50);
+}
+
+// Load parser, input validator, and scheduler modules
+loadScript("src/js/core/parser.js");
+loadScript("src/js/core/input-validator.js");
 loadScript("src/js/core/scheduler/validation.js");
 loadScript("src/js/core/scheduler/scoring.js");
-
-// Load parser
-loadScript("src/js/core/parser.js");

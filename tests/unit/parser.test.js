@@ -1,5 +1,5 @@
 /**
- * @file tests/parser.test.js
+ * @file tests/unit/parser.test.js
  * @description Tests for parsePairs — the input parsing engine.
  */
 
