@@ -7,7 +7,6 @@
 @media print {
   /* Hide non-printable UI elements */
   .controls,
-  #ttToolbar,
   #viewToggleBtn,
   #exportAllClassesBtn,
   #exportPdfBtn,
@@ -16,7 +15,6 @@
   .skeleton-wrap,
   #quickFillOverlay,
   .toast-container,
-  .swap-controls,
   .toolbar-group,
   .inputs-search-snippet {
     display: none !important;
@@ -82,17 +80,6 @@
   /* Remove interactive highlights and shadows in print */
   .subject-cell {
     box-shadow: none !important;
-  }
-
-  .tt-highlight,
-  .tt-dim,
-  .tt-clash {
-    background: transparent !important;
-    opacity: 1 !important;
-  }
-
-  .clash-badge {
-    display: none !important;
   }
 
   /* Caption and heading styles */

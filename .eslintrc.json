@@ -29,8 +29,6 @@
     "periodTimings": "readonly",
     "aggregateStats": "readonly",
     "reportData": "writable",
-    "clearHighlight": "readonly",
-    "highlightByTeacher": "readonly",
     "updateDragSwapControls": "readonly",
     "XLSX": "readonly",
     "html2canvas": "readonly",

@@ -199,34 +199,51 @@ function renderReport() {
 
   const sortDirIcon = dir === "asc" ? "▲" : "▼";
   const reportTip =
-    "Tip: Click a teacher to focus timetable · Click headers to sort · " +
+    "Click a teacher to focus timetable · Click headers to sort · " +
     "Theory and Lab are shown separately; Total Hours sums both";
-  let html = `<h3 style='margin:12px 0 6px'>Per-Teacher Report</h3>
+  // step: determine clash severity for card accent
+  const clashSev = clashMetrics.teacherSlotClashes > 0 ? "clash-danger" : "clash-ok";
+  const violSev = clashMetrics.strictViolations > 0 ? "clash-danger" : "clash-ok";
+  const overSev = clashMetrics.overloadedTeachers > 0 ? "clash-warn" : "clash-ok";
+  let html = `<div class="report-header">
+      <h3 class="report-title">Per-Teacher Report</h3>
+      <span class="report-count">${rows.length} teachers</span>
+    </div>
     <div class="clash-dashboard">
-      <div class="clash-card clash-danger">
-        <div class="clash-card-label">Teacher Clash Events</div>
-        <div class="clash-card-value">${clashMetrics.teacherSlotClashes}</div>
-        <div class="clash-card-meta">${clashMetrics.clashCells} conflicting cells</div>
+      <div class="clash-card ${clashSev}">
+        <div class="clash-card-icon">⚡</div>
+        <div class="clash-card-body">
+          <div class="clash-card-value">${clashMetrics.teacherSlotClashes}</div>
+          <div class="clash-card-label">Clash Events</div>
+          <div class="clash-card-meta">${clashMetrics.clashCells} conflicting cells</div>
+        </div>
       </div>
-      <div class="clash-card clash-warn">
-        <div class="clash-card-label">Teachers in Clash</div>
-        <div class="clash-card-value">${clashMetrics.teachersInClash}</div>
-        <div class="clash-card-meta">cross-class same-slot overlaps</div>
+      <div class="clash-card ${clashMetrics.teachersInClash > 0 ? 'clash-warn' : 'clash-ok'}">
+        <div class="clash-card-icon">👥</div>
+        <div class="clash-card-body">
+          <div class="clash-card-value">${clashMetrics.teachersInClash}</div>
+          <div class="clash-card-label">Teachers in Clash</div>
+          <div class="clash-card-meta">cross-class same-slot overlaps</div>
+        </div>
       </div>
-      <div class="clash-card clash-info">
-        <div class="clash-card-label">Strict Violations</div>
-        <div class="clash-card-value">${clashMetrics.strictViolations}</div>
-        <div class="clash-card-meta">teacher ${clashMetrics.strictTeacherClashes} · other ${clashMetrics.strictOtherViolations}</div>
+      <div class="clash-card ${violSev}">
+        <div class="clash-card-icon">🚨</div>
+        <div class="clash-card-body">
+          <div class="clash-card-value">${clashMetrics.strictViolations}</div>
+          <div class="clash-card-label">Strict Violations</div>
+          <div class="clash-card-meta">teacher ${clashMetrics.strictTeacherClashes} · other ${clashMetrics.strictOtherViolations}</div>
+        </div>
       </div>
-      <div class="clash-card clash-neutral">
-        <div class="clash-card-label">Overloaded Teachers</div>
-        <div class="clash-card-value">${clashMetrics.overloadedTeachers}</div>
-        <div class="clash-card-meta">above 18.0h weekly load</div>
+      <div class="clash-card ${overSev}">
+        <div class="clash-card-icon">📊</div>
+        <div class="clash-card-body">
+          <div class="clash-card-value">${clashMetrics.overloadedTeachers}</div>
+          <div class="clash-card-label">Overloaded Teachers</div>
+          <div class="clash-card-meta">above 18.0h weekly load</div>
+        </div>
       </div>
     </div>
-    <div class="report-toolbar">
-      <div style="font-size:12px;color:#6b7280">${reportTip}</div>
-    </div>`;
+    <div class="report-tip">💡 ${reportTip}</div>`;
   html += `<table><thead><tr>
     <th class="sortable" data-sort="teacher">Teacher <span class="dir">${
       key === "teacher" ? sortDirIcon : ""
@@ -247,21 +264,22 @@ function renderReport() {
       key === "status" ? sortDirIcon : ""
     }</span></th>
   </tr></thead><tbody>`;
-  rows.forEach((r) => {
+  rows.forEach((r, i) => {
     // Formatted total hours string for display (e.g. "12.5h")
     const hrs = (r.minutes / 60).toFixed(1) + "h";
-    let statusHtml = "<span class='pill ok'>OK</span>";
+    let statusHtml = "<span class='pill ok'>✓ OK</span>";
     if (r.status === "warn")
-      statusHtml = `<span class='pill warn'>${r.flags[0]}</span>`;
+      statusHtml = `<span class='pill warn'>⚠ ${r.flags[0]}</span>`;
     if (r.status === "err")
-      statusHtml = `<span class='pill err'>${r.flags.join(" · ")}</span>`;
-    html += `<tr class="report-row" data-teacher="${r.teacher}">
-<td class="teacher-cell">${r.teacher}</td>
-<td>${r.theory}</td>
-<td>${r.labs}</td>
-<td>${hrs}</td>
-<td>${r.first}</td>
-<td>${statusHtml}</td>
+      statusHtml = `<span class='pill err'>✗ ${r.flags.join(" · ")}</span>`;
+    const zebraClass = i % 2 === 0 ? "report-row-even" : "report-row-odd";
+    html += `<tr class="report-row ${zebraClass}" data-teacher="${r.teacher}">
+<td class="teacher-cell" title="${r.teacher}">${r.teacher}</td>
+<td class="num-cell">${r.theory}</td>
+<td class="num-cell">${r.labs}</td>
+<td class="num-cell">${hrs}</td>
+<td class="num-cell">${r.first}</td>
+<td class="status-cell">${statusHtml}</td>
     </tr>`;
   });
   html += `</tbody></table>`;
@@ -282,25 +300,12 @@ function renderReport() {
   panel.querySelectorAll(".report-row").forEach((tr) => {
     const t = tr.getAttribute("data-teacher");
     tr.addEventListener("click", () => {
-      syncTeacherFilter(t);
-      highlightByTeacher(t);
       focusTeacherCell(t);
     });
   });
 }
 
 // Section: TEACHER FOCUS HELPERS
-
-/**
- * Synchronizes the teacher filter dropdown to match the clicked teacher name.
- * @param {string} teacher - Teacher name to select
- */
-function syncTeacherFilter(teacher) {
-  const sel = document.getElementById("teacherFilter");
-  if (sel) {
-    sel.value = teacher;
-  }
-}
 
 /**
  * Scrolls the viewport to the first timetable cell assigned to the given teacher.

@@ -157,22 +157,6 @@
   cursor: not-allowed;
 }
 
-.toolbar-hint {
-  color: #64748b;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-#ttToolbar {
-  display: none;
-  position: sticky;
-  top: 0;
-  background: var(--card);
-  z-index: 5;
-  padding: 4px 0 !important;
-  margin-bottom: 4px;
-}
-
 /* Section: Timetable Grid and Class Blocks */
 #timetableWrap {
   display: grid;
@@ -278,34 +262,6 @@ thead th:first-child {
 
 tbody tr:hover td {
   background: #f3f3f3;
-}
-
-/* Section: Subject Cell States */
-.subject-cell.tt-highlight {
-  outline: 2px solid #10b981;
-  outline-offset: -2px;
-  background: #ecfdf5;
-}
-
-.subject-cell.tt-clash {
-  position: relative;
-  outline: 3px solid #ef4444 !important;
-  outline-offset: -2px;
-  background: #fef2f2 !important;
-}
-
-.clash-badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  color: #fff;
-  background: #ef4444;
-  border-radius: 3px;
-  font-size: 9px;
-  font-weight: 700;
-  line-height: 1.2;
-  padding: 1px 4px;
-  pointer-events: none;
 }
 
 /* Section: Faculty Cells */
@@ -1019,10 +975,6 @@ tbody tr:hover td {
 }
 
 /* Section: View Modes — panel visibility now handled by tabs.js */
-.timetable-area.view-inputs #ttToolbar {
-  display: none !important;
-}
-
 .timetable-area.view-timetable #timetableWrap {
   position: relative;
   grid-template-columns: 1fr 1fr;

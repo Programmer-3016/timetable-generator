@@ -489,63 +489,6 @@ button:disabled {
   padding-top: 0;
 }
 
-/* Teacher toolbar — better grouping (#9) */
-#ttToolbar {
-  background: #ffffff;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 14px !important;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 14px;
-  gap: 12px;
-}
-
-#ttToolbar .toolbar-group {
-  border: 1px solid #d8dde6;
-  border-radius: 8px;
-  padding: 5px 10px;
-  background: #f4f6f9;
-  gap: 8px;
-  box-shadow: none;
-}
-
-#ttToolbar .toolbar-group label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #706e6b;
-  white-space: nowrap;
-}
-
-#ttToolbar .toolbar-group select {
-  padding: 5px 28px 5px 8px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 12.5px;
-  background-color: #ffffff;
-  cursor: pointer;
-  min-width: 160px;
-}
-
-#ttToolbar .toolbar-group button {
-  padding: 5px 10px;
-  font-size: 12px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: #ffffff;
-  color: #3e3e3c;
-  font-weight: 600;
-}
-
-#ttToolbar .toolbar-group button:hover {
-  background: #f4f6f9;
-  border-color: #d8dde6;
-}
-
-#ttToolbar .toolbar-group button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
 /* ═══════════════════════════════════════════════════════
    SECTION 7: CLASS INPUTS PANEL & TABLE
 ═══════════════════════════════════════════════════════ */
@@ -708,7 +651,7 @@ button:disabled {
   gap: 24px;
 }
 
-/* Grid cell — subgrid so timetable rows and subject rows align across columns */
+/* Grid cell — keep timetable and subject cards aligned side by side across columns */
 .class-grid-cell {
   display: grid;
   grid-template-rows: subgrid;
@@ -721,9 +664,14 @@ button:disabled {
   flex-direction: column;
 }
 
+.class-grid-cell > .class-block {
+  align-self: start;
+  width: 100%;
+}
+
 /* Table content stretches to fill the card */
 .class-grid-cell > .class-block:first-child .placeholder-panel {
-  flex: 1;
+  flex: 0 0 auto;
 }
 
 /* Class block — the card container */
@@ -760,6 +708,8 @@ button:disabled {
   border-radius: 0;
   box-shadow: none;
   font-size: 13px;
+  border-collapse: collapse;
+  margin: 0;
 }
 
 .class-block table thead th {
@@ -875,6 +825,8 @@ td.break {
   border-radius: 0;
   font-size: 11.5px;
   box-shadow: none;
+  border-collapse: collapse;
+  margin: 0;
 }
 
 .section-info table thead th {
@@ -914,6 +866,7 @@ td.break {
 .empty-state {
   padding: 64px 24px;
   gap: 14px;
+  min-height: 220px;
 }
 
 .empty-state-icon {
@@ -1029,27 +982,233 @@ td.break {
   overflow: hidden;
 }
 
-/* Clash dashboard sits inside reportPanel */
+/* Report header — card-style title bar */
+.report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 13px;
+  background: #032d60;
+  border-bottom: 1px solid #014486;
+}
+
+.report-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+}
+
+.report-count {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Tip bar below dashboard */
+.report-tip {
+  padding: 8px 18px;
+  font-size: 11.5px;
+  color: #64748b;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Clash dashboard — metric cards */
 .clash-dashboard {
-  padding: 16px;
-  gap: 10px;
+  padding: 16px 18px;
+  gap: 12px;
 }
 
 .clash-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 14px 16px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.clash-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.clash-card-icon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.clash-card-body {
+  flex: 1;
+  min-width: 0;
 }
 
 .clash-card-label {
   font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .clash-card-value {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 800;
-  margin-top: 4px;
+  margin: 2px 0 1px;
+  line-height: 1.1;
+}
+
+.clash-card-meta {
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+/* Clash severity colors — ok (green) */
+.clash-card.clash-ok {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.clash-card.clash-ok .clash-card-value {
+  color: #15803d;
+}
+.clash-card.clash-ok .clash-card-label {
+  color: #166534;
+}
+.clash-card.clash-ok .clash-card-meta {
+  color: #4ade80;
+}
+
+/* Clash severity — danger (red) */
+.clash-card.clash-danger {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+.clash-card.clash-danger .clash-card-value {
+  color: #dc2626;
+}
+.clash-card.clash-danger .clash-card-label {
+  color: #991b1b;
+}
+.clash-card.clash-danger .clash-card-meta {
+  color: #f87171;
+}
+
+/* Clash severity — warn (amber) */
+.clash-card.clash-warn {
+  background: #fffbeb;
+  border-color: #fed7aa;
+}
+.clash-card.clash-warn .clash-card-value {
+  color: #d97706;
+}
+.clash-card.clash-warn .clash-card-label {
+  color: #92400e;
+}
+.clash-card.clash-warn .clash-card-meta {
+  color: #fbbf24;
+}
+
+/* Report table polish */
+#reportPanel table {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+#reportPanel table thead th {
+  background: #f4f6f9;
+  color: #3e3e3c;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 8px 14px;
+  border-bottom: 2px solid #d8dde6;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+#reportPanel table thead th:hover {
+  background: #e8edf3;
+}
+
+#reportPanel table thead th .dir {
+  font-size: 9px;
+  color: var(--primary);
+  margin-left: 3px;
+}
+
+/* Zebra stripes */
+#reportPanel .report-row-odd {
+  background: #ffffff;
+}
+#reportPanel .report-row-even {
+  background: #f8fafc;
+}
+
+/* Clickable rows */
+#reportPanel .report-row {
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+#reportPanel .report-row:hover td {
+  background: #eaf5fe;
+}
+
+/* Teacher name column */
+#reportPanel .teacher-cell {
+  font-weight: 600;
+  color: #1e293b;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Numeric cells */
+#reportPanel .num-cell {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: #334155;
+  font-weight: 600;
+}
+
+/* Status cell */
+#reportPanel .status-cell {
+  text-align: center;
+}
+
+/* Report pills — refined */
+#reportPanel .pill.ok {
+  color: #15803d;
+  background: #dcfce7;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+#reportPanel .pill.warn {
+  color: #92400e;
+  background: #fef3c7;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+
+#reportPanel .pill.err {
+  color: #991b1b;
+  background: #fee2e2;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 10px;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1195,7 +1354,7 @@ td.break {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 15: TOOLBAR (TEACHER HIGHLIGHT)
+   SECTION 15: CLASS FILTER TOOLBAR
 ═══════════════════════════════════════════════════════ */
 .toolbar-group {
   background: var(--card);
@@ -1236,18 +1395,7 @@ td.break {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 16: GENERATION OVERLAY (keep existing, minor polish)
-═══════════════════════════════════════════════════════ */
-.generate-card {
-  border-radius: 16px;
-  padding: 36px 32px 28px;
-  background: linear-gradient(160deg, #ffffff 0%, #f0f4ff 100%);
-  border: 1px solid rgba(255,255,255,0.3);
-  box-shadow: 0 32px 80px rgba(15,23,42,0.2);
-}
-
-/* ═══════════════════════════════════════════════════════
-   SECTION 17: LAB TABLE — color-coded slots (#8)
+   SECTION 16: LAB TABLE — color-coded slots (#8)
 ═══════════════════════════════════════════════════════ */
 .lab-table-wrap {
   border: 1px solid var(--border);
@@ -1273,13 +1421,6 @@ td.break {
   font-size: 11.5px;
   line-height: 1.4;
   transition: background var(--transition);
-}
-
-/* Free slots in lab view */
-.lab-table-wrap table tbody td .lab-free-text {
-  color: #059669;
-  font-weight: 600;
-  font-size: 12px;
 }
 
 /* Occupied lab slots — add subtle blue-green background */
@@ -1340,34 +1481,15 @@ body.fullwide #sidebarToggleBtn {
    SECTION 19: SUBJECT COLOR CODING IN TIMETABLE CELLS
    Pastel-coded by slot number — automatically applied
 ═══════════════════════════════════════════════════════ */
-.subject-cell:not(.tt-clash):not(.tt-dim) {
+.subject-cell {
   position: relative;
 }
 
 /* The JS in render.js sets a --slot-idx CSS var or we use nth-child tricks. */
 /* Fallback: light blue for all subjects so they read cleanly */
-.subject-cell:not(:empty):not(.tt-clash):not(.tt-dim) {
+.subject-cell:not(:empty) {
   background: #f0f7ff;
   border-left: 2px solid #0176d3;
-}
-
-/* If teacher highlight is active, green overrides */
-.subject-cell.tt-highlight {
-  background: #ecfdf5 !important;
-  border-left: 2px solid #34d399 !important;
-  outline: none;
-}
-
-.subject-cell.tt-dim {
-  opacity: 0.28;
-  background: transparent;
-  border-left: none;
-}
-
-.subject-cell.tt-clash {
-  background: #fef2f2 !important;
-  border-left: 2px solid #f87171 !important;
-  outline: none !important;
 }
 
 /* Lab cells — slightly different hue */

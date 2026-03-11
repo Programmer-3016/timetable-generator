@@ -511,24 +511,6 @@ def _build_process_classes_from_pdf_tables(pdf_bytes: bytes) -> list[dict[str, A
     return classes
 
 
-def _looks_like_class_label(line: str) -> bool:
-    return bool(_CLASS_LABEL_HINT_RE.search(line or ""))
-
-
-def _parse_subject_line(line: str) -> tuple[str, str] | None:
-    match = _SUBJECT_ROW_RE.match(line)
-    if not match:
-        return None
-    short = " ".join(match.group(1).split()).upper()
-    full_name = " ".join(match.group(2).split())
-    teacher = " ".join(match.group(3).split())
-    if not short or not full_name or not teacher:
-        return None
-    if _CLASS_LABEL_HINT_RE.search(short):
-        return None
-    return short, f"{short} - {full_name} - {teacher}"
-
-
 def _build_process_classes(lines: list[str] | list[list[str]]) -> list[dict[str, Any]]:
     def _clean(text: str) -> str:
         return " ".join(str(text or "").replace("\x0c", " ").split()).strip()

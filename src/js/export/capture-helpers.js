@@ -60,8 +60,6 @@ function withStickyDisabled(fn) {
     .timetable-area table tbody tr:nth-child(even) td { background: #ffffff !important; }
     /* Keep lunch visible but slightly stronger */
     .timetable-area .break { background: #fff1a6 !important; color: #6b5800 !important; }
-    /* Remove any dim highlight while exporting */
-    .timetable-area .subject-cell.tt-dim { opacity: 1 !important; filter: none !important; }
     /* Make subject cells bold and dark */
     .timetable-area .subject-cell { color: #000 !important; font-weight: 700 !important; }
     /* Hide visual layout-only lines to keep export clean */

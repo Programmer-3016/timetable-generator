@@ -92,12 +92,6 @@
       }
     }
 
-    // -- Show toolbar only on timetable view --
-    var toolbar = document.getElementById("ttToolbar");
-    if (toolbar) {
-      toolbar.style.display = tabName === "timetables" ? "flex" : "none";
-    }
-
     // -- Persist --
     try { localStorage.setItem(TAB_STORAGE_KEY, tabName); } catch (_) {}
   }

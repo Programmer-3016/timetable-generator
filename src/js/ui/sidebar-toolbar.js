@@ -1,6 +1,6 @@
 /**
  * @module ui/sidebar-toolbar.js
- * @description Sidebar collapse/expand controls and teacher highlight toolbar.
+ * @description Sidebar collapse/expand controls and class filter toolbar.
  */
 
 // Section: SIDEBAR & TOOLBAR CONTROLS
@@ -79,53 +79,9 @@ function applyClassNameFilter(query = "") {
 }
 
 /**
- * Builds the teacher highlight toolbar and class filter controls.
+ * Builds the class filter controls.
  */
 function buildToolbar() {
-  const toolbar = document.getElementById("ttToolbar");
-  if (!toolbar) return;
-  const teachers = Object.keys(aggregateStats)
-    .map((k) => aggregateStats[k]?.display || k)
-    .filter((t) => t && t.trim().length);
-  const hasClassBlocks = !!(gEnabledKeys && gEnabledKeys.length);
-
-  if (teachers.length || hasClassBlocks) {
-    const options = ['<option value="">— Select Teacher —</option>']
-      .concat(teachers.map((t) => `<option value="${t}">${t}</option>`))
-      .join("");
-    toolbar.innerHTML = `
-      ${
-        teachers.length ?
-        `<div class="toolbar-group">
-          <label for="teacherFilter">Highlight by teacher:</label>
-          <select id="teacherFilter">${options}</select>
-          <button id="clearHighlightBtn" type="button">Clear</button>
-        </div>` :
-        ""
-      }
-    `;
-    toolbar.style.display = "flex";
-
-    const teacherFilter = document.getElementById("teacherFilter");
-    if (teacherFilter) {
-      teacherFilter.addEventListener("change", (e) => {
-        const val = e.target.value;
-        if (!val) {
-          clearHighlight();
-          return;
-        }
-        highlightByTeacher(val);
-      });
-    }
-    const clearHighlightBtn = document.getElementById("clearHighlightBtn");
-    if (clearHighlightBtn) {
-      clearHighlightBtn.addEventListener("click", () => {
-        const sel = document.getElementById("teacherFilter");
-        if (sel) sel.value = "";
-        clearHighlight();
-      });
-    }
-
     const classFilterInput = document.getElementById("classFilterInput");
     if (classFilterInput) {
       classFilterInput.value = gClassFilterQuery;
@@ -143,11 +99,6 @@ function buildToolbar() {
     }
 
     refreshSidebarToggleButton();
-  } else {
-    toolbar.style.display = "none";
-    toolbar.innerHTML = "";
-    refreshSidebarToggleButton();
-  }
 }
 
 refreshSidebarToggleButton();

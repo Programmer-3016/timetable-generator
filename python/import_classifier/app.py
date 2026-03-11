@@ -53,7 +53,6 @@ from .process_parser import (
     _extract_process_settings,
     _extract_process_settings_from_pdf_tables,
     _build_settings_diagnostics,
-    _estimate_min_expected_classes,
     _should_retry_ocr_for_class_recovery,
 )
 

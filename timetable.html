@@ -4,7 +4,7 @@
     <!--
       @file timetable.html
       @description Main app shell for timetable generation, rendering, and exports.
-      @styles src/css/base.css, animations.css, components.css, skeleton.css, saas-theme.css, responsive.css, print.css
+      @styles src/css/base.css, components.css, skeleton.css, saas-theme.css, responsive.css, print.css
       @scripts src/js/core/*, src/js/ui/*, src/js/export/*
     -->
     <meta charset="utf-8" />
@@ -40,7 +40,6 @@
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <!-- Stylesheets -->
     <link rel="stylesheet" href="src/css/base.css" />
-    <link rel="stylesheet" href="src/css/animations.css" />
     <link rel="stylesheet" href="src/css/components.css" />
     <link rel="stylesheet" href="src/css/skeleton.css" />
     <link rel="stylesheet" href="src/css/saas-theme.css" />
@@ -116,10 +115,6 @@
       <!-- Section: Timetable Area -->
 
       <div class="timetable-area">
-        <!-- Subsection: Teacher Highlight Toolbar -->
-
-        <div id="ttToolbar" class="timetable-toolbar"></div>
-
         <!-- Subsection: Tab Navigation Bar -->
 
         <div class="tab-bar" id="mainTabBar">
@@ -517,7 +512,6 @@
     <script src="src/js/ui/faculty-panel.js"></script>
     <script src="src/js/ui/dragdrop.js"></script>
     <script src="src/js/ui/sidebar-toolbar.js"></script>
-    <script src="src/js/ui/highlight.js"></script>
 
     <script src="src/js/export/capture-helpers.js"></script>
     <script src="src/js/export/file-save.js"></script>

@@ -13,7 +13,7 @@ let gPostSwapRefreshTimer = null;
 // Section: VIEW REFRESH
 
 /**
- * Debounced refresh of report, faculty, lab, and highlight views after a swap.
+ * Debounced refresh of report, faculty, and lab views after a swap.
  */
 function refreshViewsAfterScheduleShift() {
   if (gPostSwapRefreshTimer) clearTimeout(gPostSwapRefreshTimer);
@@ -54,13 +54,7 @@ function refreshViewsAfterScheduleShift() {
     } catch (e) {
       console.error("lab panel refresh after swap failed:", e);
     }
-    try {
-      const teacherFilter = document.getElementById("teacherFilter");
-      const activeTeacher = teacherFilter ? teacherFilter.value : "";
-      if (activeTeacher && typeof highlightByTeacher === "function") {
-        highlightByTeacher(activeTeacher);
-      }
-    } catch (_e) {}
+
   }, 0);
 }
 

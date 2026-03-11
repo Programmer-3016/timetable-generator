@@ -67,11 +67,10 @@ Project_T/
 ├── jest.config.js                  # Test runner config
 │
 ├── src/
-│   ├── css/                        # Modular stylesheets (7 files)
+│   ├── css/                        # Modular stylesheets (6 files)
 │   │   ├── base.css                # Reset, variables, typography
 │   │   ├── components.css          # Buttons, cards, modals, inputs
 │   │   ├── skeleton.css            # Loading skeleton animations
-│   │   ├── animations.css          # Transitions & keyframes
 │   │   ├── saas-theme.css          # Color theme & branding
 │   │   ├── responsive.css          # Breakpoint-based layouts
 │   │   └── print.css               # Print-only styles
@@ -105,10 +104,9 @@ Project_T/
 │       │   ├── dragdrop.js         # Drag-and-drop slot swapping
 │       │   ├── faculty-panel.js    # Faculty timetable view
 │       │   ├── lab-panel.js        # Lab room view
-│       │   ├── highlight.js       # Cell highlighting & selection
-│       │   ├── tabs.js            # Tab switching logic
+│       │   ├── tabs.js             # Tab switching logic
 │       │   ├── skeleton.js         # Loading skeleton renderer
-│       │   ├── sidebar-toolbar.js  # Sidebar & toolbar controls
+│       │   ├── sidebar-toolbar.js  # Class filter & sidebar controls
 │       │   ├── keyboard-shortcuts.js  # Hotkey bindings
 │       │   ├── subject-info.js     # Subject detail tooltips
 │       │   ├── report-builder.js   # Report data assembly
@@ -133,9 +131,13 @@ Project_T/
 │
 ├── tests/                          # Jest test suites
 │   ├── setup-globals.js            # Test environment globals
-│   ├── parser.test.js              # Input parsing tests
-│   ├── scoring.test.js             # Slot scoring tests
-│   └── validation.test.js          # Constraint validation tests
+│   └── unit/                       # Unit test files
+│       ├── clash.test.js           # Clash detection tests
+│       ├── helpers.test.js         # Helper utility tests
+│       ├── input-validator.test.js # Input validation tests
+│       ├── parser.test.js          # Input parsing tests
+│       ├── scoring.test.js         # Slot scoring tests
+│       └── validation.test.js      # Constraint validation tests
 │
 └── python/
     └── import_classifier/          # FastAPI backend service
@@ -208,31 +210,31 @@ pytest tests/ -v
 
 ## 🛠️ Tech Stack
 
-| Layer       | Technology                                      |
-| ----------- | ----------------------------------------------- |
-| Frontend    | Vanilla HTML + CSS + JavaScript (no framework)  |
-| Styling     | Modular CSS with CSS variables, Inter font      |
-| Backend     | Python 3 · FastAPI · Uvicorn                    |
-| PDF Parsing | PyMuPDF · pdfplumber · Tesseract OCR            |
-| Export      | html2canvas · SheetJS (xlsx)                     |
-| Testing     | Jest (JS) · Pytest (Python)                      |
-| Linting     | ESLint · Prettier                                |
+| Layer       | Technology                                     |
+| ----------- | ---------------------------------------------- |
+| Frontend    | Vanilla HTML + CSS + JavaScript (no framework) |
+| Styling     | Modular CSS with CSS variables, Inter font     |
+| Backend     | Python 3 · FastAPI · Uvicorn                   |
+| PDF Parsing | PyMuPDF · pdfplumber · Tesseract OCR           |
+| Export      | html2canvas · SheetJS (xlsx)                   |
+| Testing     | Jest (JS) · Pytest (Python)                    |
+| Linting     | ESLint · Prettier                              |
 
 ---
 
 ## 📊 Project Stats
 
-| Metric                | Count    |
-| --------------------- | -------- |
-| JavaScript files      | 46       |
-| CSS files             | 7        |
-| Python files          | 14       |
-| Total JS lines        | ~17,500  |
-| Total CSS lines       | ~4,450   |
-| Total Python lines    | ~2,900   |
-| JSDoc-documented functions | 330+ |
-| Section markers       | 165      |
-| Jest tests            | 19       |
+| Metric                     | Count   |
+| -------------------------- | ------- |
+| JavaScript files           | 45      |
+| CSS files                  | 6       |
+| Python files               | 14      |
+| Total JS lines             | ~17,300 |
+| Total CSS lines            | ~4,000  |
+| Total Python lines         | ~2,900  |
+| JSDoc-documented functions | 330+    |
+| Section markers            | 165     |
+| Jest tests                 | 128     |
 
 ---
 
