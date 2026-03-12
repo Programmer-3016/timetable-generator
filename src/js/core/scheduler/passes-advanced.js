@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* exported schedulerPassCompactPreLunch, schedulerPassCompactDayGaps */
+
 /**
  * @module core/scheduler/passes-advanced.js
  * @description Advanced fill/balance pass helpers extracted from scheduler core.

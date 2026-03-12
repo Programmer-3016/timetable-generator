@@ -11,6 +11,13 @@ const IMPORT_ERROR_MODAL_ID = "backendImportErrorOverlay";
 
 let backendApplyLoadPromise = null;
 
+function callOptionalGenerationAnimation(methodName, ...args) {
+  const fn = typeof window !== "undefined" ? window[methodName] : undefined;
+  if (typeof fn === "function") {
+    fn(...args);
+  }
+}
+
 // Section: ERROR MODAL
 
 /**
@@ -101,17 +108,13 @@ function setImportProcessing(importBtn, busy, busyText = "Processing...") {
     }
     importBtn.disabled = true;
     importBtn.textContent = busyText;
-    if (typeof showGenerationAnimation === "function") {
-      showGenerationAnimation(0, busyText);
-    }
+    callOptionalGenerationAnimation("showGenerationAnimation", 0, busyText);
     return;
   }
   importBtn.disabled = false;
   importBtn.textContent = importBtn.dataset.originalText || "Import PDF";
   delete importBtn.dataset.originalText;
-  if (typeof hideGenerationAnimation === "function") {
-    hideGenerationAnimation();
-  }
+  callOptionalGenerationAnimation("hideGenerationAnimation");
 }
 
 // Section: VALIDATION HELPERS
@@ -195,7 +198,7 @@ function validateBackendImportPayload(payload) {
  * @returns {Promise<void>} Resolves when backend apply module is ready.
  */
 function ensureBackendApplyLoaded() {
-  if (typeof applyBackendImportData === "function") {
+  if (typeof window.applyBackendImportData === "function") {
     return Promise.resolve();
   }
   if (backendApplyLoadPromise) return backendApplyLoadPromise;
@@ -205,7 +208,7 @@ function ensureBackendApplyLoaded() {
     script.src = BACKEND_APPLY_SCRIPT_SRC;
     script.async = false;
     script.onload = () => {
-      if (typeof applyBackendImportData !== "function") {
+      if (typeof window.applyBackendImportData !== "function") {
         reject(new Error("backend-apply module loaded but apply function missing"));
         return;
       }
@@ -324,7 +327,7 @@ async function runBackendImportFlow(file, importBtn) {
     }
 
     setImportProcessing(importBtn, true, "Applying imported data to input table...");
-    const applied = await applyBackendImportData(validation.data);
+    const applied = await window.applyBackendImportData(validation.data);
     if (!applied) {
       showImportErrorModal(
         "Import Failed",
@@ -403,7 +406,7 @@ async function runLegacyImportFlow(file, importBtn) {
       );
     }
 
-    hideGenerationAnimation();
+    callOptionalGenerationAnimation("hideGenerationAnimation");
     let reviewResult = {
       shown: false,
       classes: parsed.classes || []

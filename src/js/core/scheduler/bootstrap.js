@@ -1,3 +1,5 @@
+/* exported schedulerBuildTeacherFoldMapFromData, schedulerBuildGlobalTeacherForShort, schedulerReadLabCapacityFromDom, schedulerComputeFillerCapacityForClass */
+
 /**
  * @module core/scheduler/bootstrap.js
  * @description Bootstrap helpers for scheduler initialization.

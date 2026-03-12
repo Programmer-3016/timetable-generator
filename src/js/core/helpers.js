@@ -1,3 +1,5 @@
+/* exported createSeededRandom, buildTeacherFoldMapFromRawNames, subjectTeacherPairsByClass, periodTimings, generated, daysOfWeek, reportData, reportSort, gWeeklyQuotaByClass, gSchedules, gTeacherForShort, gSubjectByShort, gImportedLtpByClass, gImportedFixedSlotsByClass, gTeacherDisplayByCanon, gEnabledKeys, gClassLabels, gLabsAtSlot, gFillerShortsByClass, gFillerLabelsByClass, aggregateStats, gCanonFoldMap */
+
 /**
  * @module core/helpers.js
  * @description Shared constants, global runtime state, and helper utilities.
@@ -169,7 +171,9 @@ function saveTeacherAliasDecisionsToStorage() {
       TEACHER_SEPARATE_STORE_KEY,
       JSON.stringify(gTeacherForcedSeparatePairs)
     );
-  } catch (_e) {}
+  } catch (_e) {
+    // Ignore storage failures; alias decisions remain in memory for this session.
+  }
 }
 
 /** Restores alias and forced-separate maps from localStorage into globals. */

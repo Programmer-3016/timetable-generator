@@ -1,3 +1,5 @@
+/* exported exportFacultyJPG, getClassBlockElement, exportLabJPG */
+
 /**
  * @module export/file-save.js
  * @description File naming and save target utilities for all export modes.
@@ -188,7 +190,9 @@ async function exportFacultyJPG() {
     try {
       canvas.width = 0;
       canvas.height = 0;
-    } catch {}
+    } catch {
+      // Ignore canvas cleanup failures after export completes.
+    }
   });
 }
 
@@ -239,7 +243,9 @@ async function exportLabJPG() {
   }
   try {
     renderLabTimetables();
-  } catch {}
+  } catch {
+    // Export can continue using the currently rendered lab panel.
+  }
   const panel = document.getElementById("labPanel");
   if (!panel) {
     showToast("No lab timetable to export.", {
@@ -323,13 +329,17 @@ async function exportLabJPG() {
         });
         out.width = 0;
         out.height = 0;
-      } catch {}
+      } catch {
+        // Ignore canvas cleanup failures after export completes.
+      }
     } catch (e) {
       try {
         const c = captures[0];
         const blob = await canvasToBlob(c.canvas, "image/jpeg", 0.98);
         await saveTarget.save(blob);
-      } catch {}
+      } catch {
+        // Ignore fallback export failure; caller already handled the main error path.
+      }
     }
   });
 }

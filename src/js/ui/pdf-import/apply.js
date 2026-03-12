@@ -1,3 +1,5 @@
+/* exported pdfImportApplyParsedData, pdfImportProcessFile */
+
 /**
  * @module ui/pdf-import/apply.js
  * @description Apply parsed import payload into existing timetable input fields.

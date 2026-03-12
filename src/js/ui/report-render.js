@@ -1,3 +1,5 @@
+/* exported renderReport */
+
 /**
  * @module ui/report-render.js
  * @description Report table UI rendering and sorting interactions.
@@ -20,11 +22,21 @@ function buildClashDashboardMetrics() {
     strictTeacherClashes: 0,
     strictOtherViolations: 0,
     overloadedTeachers: 0,
+    // detail lists for card drill-down
+    clashDetails: [],       // [{teacher, day, period, classes:[]}]
+    clashTeacherList: [],    // [teacherName, ...]
+    violationLines: [],      // [string, ...]
+    overloadedList: [],      // [{teacher, hours}]
   };
 
-  metrics.overloadedTeachers = (reportData || []).filter(
+  const overloaded = (reportData || []).filter(
     (row) => Number(row?.minutes || 0) > 18 * 60
-  ).length;
+  );
+  metrics.overloadedTeachers = overloaded.length;
+  metrics.overloadedList = overloaded.map((r) => ({
+    teacher: r.teacher,
+    hours: (Number(r.minutes || 0) / 60).toFixed(1),
+  }));
 
   const state = typeof window !== "undefined" ? window.__ttLastScheduleState : null;
   if (state && typeof state === "object") {
@@ -99,10 +111,17 @@ function buildClashDashboardMetrics() {
           metrics.teacherSlotClashes += 1;
           metrics.clashCells += payload.cells;
           teacherSet.add(teacherKey);
+          metrics.clashDetails.push({
+            teacher: teacherKey,
+            day: d + 1,
+            period: c + 1,
+            classes: Array.from(payload.classes),
+          });
         });
       }
     }
     metrics.teachersInClash = teacherSet.size;
+    metrics.clashTeacherList = Array.from(teacherSet);
   }
 
   let strictViolations = [];
@@ -118,7 +137,9 @@ function buildClashDashboardMetrics() {
       if (result && Array.isArray(result.violations)) {
         strictViolations = result.violations.slice();
       }
-    } catch (_e) {}
+    } catch (_e) {
+      // Validation fallback is best-effort for report-only metrics.
+    }
   }
   metrics.strictViolations = strictViolations.length;
   metrics.strictTeacherClashes = strictViolations.filter((line) =>
@@ -130,6 +151,7 @@ function buildClashDashboardMetrics() {
     0,
     metrics.strictViolations - metrics.strictTeacherClashes
   );
+  metrics.violationLines = strictViolations.map((v) => String(v || ""));
 
   return metrics;
 }
@@ -210,32 +232,32 @@ function renderReport() {
       <span class="report-count">${rows.length} teachers</span>
     </div>
     <div class="clash-dashboard">
-      <div class="clash-card ${clashSev}">
-        <div class="clash-card-icon">⚡</div>
+      <div class="clash-card ${clashSev}" data-card="clashes" title="Click to see clash details">
+        <div class="clash-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
         <div class="clash-card-body">
           <div class="clash-card-value">${clashMetrics.teacherSlotClashes}</div>
           <div class="clash-card-label">Clash Events</div>
           <div class="clash-card-meta">${clashMetrics.clashCells} conflicting cells</div>
         </div>
       </div>
-      <div class="clash-card ${clashMetrics.teachersInClash > 0 ? 'clash-warn' : 'clash-ok'}">
-        <div class="clash-card-icon">👥</div>
+      <div class="clash-card ${clashMetrics.teachersInClash > 0 ? 'clash-warn' : 'clash-ok'}" data-card="teachers" title="Click to see which teachers clash">
+        <div class="clash-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
         <div class="clash-card-body">
           <div class="clash-card-value">${clashMetrics.teachersInClash}</div>
           <div class="clash-card-label">Teachers in Clash</div>
           <div class="clash-card-meta">cross-class same-slot overlaps</div>
         </div>
       </div>
-      <div class="clash-card ${violSev}">
-        <div class="clash-card-icon">🚨</div>
+      <div class="clash-card ${violSev}" data-card="violations" title="Click to see violation details">
+        <div class="clash-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
         <div class="clash-card-body">
           <div class="clash-card-value">${clashMetrics.strictViolations}</div>
           <div class="clash-card-label">Strict Violations</div>
           <div class="clash-card-meta">teacher ${clashMetrics.strictTeacherClashes} · other ${clashMetrics.strictOtherViolations}</div>
         </div>
       </div>
-      <div class="clash-card ${overSev}">
-        <div class="clash-card-icon">📊</div>
+      <div class="clash-card ${overSev}" data-card="overloaded" title="Click to see overloaded teachers">
+        <div class="clash-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
         <div class="clash-card-body">
           <div class="clash-card-value">${clashMetrics.overloadedTeachers}</div>
           <div class="clash-card-label">Overloaded Teachers</div>
@@ -243,7 +265,7 @@ function renderReport() {
         </div>
       </div>
     </div>
-    <div class="report-tip">💡 ${reportTip}</div>`;
+    <div class="report-tip">${reportTip}</div>`;
   html += `<table><thead><tr>
     <th class="sortable" data-sort="teacher">Teacher <span class="dir">${
       key === "teacher" ? sortDirIcon : ""
@@ -303,6 +325,125 @@ function renderReport() {
       focusTeacherCell(t);
     });
   });
+
+  // -- Card drill-down click handlers (popup modal) --
+  const cardMeta = {
+    clashes: {
+      icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+      title: "Clash Events",
+      subtitle: "Teacher double-bookings in the same time slot across classes",
+      accent: "#dc2626",
+      accentBg: "#fef2f2",
+    },
+    teachers: {
+      icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+      title: "Teachers in Clash",
+      subtitle: "Teachers who have at least one scheduling overlap",
+      accent: "#d97706",
+      accentBg: "#fffbeb",
+    },
+    violations: {
+      icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+      title: "Strict Violations",
+      subtitle: "Hard constraint rule breaks detected in the schedule",
+      accent: "#dc2626",
+      accentBg: "#fef2f2",
+    },
+    overloaded: {
+      icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+      title: "Overloaded Teachers",
+      subtitle: "Teachers exceeding the 18-hour weekly teaching limit",
+      accent: "#d97706",
+      accentBg: "#fffbeb",
+    },
+  };
+
+  panel.querySelectorAll(".clash-card[data-card]").forEach((card) => {
+    card.addEventListener("click", () => {
+      const cardType = card.getAttribute("data-card");
+      const meta = cardMeta[cardType];
+      if (!meta) return;
+
+      // Build body content
+      let bodyHtml = "";
+      if (cardType === "clashes") {
+        if (!clashMetrics.clashDetails.length) {
+          bodyHtml = "<div class='detail-empty'>No clash events found.</div>";
+        } else {
+          bodyHtml = "<table class='detail-table'><thead><tr><th>Teacher</th><th>Day</th><th>Period</th><th>Conflicting Classes</th></tr></thead><tbody>";
+          clashMetrics.clashDetails.forEach((d) => {
+            bodyHtml += `<tr><td>${d.teacher}</td><td>Day ${d.day}</td><td>Period ${d.period}</td><td>${d.classes.join(", ")}</td></tr>`;
+          });
+          bodyHtml += "</tbody></table>";
+        }
+      } else if (cardType === "teachers") {
+        if (!clashMetrics.clashTeacherList.length) {
+          bodyHtml = "<div class='detail-empty'>No teachers in clash.</div>";
+        } else {
+          bodyHtml = "<div class='detail-chips'>";
+          clashMetrics.clashTeacherList.forEach((t) => {
+            bodyHtml += `<span class='detail-chip'>${t}</span>`;
+          });
+          bodyHtml += "</div>";
+        }
+      } else if (cardType === "violations") {
+        if (!clashMetrics.violationLines.length) {
+          bodyHtml = "<div class='detail-empty'>No strict violations.</div>";
+        } else {
+          bodyHtml = "<ul class='detail-list'>";
+          clashMetrics.violationLines.forEach((v) => {
+            bodyHtml += `<li>${v}</li>`;
+          });
+          bodyHtml += "</ul>";
+        }
+      } else if (cardType === "overloaded") {
+        if (!clashMetrics.overloadedList.length) {
+          bodyHtml = "<div class='detail-empty'>No overloaded teachers.</div>";
+        } else {
+          bodyHtml = "<table class='detail-table'><thead><tr><th>Teacher</th><th>Weekly Hours</th><th>Over By</th></tr></thead><tbody>";
+          clashMetrics.overloadedList.forEach((o) => {
+            const overBy = (Number(o.hours) - 18).toFixed(1);
+            bodyHtml += `<tr><td>${o.teacher}</td><td>${o.hours}h</td><td class='over-cell'>+${overBy}h</td></tr>`;
+          });
+          bodyHtml += "</tbody></table>";
+        }
+      }
+
+      // Remove any existing popup
+      const existing = document.getElementById("clashDetailPopup");
+      if (existing) existing.remove();
+
+      // Build popup
+      const overlay = document.createElement("div");
+      overlay.id = "clashDetailPopup";
+      overlay.className = "detail-popup-overlay";
+      overlay.innerHTML = `
+        <div class="detail-popup">
+          <div class="detail-popup-header" style="border-bottom-color: ${meta.accent}">
+            <div class="detail-popup-icon" style="background: ${meta.accentBg}; color: ${meta.accent}">${meta.icon}</div>
+            <div class="detail-popup-heading">
+              <div class="detail-popup-title">${meta.title}</div>
+              <div class="detail-popup-subtitle">${meta.subtitle}</div>
+            </div>
+            <button class="detail-popup-close" aria-label="Close">&times;</button>
+          </div>
+          <div class="detail-popup-body">${bodyHtml}</div>
+        </div>`;
+
+      document.body.appendChild(overlay);
+
+      // Close handlers
+      overlay.querySelector(".detail-popup-close").addEventListener("click", () => overlay.remove());
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) overlay.remove();
+      });
+      // Escape key close
+      const escHandler = (e) => {
+        if (e.key === "Escape") { overlay.remove(); document.removeEventListener("keydown", escHandler); }
+      };
+      document.addEventListener("keydown", escHandler);
+    });
+  });
 }
 
 // Section: TEACHER FOCUS HELPERS
@@ -352,7 +493,9 @@ document.addEventListener("DOMContentLoaded", function() {
     exportLabsBtn.addEventListener("click", () => {
       try {
         renderLabTimetables();
-      } catch {}
+      } catch {
+        // Export still proceeds with the latest rendered lab view.
+      }
       exportLabJPG();
     });
 
@@ -364,10 +507,14 @@ document.addEventListener("DOMContentLoaded", function() {
           setTimeout(() => {
             try {
               generateTimetable();
-            } catch (e) {}
+            } catch (e) {
+              // Ignore refresh failures triggered by lab-count auto-regeneration.
+            }
           }, 50);
         }
-      } catch (e) {}
+      } catch (e) {
+        // Ignore non-critical lab-count refresh issues.
+      }
     });
   }
 });

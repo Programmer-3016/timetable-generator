@@ -1,3 +1,5 @@
+/* exported validateAndGenerate */
+
 /**
  * @module core/input-validator.js
  * @description Pre-generate input validation and error boundary wrapper.
@@ -35,7 +37,6 @@ function validateInputsBeforeGenerate() {
   );
 
   let classesWithSubjects = 0;
-  let classesWithMissingTeachers = 0;
   const warnings = [];
 
   for (let i = 0; i < classCount; i++) {
@@ -66,7 +67,6 @@ function validateInputsBeforeGenerate() {
     });
 
     if (missingTeacher > 0) {
-      classesWithMissingTeachers++;
       warnings.push(
         `Class ${i + 1}: ${missingTeacher} subject(s) may be missing teacher names.`
       );

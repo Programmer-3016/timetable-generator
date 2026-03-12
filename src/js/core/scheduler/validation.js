@@ -1,3 +1,5 @@
+/* exported schedulerBuildSetMapSnapshot, schedulerBuildTeacherListSnapshot, schedulerIsFullyValid */
+
 /**
  * @module core/scheduler/validation.js
  * @description Schedule validation engine — checks for teacher clashes, credit fulfilment,

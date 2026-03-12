@@ -1,3 +1,5 @@
+/* exported schedulerCountOccurrences, schedulerGetTargetForShort */
+
 /**
  * @module core/scheduler/counts.js
  * @description Count and target lookup helpers for scheduler passes.

@@ -1,3 +1,5 @@
+/* exported enableDragAndDrop */
+
 /**
  * @module ui/dragdrop.js
  * @description Drag-and-drop swap with clash-safe validation.

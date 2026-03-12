@@ -1,3 +1,5 @@
+/* exported pdfImportNormalizeLine, pdfImportPreprocessLine, pdfImportIsLowQualityLine, pdfImportEscapeRegExp, pdfImportNormalizeRomanToken, pdfImportToHHMM, pdfImportTimeToMinutes, pdfImportDurationMinutes, pdfImportExtractTimeRanges, pdfImportLooksLikeClassHeader, pdfImportNormalizeClassLabel, pdfImportShouldSkipLine, pdfImportNormalizeShort, pdfImportIsLikelyCodeToken, pdfImportExtractTeacherAndHead, pdfImportSplitCodeAndSubject, pdfImportParseSubjectLine, pdfImportIsBlockedShort, pdfImportIsStrictShort, pdfImportLooksLikePersonNameChunk, pdfImportLooksLikeTeacherNameList, pdfImportBuildShortFromInitials, pdfImportDeriveShortFromSubject, pdfImportLooksLikeNoiseSubject, pdfImportIsStrictTeacher, pdfImportIsStrictSubject, pdfImportCleanSubject, pdfImportNormalizeSubjectForShort, pdfImportCleanTeacher, pdfImportRepairSubjectPrefix, pdfImportSplitLineBySubjectCode, pdfImportSplitTabularColumns, pdfImportSplitMergedDashEntries, pdfImportFinalizeEntry, pdfImportExtractShortFromTail */
+
 /**
  * @module ui/pdf-import/text-utils.js
  * @description General normalization and parsing utilities for PDF import.

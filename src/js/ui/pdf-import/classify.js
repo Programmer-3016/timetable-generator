@@ -1,3 +1,5 @@
+/* exported pdfImportBuildLtpMap, pdfImportBackfillMissingLtp, pdfImportBuildLtpMapFromHints, pdfImportClassifyEntries, pdfImportBuildGroupedSubjectsText */
+
 /**
  * @module ui/pdf-import/classify.js
  * @description Subject classification (mains/labs/fillers) and grouped text builders.

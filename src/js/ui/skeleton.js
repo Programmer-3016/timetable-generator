@@ -115,7 +115,7 @@
     // Switch view to timetable area so skeletons are on-screen
     try {
       if (typeof switchTab === "function") {
-        switchTab("timetables");
+        window.switchTab("timetables");
       } else {
         var ttArea = document.querySelector(".timetable-area");
         if (ttArea) {
@@ -125,9 +125,11 @@
       }
       // Enable post-generate tabs
       if (typeof enablePostGenerateTabs === "function") {
-        enablePostGenerateTabs();
+        window.enablePostGenerateTabs();
       }
-    } catch (_) {}
+    } catch (_) {
+      // Skeleton visibility should not block timetable generation.
+    }
 
     return injected;
   }

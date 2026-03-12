@@ -477,7 +477,9 @@ function generateTimetable(options = {}) {
         strictValidation.violations.slice() :
         [],
     };
-  } catch (_e) {}
+  } catch (_e) {
+    // Strict-generation metadata is optional debug state.
+  }
 
   if (scheduleRenderOk) {
     try {
@@ -507,7 +509,9 @@ function generateTimetable(options = {}) {
         ttArea.classList.remove("view-inputs");
       }
     }
-  } catch {}
+  } catch {
+    // Ignore tab-switch UI failures; the generated schedule remains available.
+  }
   buildToolbar();
   enableDragAndDrop();
   generated = true;
@@ -577,7 +581,9 @@ function generateMultipleCandidates(count = 5) {
   candidates.sort((a, b) => b.score - a.score);
   try {
     window.__ttLastCandidates = candidates;
-  } catch (_e) {}
+  } catch (_e) {
+    // Candidate debugging metadata is optional.
+  }
   return candidates;
 }
 

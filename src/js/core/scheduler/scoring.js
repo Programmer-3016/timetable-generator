@@ -1,3 +1,5 @@
+/* exported schedulerScoreCandidateObjective */
+
 /**
  * @module core/scheduler/scoring.js
  * @description Quality scoring function for generated schedules — evaluates gap distribution,

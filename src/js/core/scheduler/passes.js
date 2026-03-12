@@ -1,3 +1,5 @@
+/* exported schedulerPlaceLabBlock, schedulerPlaceInitialLabsAcrossClasses, schedulerClampMainsToTarget, schedulerResolveFinalTeacherClashes */
+
 /**
  * @module core/scheduler/passes.js
  * @description Pass-layer helpers extracted from scheduler core.

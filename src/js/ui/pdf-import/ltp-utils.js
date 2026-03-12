@@ -1,3 +1,5 @@
+/* exported pdfImportNormalizeLtpTriplet, pdfImportExtractLtpFromColumns, pdfImportExtractLtpFromLine */
+
 /**
  * @module ui/pdf-import/ltp-utils.js
  * @description LTP extraction and normalization helpers for PDF import.

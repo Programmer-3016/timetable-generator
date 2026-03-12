@@ -1,3 +1,5 @@
+/* exported schedulerIsCommonFor, schedulerPreferredForSlot, schedulerPickLectureIndex */
+
 /**
  * @module core/scheduler/selection.js
  * @description Slot/lecture selection helpers used by scheduler core.

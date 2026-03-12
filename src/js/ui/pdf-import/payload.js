@@ -1,3 +1,5 @@
+/* exported pdfImportDetectDays, pdfImportDetectLabCount, pdfImportDetectTimingSettings, pdfImportExtractPdfLines, pdfImportBuildClassPayloads, pdfImportAssessImportQuality */
+
 /**
  * @module ui/pdf-import/payload.js
  * @description Page/text extraction and class payload construction for PDF import.
@@ -781,8 +783,8 @@ async function pdfImportRecognizePageWithOcr(
   }).promise;
   pdfImportEnhanceCanvasForOcr(canvas, ctx);
 
-  if (typeof showGenerationAnimation === "function") {
-    showGenerationAnimation(
+  if (typeof window.showGenerationAnimation === "function") {
+    window.showGenerationAnimation(
       0,
       `Running OCR on page ${pageNo}/${totalPages} (rotation ${rotation}deg)...`
     );
@@ -910,8 +912,8 @@ async function pdfImportExtractPdfLines(file) {
     );
   }
 
-  if (typeof showGenerationAnimation === "function") {
-    showGenerationAnimation(
+  if (typeof window.showGenerationAnimation === "function") {
+    window.showGenerationAnimation(
       0,
       "Text layer missing/weak. Running OCR for scanned PDF..."
     );

@@ -36,14 +36,8 @@
    * Move the sliding pill behind the active tab button.
    */
   function positionPill(activeBtn) {
-    var pill = document.getElementById("tabPill");
-    if (!pill || !activeBtn) return;
-    var bar = activeBtn.parentElement;
-    if (!bar) return;
-    var barRect = bar.getBoundingClientRect();
-    var btnRect = activeBtn.getBoundingClientRect();
-    pill.style.left  = (btnRect.left - barRect.left) + "px";
-    pill.style.width  = btnRect.width + "px";
+    // Note: The new Stitch design does not use a sliding pill,
+    // so this function is intentionally left empty but maintained for API compatibility.
   }
 
   /**
@@ -57,7 +51,7 @@
 
     // -- Update tab button active states --
     var activeBtn = null;
-    var btns = document.querySelectorAll(".tab-bar .tab-btn");
+    var btns = document.querySelectorAll(".tab-nav .tab-btn");
     btns.forEach(function (btn) {
       if (btn.getAttribute("data-tab") === tabName) {
         btn.classList.add("tab-btn--active");
@@ -93,7 +87,11 @@
     }
 
     // -- Persist --
-    try { localStorage.setItem(TAB_STORAGE_KEY, tabName); } catch (_) {}
+    try {
+      localStorage.setItem(TAB_STORAGE_KEY, tabName);
+    } catch (_) {
+      // Ignore persistence failures and keep the current in-memory tab state.
+    }
   }
 
   /**
@@ -120,7 +118,7 @@
 
   // -- Wire up tab clicks --
   function initTabs() {
-    var btns = document.querySelectorAll(".tab-bar .tab-btn");
+    var btns = document.querySelectorAll(".tab-nav .tab-btn");
     btns.forEach(function (btn) {
       btn.addEventListener("click", function () {
         var tab = btn.getAttribute("data-tab");
@@ -139,12 +137,13 @@
         switchTab("inputs");
       }
     } catch (_) {
+      // Fall back to the default tab when localStorage is unavailable.
       switchTab("inputs");
     }
 
     // Reposition pill on window resize (font / layout shifts)
     window.addEventListener("resize", function () {
-      var active = document.querySelector(".tab-bar .tab-btn--active");
+      var active = document.querySelector(".tab-nav .tab-btn--active");
       positionPill(active);
     });
   }

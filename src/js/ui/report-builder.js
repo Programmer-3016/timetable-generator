@@ -1,3 +1,5 @@
+/* exported buildAndRenderReport */
+
 /**
  * @module ui/report-builder.js
  * @description Teacher aggregate report data preparation.

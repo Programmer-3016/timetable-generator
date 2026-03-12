@@ -1,3 +1,5 @@
+/* exported applyBackendImportData */
+
 /**
  * @module ui/pdf-import/backend-apply.js
  * @description Adapter to map backend JSON payload into existing frontend apply pipeline.

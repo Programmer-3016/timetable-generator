@@ -1,3 +1,5 @@
+/* exported schedulerRenderMultiClassesEngine */
+
 /**
  * @module core/scheduler/engine.js
  * @description Core scheduling engine (renderMultiClasses).
@@ -92,7 +94,9 @@ function schedulerRenderMultiClassesEngine({
   const seededRandom = createSeededRandom(resolvedSeed);
   try {
     window.__ttLastSeed = resolvedSeed;
-  } catch (_e) {}
+  } catch (_e) {
+    // Seed tracking is best-effort debug metadata only.
+  }
   const teacherFoldMapLocal = schedulerBuildTeacherFoldMapFromData({
     data,
     buildTeacherFoldMapFromRawNames,
@@ -586,7 +590,9 @@ function schedulerRenderMultiClassesEngine({
           "Teacherless fillers (allowed; placed only in last two periods):\n" +
           lines.join("\n")
         );
-      } catch {}
+      } catch {
+        // Ignore console availability issues in restricted runtimes.
+      }
     }
   })();
 
@@ -770,7 +776,6 @@ function fillRemaining(key) {
     for (let d = 0; d < days; d++) {
       for (let c = 0; c < classesPerDay; c++) {
         if (schedules[key][d][c] !== null) continue;
-        let placed = false;
         for (const t of below) {
           const idx = list.findIndex(
             (s) =>
@@ -799,7 +804,6 @@ function fillRemaining(key) {
               (teacherAssignedPerDayByClass[key][d][t] || 0) + 1;
             ensureTP(key, t)[c < lunchClassIndex ? "pre" : "post"]++;
             recordMainPostLunchIfNeeded(key, pick.short, c);
-            placed = true;
             break;
           }
         }
@@ -1478,7 +1482,6 @@ function fillRemaining(key) {
             if (!aIsAR && bIsAR) return 1;
             return 0;
           });
-        let placed = false;
         for (const {
             f
           }
@@ -1507,10 +1510,8 @@ function fillRemaining(key) {
               (teacherAssignedPerDayByClass[key][d][tF] || 0) + 1;
             ensureTP(key, tF)[p5 < lunchClassIndex ? "pre" : "post"]++;
           }
-          placed = true;
           break;
         }
-        if (!placed) {}
       }
     }
     for (const k of keys) emergencyP5FillerIfNeeded(k);
@@ -1568,7 +1569,6 @@ function fillRemaining(key) {
             return 0;
           });
         // step: pick first filler that fits within cap and constraints
-        let placed = false;
         for (const {
             f
           }
@@ -1599,7 +1599,6 @@ function fillRemaining(key) {
           }
           if (getFillerTotal(key) > getFillerCap(key))
             usedOverflow = true;
-          placed = true;
           break;
         }
       }
@@ -2499,7 +2498,9 @@ function fillRemaining(key) {
 
     try {
       window.__ttPostLunchCompactReport = summary;
-    } catch {}
+    } catch {
+      // Compact-pass reporting is debug-only.
+    }
     try {
       console.info("Post-lunch compaction summary:", summary);
       if (issues.length) {
@@ -2508,7 +2509,9 @@ function fillRemaining(key) {
           summary.sampleIssues
         );
       }
-    } catch {}
+    } catch {
+      // Ignore console/reporting failures.
+    }
   }
 
   validatePostLunchCompaction();
@@ -2589,7 +2592,9 @@ function fillRemaining(key) {
   try {
     window.__ttLastScheduleState = strictSnapshot;
     window.__ttLastValidation = schedulerIsFullyValid(strictSnapshot);
-  } catch (_e) {}
+  } catch (_e) {
+    // Snapshot publication is diagnostic only.
+  }
   gSchedules = publishedState.schedulesByClass;
   gTeacherForShort = publishedState.teacherForShortByClass;
   gSubjectByShort = publishedState.subjectByShortByClass;

@@ -1,3 +1,5 @@
+/* exported schedulerGetAssignedTeacherValue, schedulerGetShortTeacherList, schedulerIsLabShortFor, schedulerGetTeachersForCell, schedulerGetTeacherForCell, schedulerSameSubjectCode, schedulerIsAdjacentToSameSubjectLab */
+
 /**
  * @module core/scheduler/teacher-helpers.js
  * @description Teacher lookup and adjacency utility helpers for scheduler.

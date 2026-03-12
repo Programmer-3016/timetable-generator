@@ -1,3 +1,5 @@
+/* exported schedulerCreateTeacherTheoryCountByClass, schedulerCreateClassContainers, schedulerPopulateClassSubjectMapsAndQuotas, schedulerBuildFillerTargetsAndCounts, schedulerMergeFillerTargetsIntoWeeklyQuota */
+
 /**
  * @module core/scheduler/state.js
  * @description Scheduler state/container initialization helpers.
