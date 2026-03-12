@@ -41,6 +41,44 @@
   .clash-dashboard {
     grid-template-columns: repeat(2, minmax(150px, 1fr));
   }
+
+  /* Tab bar: tighter padding on mid-width screens */
+  .tab-btn {
+    padding: 9px 18px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Tab bar: icon-only on small screens */
+  .tab-nav {
+    padding: 4px 5px;
+    gap: 3px;
+    border-radius: 12px;
+  }
+
+  .tab-btn {
+    padding: 10px 14px;
+    gap: 0;
+    border-radius: 9px;
+  }
+
+  /* Hide text label, keep icon */
+  .tab-btn > :not(.tab-icon) {
+    display: none;
+  }
+
+  .tab-btn .tab-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
+
+  /* Move active indicator closer on small buttons */
+  .tab-btn--active::after {
+    width: 14px;
+    bottom: 4px;
+  }
 }
 
 /* Section: Mobile Layout (< 768px) */

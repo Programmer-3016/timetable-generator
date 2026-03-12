@@ -11,6 +11,13 @@
 
 // Section: DOM RENDERING
 
+/** Deterministic hue (0–359) for a subject short code — same code always same color. */
+function _subjectHue(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) & 0x7fffffff;
+  return h % 360;
+}
+
 function schedulerRenderClassToDOM({
   key,
   days,
@@ -53,7 +60,7 @@ function schedulerRenderClassToDOM({
           cell.textContent = displayShort;
         }
         cell.classList.add("subject-cell");
-        cell.style.background = "transparent";
+        cell.style.setProperty('--sh', _subjectHue(label));
         cell.style.boxShadow = "none";
         cell.dataset.key = key;
         cell.dataset.day = String(d);
@@ -73,6 +80,8 @@ function schedulerRenderClassToDOM({
         cell.dataset.short = label; // use internal key for counting and quotas
       } else {
         cell.textContent = "";
+        cell.classList.remove("subject-cell");
+        cell.style.removeProperty('--sh');
       }
       classCol++;
     }

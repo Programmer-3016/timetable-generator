@@ -1,5 +1,7 @@
 # 📅 Timetable Generator
 
+![CI](https://github.com/Programmer-3016/timetable-generator/actions/workflows/ci.yml/badge.svg)
+
 > **🚧 Work in Progress** — This project is under active development. Many features and improvements are planned. Contributions and feedback are welcome!
 
 A constraint-based college timetable generator with PDF import, drag-and-drop editing, faculty/lab views, and multi-format export. Built with vanilla JavaScript on the frontend and a FastAPI Python backend for PDF classification.

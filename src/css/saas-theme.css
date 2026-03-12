@@ -1643,18 +1643,17 @@ body.fullwide #sidebarToggleBtn {
   position: relative;
 }
 
-/* The JS in render.js sets a --slot-idx CSS var or we use nth-child tricks. */
-/* Fallback: light blue for all subjects so they read cleanly */
+/* render.js sets a --sh CSS var (hue 0–359) per subject short code. */
 .subject-cell:not(:empty) {
-  background: #f0f7ff;
-  border-left: 2px solid #0176d3;
+  background: hsl(var(--sh, 210) 85% 95%);
+  border-left: 2px solid hsl(var(--sh, 210) 55% 50%);
 }
 
-/* Lab cells — slightly different hue */
+/* Lab cells — green hue override */
 td[data-lab] .subject-cell,
 .subject-cell[data-lab] {
-  background: #f0fdf4;
-  border-left: 2px solid #6ee7b7;
+  background: hsl(145 70% 95%);
+  border-left: 2px solid hsl(145 55% 55%);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -2101,93 +2100,7 @@ tbody tr {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 27: APP HEADER / BRANDING BAR
-═══════════════════════════════════════════════════════ */
-.app-header {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
-  background: #032d60;
-  border-radius: var(--radius-card);
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.16);
-  margin-bottom: 4px;
-}
-
-.app-header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.app-logo {
-  width: 36px;
-  height: 36px;
-  background: #0176d3;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-}
-
-.app-logo svg {
-  width: 20px;
-  height: 20px;
-  color: #fff;
-}
-
-.app-title {
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-
-.app-subtitle {
-  color: #b0adab;
-  font-size: 11.5px;
-  font-weight: 500;
-  margin: 0;
-  letter-spacing: 0.01em;
-}
-
-.app-header-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.header-action-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.06);
-  color: #b0adab;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition: all 0.15s ease;
-}
-
-.header-action-btn:hover {
-  background: rgba(255,255,255,0.12);
-  color: #d8dde6;
-  transform: scale(1.05);
-}
-
-.header-action-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* ═══════════════════════════════════════════════════════
-   SECTION 28: TOOLTIP ON HOVER (for sidebar labels)
+   SECTION 27: TOOLTIP ON HOVER (for sidebar labels)
 ═══════════════════════════════════════════════════════ */
 [data-tooltip] {
   position: relative;
