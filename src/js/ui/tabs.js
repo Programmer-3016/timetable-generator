@@ -19,14 +19,16 @@
     reportPanel: "block",
     facultyPanel: "block",
     labPanelWrap: "block",
+    versionPanelWrap: "block",
     globalExport: "flex",
   };
 
   var TAB_CONFIG = {
-    inputs:     { panelShow: ["classInputsPanel"], panelHide: ["timetableWrap", "reportPanel", "facultyPanel", "labPanelWrap", "globalExport"] },
-    timetables: { panelShow: ["timetableWrap", "reportPanel", "globalExport"], panelHide: ["classInputsPanel", "facultyPanel", "labPanelWrap"] },
-    faculty:    { panelShow: ["facultyPanel"],  panelHide: ["classInputsPanel", "timetableWrap", "reportPanel", "labPanelWrap", "globalExport"] },
-    labs:       { panelShow: ["labPanelWrap"],   panelHide: ["classInputsPanel", "timetableWrap", "reportPanel", "facultyPanel", "globalExport"] },
+    inputs:     { panelShow: ["classInputsPanel"], panelHide: ["timetableWrap", "reportPanel", "facultyPanel", "labPanelWrap", "versionPanelWrap", "globalExport"] },
+    timetables: { panelShow: ["timetableWrap", "reportPanel", "globalExport"], panelHide: ["classInputsPanel", "facultyPanel", "labPanelWrap", "versionPanelWrap"] },
+    faculty:    { panelShow: ["facultyPanel"],  panelHide: ["classInputsPanel", "timetableWrap", "reportPanel", "labPanelWrap", "versionPanelWrap", "globalExport"] },
+    labs:       { panelShow: ["labPanelWrap"],   panelHide: ["classInputsPanel", "timetableWrap", "reportPanel", "facultyPanel", "versionPanelWrap", "globalExport"] },
+    versions:   { panelShow: ["versionPanelWrap"], panelHide: ["classInputsPanel", "timetableWrap", "reportPanel", "facultyPanel", "labPanelWrap", "globalExport"] },
   };
 
   /** Currently active tab name */
@@ -62,6 +64,11 @@
       if (el) el.style.display = "none";
     });
 
+    // -- Refresh version panel when switching to versions tab --
+    if (tabName === "versions" && typeof renderVersionPanel === "function") {
+      renderVersionPanel();
+    }
+
     // -- Keep legacy view class in sync so other code isn't broken --
     var ttArea = document.querySelector(".timetable-area");
     if (ttArea) {
@@ -87,8 +94,10 @@
   function enablePostGenerateTabs() {
     var tabFaculty = document.getElementById("tabFaculty");
     var tabLabs = document.getElementById("tabLabs");
+    var tabVersions = document.getElementById("tabVersions");
     if (tabFaculty) tabFaculty.disabled = false;
     if (tabLabs) tabLabs.disabled = false;
+    if (tabVersions) tabVersions.disabled = false;
   }
 
   /**

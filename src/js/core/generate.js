@@ -497,6 +497,12 @@ function generateTimetable(options = {}) {
     } catch (e) {
       console.error("renderLabTimetables error:", e);
     }
+    // Auto-save schedule version
+    try {
+      if (typeof onVersionAutoSave === "function") onVersionAutoSave();
+    } catch (e) {
+      console.error("Version auto-save error:", e);
+    }
   }
   try {
     // Use tab system to switch to timetables view
