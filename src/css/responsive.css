@@ -14,14 +14,6 @@
     display: none;
   }
 
-  .toolbar-group {
-    flex-wrap: wrap;
-  }
-
-  .toolbar-group input[type="search"] {
-    width: 180px;
-  }
-
   .inputs-search-wrap input[type="search"] {
     width: min(320px, 42vw);
     min-width: 180px;

@@ -33,14 +33,6 @@
   var activeTab = "inputs";
 
   /**
-   * Move the sliding pill behind the active tab button.
-   */
-  function positionPill(activeBtn) {
-    // Note: The new Stitch design does not use a sliding pill,
-    // so this function is intentionally left empty but maintained for API compatibility.
-  }
-
-  /**
    * Switch to the given tab. Updates button states, panel visibility, and
    * the legacy view-inputs / view-timetable CSS classes so existing code
    * (skeleton.js, init.js persistence, etc.) continues to work.
@@ -50,19 +42,14 @@
     activeTab = tabName;
 
     // -- Update tab button active states --
-    var activeBtn = null;
     var btns = document.querySelectorAll(".tab-nav .tab-btn");
     btns.forEach(function (btn) {
       if (btn.getAttribute("data-tab") === tabName) {
         btn.classList.add("tab-btn--active");
-        activeBtn = btn;
       } else {
         btn.classList.remove("tab-btn--active");
       }
     });
-
-    // -- Slide the pill to the active tab --
-    positionPill(activeBtn);
 
     // -- Show / hide panels --
     var cfg = TAB_CONFIG[tabName];
@@ -141,11 +128,6 @@
       switchTab("inputs");
     }
 
-    // Reposition pill on window resize (font / layout shifts)
-    window.addEventListener("resize", function () {
-      var active = document.querySelector(".tab-nav .tab-btn--active");
-      positionPill(active);
-    });
   }
 
   if (document.readyState === "loading") {

@@ -1065,12 +1065,6 @@ td.break {
   color: #d97706;
 }
 
-/* Active card state — solid border when expanded */
-.clash-card.clash-card-active {
-  border-style: solid;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-}
-
 /* ── Detail Popup Modal ── */
 .detail-popup-overlay {
   position: fixed;
@@ -1512,48 +1506,7 @@ td.break {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 15: CLASS FILTER TOOLBAR
-═══════════════════════════════════════════════════════ */
-.toolbar-group {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  box-shadow: var(--shadow-sm);
-  gap: 6px;
-  padding: 5px 8px;
-}
-
-.toolbar-group input[type="search"] {
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: #f4f6f9;
-  padding: 6px 10px;
-  font-size: 13px;
-  color: var(--text);
-  transition: border-color var(--transition);
-}
-
-.toolbar-group input[type="search"]:focus {
-  outline: none;
-  border-color: var(--border-focus);
-  background: #ffffff;
-}
-
-.toolbar-group button {
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: #f4f6f9;
-  color: #3e3e3c;
-  padding: 6px 10px;
-  font-size: 12.5px;
-}
-
-.toolbar-group button:hover {
-  background: #ecebea;
-}
-
-/* ═══════════════════════════════════════════════════════
-   SECTION 16: LAB TABLE — color-coded slots (#8)
+   SECTION 15: LAB TABLE — color-coded slots (#8)
 ═══════════════════════════════════════════════════════ */
 .lab-table-wrap {
   border: 1px solid var(--border);
@@ -1643,10 +1596,9 @@ body.fullwide #sidebarToggleBtn {
   position: relative;
 }
 
-/* render.js sets a --sh CSS var (hue 0–359) per subject short code. */
 .subject-cell:not(:empty) {
-  background: hsl(var(--sh, 210) 85% 95%);
-  border-left: 2px solid hsl(var(--sh, 210) 55% 50%);
+  background: #f0f7ff;
+  border-left: 2px solid #0176d3;
 }
 
 /* Lab cells — green hue override */
@@ -1852,77 +1804,7 @@ a:hover {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 22: SIDEBAR GROUPED SECTIONS
-   Visual grouping of related sidebar settings
-═══════════════════════════════════════════════════════ */
-.sidebar-group {
-  padding: 12px 18px 14px;
-  border-bottom: 1px solid var(--border);
-}
-
-.sidebar-group:last-of-type {
-  border-bottom: none;
-}
-
-.sidebar-group-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0 0 10px;
-  padding: 0;
-  font-size: 10.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #b0adab;
-  border: none;
-  background: none;
-}
-
-.sidebar-group-title .sidebar-group-icon {
-  font-size: 13px;
-  line-height: 1;
-  opacity: 0.7;
-}
-
-.sidebar-group label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  margin: 10px 0 5px;
-}
-
-.sidebar-group label:first-of-type {
-  margin-top: 0;
-}
-
-.sidebar-group input[type="text"],
-.sidebar-group input[type="number"],
-.sidebar-group input[type="time"],
-.sidebar-group select {
-  width: 100%;
-  margin: 0;
-  padding: 8px 11px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-input);
-  background: #f4f6f9;
-  color: var(--text);
-  font-size: 14px;
-  font-family: inherit;
-  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
-}
-
-.sidebar-group input:focus,
-.sidebar-group select:focus {
-  outline: none;
-  border-color: var(--border-focus);
-  background: #ffffff;
-  box-shadow: 0 0 0 3px var(--primary-ring);
-}
-
-/* ═══════════════════════════════════════════════════════
-   SECTION 23: MICRO-INTERACTIONS & POLISH
+   SECTION 22: MICRO-INTERACTIONS & POLISH
 ═══════════════════════════════════════════════════════ */
 
 /* Smooth hover lift for cards */
@@ -1938,31 +1820,6 @@ a:hover {
 @keyframes btnRipple {
   0% { transform: scale(0); opacity: 0.4; }
   100% { transform: scale(2.5); opacity: 0; }
-}
-
-/* Keyboard shortcut badges on buttons */
-.kbd-hint {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 18px;
-  padding: 0 5px;
-  margin-left: 6px;
-  border-radius: 4px;
-  background: rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.75);
-  font-size: 10px;
-  font-weight: 700;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: 0.02em;
-  pointer-events: none;
-}
-
-.secondary .kbd-hint,
-.link-btn .kbd-hint {
-  background: rgba(0,0,0,0.06);
-  color: rgba(0,0,0,0.4);
 }
 
 /* Tab transition — smooth press effect */
@@ -2056,51 +1913,7 @@ tbody tr {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 26: SCROLL TO TOP BUTTON
-═══════════════════════════════════════════════════════ */
-.scroll-top-btn {
-  position: fixed;
-  bottom: 76px;
-  right: 20px;
-  z-index: 1999;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-  transition: all 0.25s ease;
-  opacity: 0;
-  transform: translateY(10px);
-  pointer-events: none;
-  padding: 0;
-}
-
-.scroll-top-btn.visible {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-}
-
-.scroll-top-btn:hover {
-  background: var(--primary-light);
-  color: var(--primary);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
-}
-
-.scroll-top-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* ═══════════════════════════════════════════════════════
-   SECTION 27: TOOLTIP ON HOVER (for sidebar labels)
+   SECTION 26: TOOLTIP ON HOVER (for sidebar labels)
 ═══════════════════════════════════════════════════════ */
 [data-tooltip] {
   position: relative;

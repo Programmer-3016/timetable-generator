@@ -308,8 +308,6 @@ function redoTimetableSwap() {
   refreshViewsAfterScheduleShift();
 }
 
-window.updateDragSwapControls = updateDragSwapControls;
-window.resetDragSwapHistory = resetDragSwapHistory;
 window.undoTimetableSwap = undoTimetableSwap;
 window.redoTimetableSwap = redoTimetableSwap;
 

@@ -56,7 +56,6 @@
     "reportData": "writable",
       "reportSort": "writable",
       "generated": "writable",
-    "updateDragSwapControls": "readonly",
       "renderSubjectInfo": "readonly",
       "renderReport": "readonly",
       "buildAndRenderReport": "readonly",

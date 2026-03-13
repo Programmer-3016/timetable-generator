@@ -84,59 +84,8 @@ function triggerBlobDownload(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
 
-const ENABLE_NATIVE_SAVE_PICKER = false;
-
-/**
- * Creates a save target using the native File System Access API when available, falling back to anchor-based download.
- * @async
- * @param {string} suggestedFilename - Default filename for the save dialog
- * @param {Object} [options] - Save options
- * @param {string} [options.mimeType] - MIME type of the file
- * @param {string} [options.description] - Human-readable file type description
- * @returns {Promise<{cancelled: boolean, save: Function}>} Save target object
- */
 async function createFileSaveTarget(suggestedFilename, options = {}) {
   const safeName = sanitizeDownloadFilename(suggestedFilename);
-  const mimeType = options.mimeType || "";
-  const description = options.description || "Exported file";
-  if (
-    ENABLE_NATIVE_SAVE_PICKER &&
-    typeof window.showSaveFilePicker === "function"
-  ) {
-    try {
-      const pickerOptions = {
-        suggestedName: safeName
-      };
-      if (mimeType) {
-        pickerOptions.types = [{
-          description,
-          accept: {
-            [mimeType]: [`.${safeName.split(".").pop()}`],
-          },
-        }, ];
-      }
-      const handle = await window.showSaveFilePicker(pickerOptions);
-      return {
-        cancelled: false,
-        async save(blob) {
-          try {
-            const writable = await handle.createWritable();
-            await writable.write(blob);
-            await writable.close();
-          } catch (error) {
-            throw error;
-          }
-        },
-      };
-    } catch (error) {
-      if (error && error.name === "AbortError") {
-        return {
-          cancelled: true,
-          async save() {}
-        };
-      }
-    }
-  }
   return {
     cancelled: false,
     async save(blob) {

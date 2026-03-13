@@ -14,8 +14,6 @@
   #sidebarToggleBtn,
   .skeleton-wrap,
   #quickFillOverlay,
-  .toast-container,
-  .toolbar-group,
   .inputs-search-snippet {
     display: none !important;
   }
@@ -66,7 +64,6 @@
   }
 
   /* Lunch column keeps a subtle fill */
-  .lunch-cell,
   td[style*="background:#FEF9C3"],
   td[style*="background: #FEF9C3"] {
     background: #f5f5dc !important;
