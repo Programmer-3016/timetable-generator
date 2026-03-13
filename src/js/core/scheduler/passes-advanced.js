@@ -712,17 +712,18 @@ function schedulerPassFinalPostLunchGapFix({ ctx, key }) {
         if (!short) continue;
         if (isLabShort[key][short]) continue; // skip labs
         if (fillerShorts.has(short)) continue; // skip fillers
-        if (
-          !canAssign(key, short, d, p5, {
-            allowOverClassCap: true,
-            allowOverPerDayByClassCap: true,
-          })
-        )
-          continue;
         const movedTeacher =
           assignedTeacher[key][d][c] === undefined ?
           null :
           assignedTeacher[key][d][c];
+        if (
+          !canAssign(key, short, d, p5, {
+            allowOverClassCap: true,
+            allowOverPerDayByClassCap: true,
+            teacherOverride: movedTeacher,
+          })
+        )
+          continue;
         schedules[key][d][c] = null;
         schedules[key][d][p5] = short;
         assignedTeacher[key][d][p5] = movedTeacher;
@@ -749,17 +750,18 @@ function schedulerPassFinalPostLunchGapFix({ ctx, key }) {
           if (!short) continue;
           if (isLabShort[key][short]) continue;
           if (fillerShorts.has(short)) continue;
-          if (
-            !canAssign(key, short, d, p5, {
-              allowOverClassCap: true,
-              allowOverPerDayByClassCap: true,
-            })
-          )
-            continue;
           const movedTeacher =
             assignedTeacher[key][d][c] === undefined ?
             null :
             assignedTeacher[key][d][c];
+          if (
+            !canAssign(key, short, d, p5, {
+              allowOverClassCap: true,
+              allowOverPerDayByClassCap: true,
+              teacherOverride: movedTeacher,
+            })
+          )
+            continue;
           schedules[key][d][c] = null;
           schedules[key][d][p5] = short;
           assignedTeacher[key][d][p5] = movedTeacher;
@@ -959,8 +961,9 @@ function schedulerPassEnsureSubjectDailyFive({ ctx, key }) {
           for (let c = 0; c < lunchClassIndex; c++) {
             if (periodTimings[classIndices[c]].type !== "class") continue;
             if (schedules[key][d][c] !== null) continue;
-            if (!canAssign(key, subj.short, d, c) && !canAssign(key, subj.short, d, c, {
-                allowOverPerDayByClassCap: true
+            if (!canAssign(key, subj.short, d, c, { teacherOverride: subj.teacher }) && !canAssign(key, subj.short, d, c, {
+                allowOverPerDayByClassCap: true,
+                teacherOverride: subj.teacher,
               })) continue;
 
             schedules[key][d][c] = subj.short;
@@ -986,9 +989,10 @@ function schedulerPassEnsureSubjectDailyFive({ ctx, key }) {
           if (
             p5 < classesPerDay &&
             schedules[key][d][p5] === null &&
-            (canAssign(key, subj.short, d, p5) ||
+            (canAssign(key, subj.short, d, p5, { teacherOverride: subj.teacher }) ||
               canAssign(key, subj.short, d, p5, {
                 allowOverPerDayByClassCap: true,
+                teacherOverride: subj.teacher,
               }))
           ) {
             schedules[key][d][p5] = subj.short;
@@ -1012,9 +1016,10 @@ function schedulerPassEnsureSubjectDailyFive({ ctx, key }) {
             const fsh = schedules[key][d][c];
             if (!fsh || !fillerShorts.has(fsh)) continue;
             if (
-              !canAssign(key, subj.short, d, c) &&
+              !canAssign(key, subj.short, d, c, { teacherOverride: subj.teacher }) &&
               !canAssign(key, subj.short, d, c, {
                 allowOverPerDayByClassCap: true,
+                teacherOverride: subj.teacher,
               })
             )
               continue;
@@ -1129,6 +1134,7 @@ function schedulerPassEnsureAtLeastOneMainPerDay({ ctx, key }) {
           perDayUsed[key][d].add(pick.short);
           lectureList[key][idx].remaining--;
           const t = pick.teacher;
+          if (t !== undefined) assignedTeacher[key][d][c] = t;
           teacherTheoryCount[t] = (teacherTheoryCount[t] || 0) + 1;
           teacherTheoryCountByClass[key][t] =
             (teacherTheoryCountByClass[key][t] || 0) + 1;
@@ -1166,6 +1172,7 @@ function schedulerPassEnsureAtLeastOneMainPerDay({ ctx, key }) {
           perDayUsed[key][d].add(pick.short);
           lectureList[key][idx].remaining--;
           const t = pick.teacher;
+          if (t !== undefined) assignedTeacher[key][d][p5] = t;
           teacherTheoryCount[t] = (teacherTheoryCount[t] || 0) + 1;
           teacherTheoryCountByClass[key][t] =
             (teacherTheoryCountByClass[key][t] || 0) + 1;
@@ -1204,6 +1211,7 @@ function schedulerPassEnsureAtLeastOneMainPerDay({ ctx, key }) {
         perDayUsed[key][d].add(pick.short);
         lectureList[key][idx].remaining--;
         const t = pick.teacher;
+        if (t !== undefined) assignedTeacher[key][d][c] = t;
         teacherTheoryCount[t] = (teacherTheoryCount[t] || 0) + 1;
         teacherTheoryCountByClass[key][t] =
           (teacherTheoryCountByClass[key][t] || 0) + 1;
@@ -1347,11 +1355,13 @@ function schedulerPassFillSparseSchedule({ ctx, key }) {
               !canAssign(key, mShort, d, p, {
                 allowOverClassCap: true,
                 allowNoTeacher: !teacher,
+                teacherOverride: teacher,
               })
             )
               continue;
             schedules[key][d][p] = mShort;
             if (teacher) {
+              assignedTeacher[key][d][p] = teacher;
               teacherTheoryCount[teacher] =
                 (teacherTheoryCount[teacher] || 0) + 1;
               teacherTheoryCountByClass[key][teacher] =
@@ -1478,30 +1488,42 @@ function schedulerPassUltimateForceFill({ ctx, key }) {
       ) {
         const pick = mains[(mi + attempt) % mains.length];
         if (!pick) break;
+        const pickTeacher =
+          (teacherForShort[key] && teacherForShort[key][pick]) ||
+          teacherForShortGlobal[pick] ||
+          null;
         if (
           !canAssign(key, pick, d, p, {
             allowNoTeacher: true,
             allowOverClassCap: true,
             allowOverPerDayByClassCap: true,
             allowMoreThanOneMainPostLunch: true,
+            teacherOverride: pickTeacher,
           })
         )
           continue;
         schedules[key][d][p] = pick;
+        if (pickTeacher) assignedTeacher[key][d][p] = pickTeacher;
         mi = (mi + 1) % Math.max(1, mains.length);
         placed = true;
       }
       // step: fallback to filler subjects when no main can be assigned
       if (!placed && fillers.length) {
         const fillShort = fillers[fi % fillers.length];
+        const fillTeacher =
+          (teacherForShort[key] && teacherForShort[key][fillShort]) ||
+          teacherForShortGlobal[fillShort] ||
+          null;
         if (
           canAssign(key, fillShort, d, p, {
             allowNoTeacher: true,
             allowOverClassCap: true,
             allowOverPerDayByClassCap: true,
+            teacherOverride: fillTeacher,
           })
         ) {
           schedules[key][d][p] = fillShort;
+          if (fillTeacher) assignedTeacher[key][d][p] = fillTeacher;
           fi++;
           placed = true;
         }

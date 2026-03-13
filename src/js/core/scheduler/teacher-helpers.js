@@ -1,4 +1,4 @@
-/* exported schedulerGetAssignedTeacherValue, schedulerGetShortTeacherList, schedulerIsLabShortFor, schedulerGetTeachersForCell, schedulerGetTeacherForCell, schedulerSameSubjectCode, schedulerIsAdjacentToSameSubjectLab */
+/* exported schedulerGetAssignedTeacherValue, schedulerGetShortTeacherList, schedulerIsRealTeacher, schedulerIsLabShortFor, schedulerGetTeachersForCell, schedulerGetTeacherForCell, schedulerSameSubjectCode, schedulerIsAdjacentToSameSubjectLab */
 
 /**
  * @module core/scheduler/teacher-helpers.js
@@ -25,6 +25,12 @@ function schedulerGetAssignedTeacherValue({ assignedTeacher, key, day, col }) {
  * @param {string} params.short - Subject short code.
  * @returns {string[]} Teacher names for the given short.
  */
+/** Returns true if the name is a real teacher (not blank or "Not Mentioned"). */
+function schedulerIsRealTeacher(name) {
+  const s = String(name || "").trim();
+  return s !== "" && !/^not\s*mentioned$/i.test(s);
+}
+
 function schedulerGetShortTeacherList({
   teacherListForShort,
   teacherForShort,
@@ -34,16 +40,16 @@ function schedulerGetShortTeacherList({
 }) {
   const list =
     (teacherListForShort[key] && teacherListForShort[key][short]) || [];
-  // Trimmed, non-empty teacher names
+  // Trimmed, non-empty, real teacher names
   const cleaned = (list || [])
     .map((t) => String(t || "").trim())
-    .filter(Boolean);
+    .filter(schedulerIsRealTeacher);
   if (cleaned.length) return Array.from(new Set(cleaned));
   const fallback =
     (teacherForShort[key] && teacherForShort[key][short]) ||
     teacherForShortGlobal[short] ||
     "";
-  return fallback ? [fallback] : [];
+  return schedulerIsRealTeacher(fallback) ? [fallback] : [];
 }
 
 // Section: LAB DETECTION
@@ -86,13 +92,13 @@ function schedulerGetTeachersForCell({
   const assigned = getAssignedTeacherValue(key, day, col);
   if (assigned !== undefined) {
     const t = assigned === null ? "" : String(assigned || "").trim();
-    return t ? [t] : [];
+    return schedulerIsRealTeacher(t) ? [t] : [];
   }
   const fallback =
     (teacherForShort[key] && teacherForShort[key][short]) ||
     teacherForShortGlobal[short] ||
     "";
-  return fallback ? [fallback] : [];
+  return schedulerIsRealTeacher(fallback) ? [fallback] : [];
 }
 
 /**

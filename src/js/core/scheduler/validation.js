@@ -61,7 +61,9 @@ function schedulerBuildTeacherListSnapshot(source = {}, keys = []) {
  * @returns {string} Canonical key for teacher collision checks.
  */
 function schedulerTeacherValidationKey(state, teacher) {
-  const canon = canonicalTeacherName(teacher);
+  const t = String(teacher || "").trim();
+  if (!t || /^not\s*mentioned$/i.test(t)) return "";
+  const canon = canonicalTeacherName(t);
   if (!canon) return "";
   const foldMap =
     state && state.teacherFoldMap && typeof state.teacherFoldMap === "object" ?
@@ -81,6 +83,11 @@ function schedulerTeacherValidationKey(state, teacher) {
  */
 function schedulerGetTeachersForValidationCell(state, key, short, day, col) {
   if (!short) return [];
+  /** Returns true if a teacher name is a real person (not blank / "Not Mentioned"). */
+  const isReal = (t) => {
+    const s = String(t || "").trim();
+    return s && !/^not\s*mentioned$/i.test(s);
+  };
   const isLab =
     !!(state?.isLabShortByClass &&
       state.isLabShortByClass[key] &&
@@ -93,7 +100,7 @@ function schedulerGetTeachersForValidationCell(state, key, short, day, col) {
       [];
     const cleaned = list
       .map((t) => String(t || "").trim())
-      .filter(Boolean);
+      .filter(isReal);
     if (cleaned.length) return Array.from(new Set(cleaned));
   }
   const assigned =
@@ -102,7 +109,7 @@ function schedulerGetTeachersForValidationCell(state, key, short, day, col) {
     state.assignedTeacher[key][day] ?
     state.assignedTeacher[key][day][col] :
     undefined;
-  if (assigned !== undefined && assigned !== null && String(assigned).trim()) {
+  if (assigned !== undefined && assigned !== null && isReal(assigned)) {
     return [String(assigned).trim()];
   }
   const fallback =
@@ -111,7 +118,7 @@ function schedulerGetTeachersForValidationCell(state, key, short, day, col) {
       state.teacherForShortByClass[key][short]) ||
     (state?.teacherForShortGlobal && state.teacherForShortGlobal[short]) ||
     "";
-  return fallback ? [String(fallback).trim()] : [];
+  return isReal(fallback) ? [String(fallback).trim()] : [];
 }
 
 // Section: FULL VALIDATION

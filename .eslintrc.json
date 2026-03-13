@@ -95,6 +95,7 @@
     "schedulerGetFillerSubjectCap": "readonly",
     "schedulerGetAssignedTeacherValue": "readonly",
     "schedulerGetShortTeacherList": "readonly",
+    "schedulerIsRealTeacher": "readonly",
     "schedulerIsLabShortFor": "readonly",
     "schedulerGetTeachersForCell": "readonly",
     "schedulerGetTeacherForCell": "readonly",

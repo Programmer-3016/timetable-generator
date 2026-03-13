@@ -105,7 +105,9 @@ function schedulerRenderMultiClassesEngine({
 
   /** Returns the canonical fold-map key for a teacher name, used for clash detection. */
   const teacherClashKey = (name) => {
-    const canon = canonicalTeacherName(name);
+    const t = String(name || "").trim();
+    if (!t || /^not\s*mentioned$/i.test(t)) return "";
+    const canon = canonicalTeacherName(t);
     if (!canon) return "";
     return teacherFoldMapLocal[canon] || canon;
   };
@@ -396,6 +398,7 @@ function schedulerRenderMultiClassesEngine({
       keys,
       schedules,
       getTeachersForCell,
+      getShortTeacherList,
       teacherClashKey,
       getTargetForShort,
       countOccurrences,
@@ -1015,9 +1018,10 @@ function fillRemaining(key) {
                 continue;
               if (schedules[key][d][c] !== null) continue;
               if (
-                !canAssign(key, subj.short, d, c) &&
+                !canAssign(key, subj.short, d, c, { teacherOverride: subj.teacher }) &&
                 !canAssign(key, subj.short, d, c, {
                   allowOverPerDayByClassCap: true,
+                  teacherOverride: subj.teacher,
                 })
               )
                 continue;
@@ -1044,9 +1048,10 @@ function fillRemaining(key) {
             if (
               p5 < classesPerDay &&
               schedules[key][d][p5] === null &&
-              (canAssign(key, subj.short, d, p5) ||
+              (canAssign(key, subj.short, d, p5, { teacherOverride: subj.teacher }) ||
                 canAssign(key, subj.short, d, p5, {
                   allowOverPerDayByClassCap: true,
+                  teacherOverride: subj.teacher,
                 }))
             ) {
               schedules[key][d][p5] = subj.short;
@@ -1071,9 +1076,10 @@ function fillRemaining(key) {
               const cur = schedules[key][d][p5];
               if (cur && fillerShorts.has(cur)) {
                 if (
-                  canAssign(key, subj.short, d, p5) ||
+                  canAssign(key, subj.short, d, p5, { teacherOverride: subj.teacher }) ||
                   canAssign(key, subj.short, d, p5, {
                     allowOverPerDayByClassCap: true,
+                    teacherOverride: subj.teacher,
                   })
                 ) {
                   schedules[key][d][p5] = null;
@@ -1112,9 +1118,10 @@ function fillRemaining(key) {
               const fsh = schedules[key][d][c];
               if (!fsh || !fillerShorts.has(fsh)) continue;
               if (
-                !canAssign(key, subj.short, d, c) &&
+                !canAssign(key, subj.short, d, c, { teacherOverride: subj.teacher }) &&
                 !canAssign(key, subj.short, d, c, {
                   allowOverPerDayByClassCap: true,
+                  teacherOverride: subj.teacher,
                 })
               )
                 continue;
@@ -1151,6 +1158,7 @@ function fillRemaining(key) {
                   !canAssign(key, subj.short, d, c, {
                     allowOverPerDayByClassCap: true,
                     allowMoreThanOneMainPostLunch: true,
+                    teacherOverride: subj.teacher,
                   })
                 )
                   continue;
@@ -1227,6 +1235,7 @@ function fillRemaining(key) {
                   allowOverPerDayByClassCap: true,
                   allowMoreThanOneMainPostLunch: true,
                   allowOverClassCap: true,
+                  teacherOverride: subj.teacher,
                 });
                 // step: check for teacher clash in other classes at this slot
                 if (!canPlaceHere) {
@@ -1276,6 +1285,7 @@ function fillRemaining(key) {
                                   allowOverClassCap: true,
                                   allowOverPerDayByClassCap: true,
                                   allowMoreThanOneMainPostLunch: true,
+                                  teacherOverride: clashTeacher,
                                 })
                               ) {
                                 if (!fillerCountsByClass[otherKey])
@@ -1288,6 +1298,7 @@ function fillRemaining(key) {
                                 )
                                   fillerCountsByClass[otherKey][curF] = 0;
                                 schedules[otherKey][d2][c2] = otherShort;
+                                assignedTeacher[otherKey][d2][c2] = clashTeacher;
                                 perDayUsed[otherKey][d2].add(otherShort);
                                 teacherAssignedPerDayByClass[otherKey][d2][
                                     clashTeacher
@@ -1322,6 +1333,7 @@ function fillRemaining(key) {
                                 allowOverPerDayByClassCap: true,
                                 allowMoreThanOneMainPostLunch: true,
                                 allowOverClassCap: true,
+                                teacherOverride: subj.teacher,
                               }
                             );
                           }
@@ -1383,11 +1395,13 @@ function fillRemaining(key) {
                       allowOverClassCap: true,
                       allowOverPerDayByClassCap: true,
                       allowMoreThanOneMainPostLunch: true,
+                      teacherOverride: occTeacher,
                     }) &&
                     canAssign(key, subj.short, d, c, {
                       allowOverPerDayByClassCap: true,
                       allowMoreThanOneMainPostLunch: true,
                       allowOverClassCap: true,
+                      teacherOverride: subj.teacher,
                     })
                   ) {
                     if (!fillerCountsByClass[key])
@@ -1399,6 +1413,7 @@ function fillRemaining(key) {
                     schedules[key][d2][c2] = occ;
                     perDayUsed[key][d2].add(occ);
                     if (occTeacher) {
+                      assignedTeacher[key][d2][c2] = occTeacher;
                       teacherAssignedPerDayByClass[key][d][occTeacher] =
                         Math.max(
                           0,
@@ -1496,10 +1511,12 @@ function fillRemaining(key) {
             !canAssign(key, f, d, p5, {
               allowOverClassCap: true,
               allowNoTeacher: !tF,
+              teacherOverride: tF,
             })
           )
             continue;
           schedules[key][d][p5] = f;
+          if (tF) assignedTeacher[key][d][p5] = tF;
           if (!fillerCountsByClass[key]) fillerCountsByClass[key] = {};
           fillerCountsByClass[key][f] =
             (fillerCountsByClass[key][f] || 0) + 1;
@@ -1586,10 +1603,12 @@ function fillRemaining(key) {
             !canAssign(key, f, d, c, {
               allowOverClassCap: true,
               allowNoTeacher: !tF,
+              teacherOverride: tF,
             })
           )
             continue;
           schedules[key][d][c] = f;
+          if (tF) assignedTeacher[key][d][c] = tF;
           if (!fillerCountsByClass[key]) fillerCountsByClass[key] = {};
           fillerCountsByClass[key][f] =
             (fillerCountsByClass[key][f] || 0) + 1;
@@ -1866,10 +1885,12 @@ function fillRemaining(key) {
             !canAssign(key, short, d, p, {
               allowOverClassCap: true,
               allowNoTeacher: !teacher,
+              teacherOverride: teacher,
             })
           )
             continue;
           schedules[key][d][p] = short;
+          if (teacher) assignedTeacher[key][d][p] = teacher;
           teacherTheoryCount[teacher] =
             (teacherTheoryCount[teacher] || 0) + 1;
           teacherTheoryCountByClass[key][teacher] =
@@ -1896,10 +1917,12 @@ function fillRemaining(key) {
               !canAssign(key, short, d, p, {
                 allowOverClassCap: true,
                 allowNoTeacher: !teacher,
+                teacherOverride: teacher,
               })
             )
               continue;
             schedules[key][d][p] = short;
+            if (teacher) assignedTeacher[key][d][p] = teacher;
             teacherTheoryCount[teacher] =
               (teacherTheoryCount[teacher] || 0) + 1;
             teacherTheoryCountByClass[key][teacher] =
@@ -1936,9 +1959,16 @@ function fillRemaining(key) {
     let idx = 0;
     for (let d = 0; d < days; d++) {
       for (let p = 0; p < classesPerDay; p++) {
-        schedules[key][d][p] = mainsArr.length ?
+        const short = mainsArr.length ?
           mainsArr[idx % mainsArr.length] :
           "FILL";
+        const teacher = short !== "FILL" ?
+          ((teacherForShort[key] && teacherForShort[key][short]) ||
+            teacherForShortGlobal[short] ||
+            null) :
+          null;
+        schedules[key][d][p] = short;
+        if (teacher) assignedTeacher[key][d][p] = teacher;
         idx++;
       }
     }
@@ -2012,6 +2042,22 @@ function fillRemaining(key) {
       const curTarget = getTargetForShort(key, cur);
       return (countByShort[cur] || 0) > curTarget;
     };
+    /** Returns true if assigning `teacher` to `key` at `(day, col)` clashes with another class. */
+    const wouldClashAt = (teacher, day, col) => {
+      if (!teacher) return false;
+      const ck = teacherClashKey(teacher);
+      if (!ck) return false;
+      for (const ok of keys) {
+        if (ok === key) continue;
+        const osh = schedules[ok]?.[day]?.[col];
+        if (!osh) continue;
+        const oTeachers = getTeachersForCell(ok, osh, day, col);
+        for (const ot of oTeachers) {
+          if (teacherClashKey(ot) === ck) return true;
+        }
+      }
+      return false;
+    };
 
     // step: iterative enforcement loop — find subjects with largest deficit
     let changed = false;
@@ -2054,6 +2100,7 @@ function fillRemaining(key) {
                   ultraRelaxed: true,
                 });
               if (chosenFinal === null) continue;
+              if (wouldClashAt(chosenFinal, d, p)) continue;
               const cur = schedules[key][d][p];
               const bucket =
                 cur === null ? 0 : fillerSet.has(cur) ? 1 : 2;
@@ -2121,6 +2168,7 @@ function fillRemaining(key) {
    * Detects and resolves cross-class teacher clashes where the same teacher
    * is scheduled in two classes at the same day/slot.
    */
+  const unresolvedClashes = [];
   function resolveFinalTeacherClashes() {
     return schedulerResolveFinalTeacherClashes({
       days,
@@ -2139,6 +2187,7 @@ function fillRemaining(key) {
       fillerTargetsByClass,
       fillerCountsByClass,
       isLabShort,
+      unresolvedClashes,
     });
   }
   for (let pass = 0; pass < 4; pass++) {
@@ -2183,6 +2232,8 @@ function fillRemaining(key) {
       getTargetForShort,
       pickTeacherForSlot,
       assignedTeacher,
+      getTeachersForCell,
+      teacherClashKey,
     });
   }
   for (let pass = 0; pass < 3; pass++) {
@@ -2247,6 +2298,22 @@ function fillRemaining(key) {
     }
 
     const fillerWindowStart = Math.max(0, classesPerDay - 2);
+    /** Returns true if assigning `teacher` to classOneKey at `(day, col)` clashes with another class. */
+    const wouldClashForClassOne = (teacher, day, col) => {
+      if (!teacher) return false;
+      const ck = teacherClashKey(teacher);
+      if (!ck) return false;
+      for (const ok of keys) {
+        if (ok === classOneKey) continue;
+        const osh = schedules[ok]?.[day]?.[col];
+        if (!osh) continue;
+        const oTeachers = getTeachersForCell(ok, osh, day, col);
+        for (const ot of oTeachers) {
+          if (teacherClashKey(ot) === ck) return true;
+        }
+      }
+      return false;
+    };
     /** Builds a ranked list of candidate slots where a filler can be placed or swapped in. */
     const buildCandidates = (fillerShort) => {
       const candidates = [];
@@ -2268,6 +2335,7 @@ function fillRemaining(key) {
               }
             );
             if (chosen === null) continue;
+            if (wouldClashForClassOne(chosen, d, c)) continue;
             candidates.push({
               d,
               c,
@@ -2298,6 +2366,7 @@ function fillRemaining(key) {
             ultraRelaxed: true,
           });
           if (chosen === null) continue;
+          if (wouldClashForClassOne(chosen, d, c)) continue;
           candidates.push({
             d,
             c,
@@ -2392,10 +2461,35 @@ function fillRemaining(key) {
           (teacherForShort[key] && teacherForShort[key][short]) ||
           teacherForShortGlobal[short] ||
           null;
-        assignedTeacher[key][day][slot] =
+        let chosenTeacher =
           fixedTeacher && !/^not\s*mentioned$/i.test(fixedTeacher) ?
           fixedTeacher :
           fallbackTeacher;
+        // If the chosen teacher clashes with another class, try an alternate.
+        if (chosenTeacher) {
+          const ck = teacherClashKey(chosenTeacher);
+          let hasClash = false;
+          if (ck) {
+            for (const ok of keys) {
+              if (ok === key) continue;
+              const osh = schedules[ok]?.[day]?.[slot];
+              if (!osh) continue;
+              const oTeachers = getTeachersForCell(ok, osh, day, slot);
+              if (oTeachers.some((t) => teacherClashKey(t) === ck)) {
+                hasClash = true;
+                break;
+              }
+            }
+          }
+          if (hasClash) {
+            const alt = pickTeacherForSlot(key, short, day, slot, {
+              ultraRelaxed: true,
+              allowNoTeacher: true,
+            });
+            if (alt !== null) chosenTeacher = alt;
+          }
+        }
+        assignedTeacher[key][day][slot] = chosenTeacher;
         changed = true;
       });
     });
@@ -2404,6 +2498,45 @@ function fillRemaining(key) {
   for (let pass = 0; pass < 2; pass++) {
     if (!enforceImportedFixedSlots()) break;
     rebuildTrackingFromSchedule();
+  }
+
+  // Final convergence loop — interleaves clash resolution with quota enforcement.
+  // The clash resolver can displace mains (causing 4/5), and quota enforcement can
+  // re-introduce clashes, so we iterate until both are stable.
+  rebuildTrackingFromSchedule();
+  for (let _conv = 0; _conv < 6; _conv++) {
+    let anyChange = false;
+    // 1. Resolve clashes
+    for (let _fc = 0; _fc < 3; _fc++) {
+      if (!resolveFinalTeacherClashes()) break;
+      anyChange = true;
+    }
+    // 2. Re-enforce main targets (fixes 4/5 under-counts)
+    rebuildTrackingFromSchedule();
+    for (const k of keys) {
+      if (enforceMainTargetsForClass(k)) anyChange = true;
+    }
+    // 3. Re-clamp excess mains (fixes 6/5 over-counts)
+    rebuildTrackingFromSchedule();
+    if (clampMainsToTarget()) {
+      anyChange = true;
+      rebuildTrackingFromSchedule();
+    }
+    if (!anyChange) break;
+    rebuildTrackingFromSchedule();
+  }
+
+  // Surface unresolved clashes for the validation report.
+  if (unresolvedClashes.length) {
+    try {
+      window.__ttUnresolvedClashes = unresolvedClashes;
+      console.warn(
+        `Scheduler: ${unresolvedClashes.length} unresolved teacher clash(es):`,
+        unresolvedClashes
+      );
+    } catch {
+      // Reporting is debug-only.
+    }
   }
 
   /**
@@ -2455,9 +2588,9 @@ function fillRemaining(key) {
       }
     }
 
-    // Cross-class teacher clashes on post-lunch slots.
+    // Cross-class teacher clashes on ALL slots.
     for (let d = 0; d < days; d++) {
-      for (let c = lunchClassIndex; c < classesPerDay; c++) {
+      for (let c = 0; c < classesPerDay; c++) {
         const byTeacher = {};
         for (const k of keys) {
           const sh = schedules[k]?.[d]?.[c] || null;
@@ -2475,7 +2608,7 @@ function fillRemaining(key) {
           const classes = new Set(slots.map((s) => s.key));
           if (classes.size <= 1) return;
           issues.push({
-            type: "teacher_clash_post_lunch",
+            type: "teacher_clash",
             day: d,
             col: c,
             teacherKey: tk,

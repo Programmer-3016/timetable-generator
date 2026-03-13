@@ -15,3 +15,6 @@
 function renderMultiClasses(params) {
   return schedulerRenderMultiClassesEngine(params);
 }
+
+// Preserve existing global API contract.
+window.renderMultiClasses = renderMultiClasses;

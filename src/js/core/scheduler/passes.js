@@ -252,7 +252,25 @@ function schedulerClampMainsToTarget({
   getTargetForShort,
   pickTeacherForSlot,
   assignedTeacher,
+  getTeachersForCell,
+  teacherClashKey,
 }) {
+  /** Returns true if assigning `teacher` to `key` at `(day, col)` clashes with another class. */
+  function wouldClash(key, teacher, day, col) {
+    if (!teacher || !teacherClashKey) return false;
+    const ck = teacherClashKey(teacher);
+    if (!ck) return false;
+    for (const ok of keys) {
+      if (ok === key) continue;
+      const osh = schedules[ok]?.[day]?.[col];
+      if (!osh) continue;
+      const oTeachers = getTeachersForCell ? getTeachersForCell(ok, osh, day, col) : [];
+      for (const ot of oTeachers) {
+        if (teacherClashKey(ot) === ck) return true;
+      }
+    }
+    return false;
+  }
   let changed = false;
   for (const key of keys) {
     // set of main (non-filler, non-lab) subject shorts for this class
@@ -324,6 +342,7 @@ function schedulerClampMainsToTarget({
             ultraRelaxed: true,
           });
           if (teacher === null) continue;
+          if (wouldClash(key, teacher, d, p)) continue;
           schedules[key][d][p] = filler;
           assignedTeacher[key][d][p] = teacher;
           countByShort[filler] = (countByShort[filler] || 0) + 1;
@@ -344,6 +363,7 @@ function schedulerClampMainsToTarget({
               ultraRelaxed: true,
             });
             if (teacher === null) continue;
+            if (wouldClash(key, teacher, d, p)) continue;
             schedules[key][d][p] = altMain;
             assignedTeacher[key][d][p] = teacher;
             countByShort[altMain] = (countByShort[altMain] || 0) + 1;
@@ -391,6 +411,7 @@ function schedulerResolveFinalTeacherClashes({
   fillerTargetsByClass,
   fillerCountsByClass,
   isLabShort,
+  unresolvedClashes,
 }) {
   let changed = false;
   for (let d = 0; d < days; d++) {
@@ -434,7 +455,69 @@ function schedulerResolveFinalTeacherClashes({
           if (fixed) continue;
           // Never replace a lab subject cell with another short here, otherwise
           // we can break mandatory 2-slot lab blocks.
-          if (isLabCell) continue;
+          // Instead, try to fix the OTHER clashing entry (arr[0]).
+          if (isLabCell) {
+            const other = arr[0];
+            const otherIsLab =
+              !!(isLabShort && isLabShort[other.key] && isLabShort[other.key][other.short]);
+            // Try reassigning arr[0]'s teacher first
+            if (!otherIsLab) {
+              const altOther = pickTeacherForSlot(other.key, other.short, d, c, {
+                allowNoTeacher: false,
+                allowOverClassCap: true,
+                allowOverPerDayByClassCap: true,
+                allowMoreThanOneMainPostLunch: true,
+                ultraRelaxed: true,
+              });
+              if (altOther !== null) {
+                assignedTeacher[other.key][d][c] = altOther;
+                fixed = true;
+                changed = true;
+              }
+            }
+            // Cross-day swap for arr[0]: try moving the OTHER class's cell to a non-clashing slot
+            if (!fixed && !otherIsLab) {
+              const otherKey = other.key;
+              const otherShort = other.short;
+              for (let d2 = 0; d2 < days && !fixed; d2++) {
+                for (let c2 = 0; c2 < classesPerDay && !fixed; c2++) {
+                  if (d2 === d && c2 === c) continue;
+                  const swapShort = schedules[otherKey]?.[d2]?.[c2];
+                  if (!swapShort || swapShort === otherShort) continue;
+                  if (isLabShort?.[otherKey]?.[swapShort]) continue;
+                  // Would otherShort's teacher be clash-free at (d2, c2)?
+                  const otherTeacherNew = pickTeacherForSlot(otherKey, otherShort, d2, c2, {
+                    allowNoTeacher: false,
+                    allowOverClassCap: true,
+                    allowOverPerDayByClassCap: true,
+                    ultraRelaxed: true,
+                  });
+                  if (otherTeacherNew === null) continue;
+                  // Can swapShort get a teacher at (d, c) without clashing?
+                  const swapTeacher = pickTeacherForSlot(otherKey, swapShort, d, c, {
+                    allowNoTeacher: false,
+                    allowOverClassCap: true,
+                    allowOverPerDayByClassCap: true,
+                    ultraRelaxed: true,
+                  });
+                  if (swapTeacher === null) continue;
+                  schedules[otherKey][d][c] = swapShort;
+                  schedules[otherKey][d2][c2] = otherShort;
+                  assignedTeacher[otherKey][d][c] = swapTeacher;
+                  assignedTeacher[otherKey][d2][c2] = otherTeacherNew;
+                  fixed = true;
+                  changed = true;
+                }
+              }
+            }
+            if (!fixed && unresolvedClashes) {
+              unresolvedClashes.push({
+                day: d, col: c, key, short, teacher: arr[i].teacher,
+                reason: "lab_cell_no_alt_teacher",
+              });
+            }
+            continue;
+          }
 
           // subjects whose current count is below their target, sorted by largest deficit first
           const underTargetMains = (lectureList[key] || [])
@@ -527,8 +610,104 @@ function schedulerResolveFinalTeacherClashes({
             changed = true;
             break;
           }
-          if (!fixed && keepCurrentMain) {
-            continue;
+          if (fixed) continue;
+
+          // Try reassigning arr[0]'s teacher
+          if (!fixed) {
+            const other = arr[0];
+            const altOther = pickTeacherForSlot(other.key, other.short, d, c, {
+              allowNoTeacher: false,
+              allowOverClassCap: true,
+              allowOverPerDayByClassCap: true,
+              allowMoreThanOneMainPostLunch: true,
+              ultraRelaxed: true,
+            });
+            if (altOther !== null) {
+              assignedTeacher[other.key][d][c] = altOther;
+              fixed = true;
+              changed = true;
+            }
+          }
+
+          // Cross-day swap: find another slot with a non-clashing subject to swap with
+          if (!fixed && !(isLabShort?.[key]?.[short])) {
+            for (let d2 = 0; d2 < days && !fixed; d2++) {
+              for (let c2 = 0; c2 < classesPerDay && !fixed; c2++) {
+                if (d2 === d && c2 === c) continue;
+                const otherShort = schedules[key]?.[d2]?.[c2];
+                if (!otherShort || otherShort === short) continue;
+                if (isLabShort?.[key]?.[otherShort]) continue;
+                // Can we get a valid teacher for otherShort at (d, c)?
+                const otherTeacher = pickTeacherForSlot(key, otherShort, d, c, {
+                  allowNoTeacher: false,
+                  allowOverClassCap: true,
+                  allowOverPerDayByClassCap: true,
+                  ultraRelaxed: true,
+                });
+                if (otherTeacher === null) continue;
+                // Can we get a valid teacher for short at (d2, c2)?
+                const myTeacher = pickTeacherForSlot(key, short, d2, c2, {
+                  allowNoTeacher: false,
+                  allowOverClassCap: true,
+                  allowOverPerDayByClassCap: true,
+                  ultraRelaxed: true,
+                });
+                if (myTeacher === null) continue;
+                // Swap
+                schedules[key][d][c] = otherShort;
+                schedules[key][d2][c2] = short;
+                assignedTeacher[key][d][c] = otherTeacher;
+                assignedTeacher[key][d2][c2] = myTeacher;
+                fixed = true;
+                changed = true;
+              }
+            }
+          }
+
+          // Cross-day swap for arr[0] as last resort
+          if (!fixed) {
+            const other = arr[0];
+            const otherIsLab =
+              !!(isLabShort && isLabShort[other.key] && isLabShort[other.key][other.short]);
+            if (!otherIsLab) {
+              const otherKey = other.key;
+              const otherShort = other.short;
+              for (let d2 = 0; d2 < days && !fixed; d2++) {
+                for (let c2 = 0; c2 < classesPerDay && !fixed; c2++) {
+                  if (d2 === d && c2 === c) continue;
+                  const swapShort = schedules[otherKey]?.[d2]?.[c2];
+                  if (!swapShort || swapShort === otherShort) continue;
+                  if (isLabShort?.[otherKey]?.[swapShort]) continue;
+                  const otherTeacherNew = pickTeacherForSlot(otherKey, otherShort, d2, c2, {
+                    allowNoTeacher: false,
+                    allowOverClassCap: true,
+                    allowOverPerDayByClassCap: true,
+                    ultraRelaxed: true,
+                  });
+                  if (otherTeacherNew === null) continue;
+                  const swapTeacher = pickTeacherForSlot(otherKey, swapShort, d, c, {
+                    allowNoTeacher: false,
+                    allowOverClassCap: true,
+                    allowOverPerDayByClassCap: true,
+                    ultraRelaxed: true,
+                  });
+                  if (swapTeacher === null) continue;
+                  schedules[otherKey][d][c] = swapShort;
+                  schedules[otherKey][d2][c2] = otherShort;
+                  assignedTeacher[otherKey][d][c] = swapTeacher;
+                  assignedTeacher[otherKey][d2][c2] = otherTeacherNew;
+                  fixed = true;
+                  changed = true;
+                }
+              }
+            }
+          }
+
+          if (!fixed && unresolvedClashes) {
+            unresolvedClashes.push({
+              day: d, col: c, key, short, teacher: arr[i].teacher,
+              reason: keepCurrentMain ? "main_at_target_no_replacement" : "all_strategies_exhausted",
+            });
           }
         }
       });

@@ -104,6 +104,7 @@ function schedulerCanAssign({
   keys,
   schedules,
   getTeachersForCell,
+  getShortTeacherList,
   teacherClashKey,
   getTargetForShort,
   countOccurrences,
@@ -151,18 +152,29 @@ function schedulerCanAssign({
   }
   // step: detect cross-class teacher clashes in the same slot
   if (!ignoreCrossClassClash) {
-    for (const otherKey of keys) {
-      if (otherKey === key) continue;
-      if (!schedules[otherKey] || !schedules[otherKey][day]) continue;
-      const otherShort = schedules[otherKey][day][col];
-      if (!otherShort) continue;
-      const otherTeachers = getTeachersForCell(otherKey, otherShort, day, col);
-      const ca = teacherClashKey(teacher);
-      if (!ca) continue;
-      for (const otherTeacher of otherTeachers) {
-        const cb = teacherClashKey(otherTeacher);
-        if (cb && ca === cb) {
-          return failWith("Cross-class teacher clash");
+    // For labs, check ALL teachers (not just the primary one)
+    const isLab = isLabShortFor(key, short);
+    const myTeachers = isLab && getShortTeacherList
+      ? getShortTeacherList(key, short)
+      : (teacher ? [teacher] : []);
+    const myKeys = myTeachers
+      .map((t) => teacherClashKey(t))
+      .filter(Boolean);
+    if (myKeys.length) {
+      for (const otherKey of keys) {
+        if (otherKey === key) continue;
+        if (!schedules[otherKey] || !schedules[otherKey][day]) continue;
+        const otherShort = schedules[otherKey][day][col];
+        if (!otherShort) continue;
+        const otherTeachers = getTeachersForCell(otherKey, otherShort, day, col);
+        for (const otherTeacher of otherTeachers) {
+          const cb = teacherClashKey(otherTeacher);
+          if (!cb) continue;
+          for (const ca of myKeys) {
+            if (ca === cb) {
+              return failWith("Cross-class teacher clash");
+            }
+          }
         }
       }
     }
