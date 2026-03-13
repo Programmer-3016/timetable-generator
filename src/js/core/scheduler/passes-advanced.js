@@ -2114,6 +2114,7 @@ function schedulerPassCompactDayGaps({ ctx, key }) {
   const {
     days,
     classesPerDay,
+    lunchClassIndex,
     schedules,
     fillerShortsByClass,
     canAssign,
@@ -2179,6 +2180,8 @@ function schedulerPassCompactDayGaps({ ctx, key }) {
           const hasRight = j + 1 < classesPerDay && schedules[key][d][j + 1] === short;
           if (hasRight) {
             if (c + 1 >= classesPerDay) continue;
+            // Prevent lab block from straddling the lunch boundary.
+            if (c + 1 === lunchClassIndex) continue;
             // Allow one-step left shift of a lab block (e.g., P7-P8 -> P6-P7):
             // destination second cell may overlap current block start at `j`.
             if (c + 1 < j && schedules[key][d][c + 1] !== null) continue;

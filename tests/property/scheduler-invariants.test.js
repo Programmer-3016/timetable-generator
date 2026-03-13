@@ -321,20 +321,12 @@ describe("Property-Based: Scheduler Invariants", () => {
   });
 
   // ── Invariant 5: Lab Blocks Don't Span Lunch ──────────────────────────────
-  // NOTE: Property testing discovered that the scheduler may occasionally place
-  // a lab block straddling the lunch boundary under tight constraints.
-  // This is a known scheduler limitation, not a test bug.
-  // We log occurrences rather than hard-fail.
 
-  test("lab-across-lunch occurrences are rare (known scheduler limitation)", () => {
-    let totalRuns = 0;
-    let violations = 0;
-
+  test("no lab block straddles the lunch boundary", () => {
     fc.assert(
       fc.property(schedulerInputArb, (input) => {
         const { schedules, state } = runEngine(input);
         if (!state) return true;
-        totalRuns++;
 
         const lunchIdx = state.lunchClassIndex;
         const isLabShortByClass = state.isLabShortByClass || {};
@@ -349,18 +341,14 @@ describe("Property-Based: Scheduler Invariants", () => {
             const right = grid[d][lunchIdx];
             if (left && right && left === right) {
               const isLab = isLabShortByClass[key]?.[left];
-              if (isLab) { violations++; break; }
+              if (isLab) return false; // lab spans lunch
             }
           }
         }
-        return true; // always pass — we track statistically
+        return true;
       }),
       { numRuns: PROPERTY_RUNS, seed: 56789 }
     );
-
-    // Allow up to 30% of runs to have this edge case
-    const rate = totalRuns > 0 ? violations / totalRuns : 0;
-    expect(rate).toBeLessThan(0.3);
   });
 
   // ── Invariant 6: Lab Room No Double-Booking ───────────────────────────────
@@ -448,9 +436,8 @@ describe("Property-Based: Scheduler Invariants", () => {
         if (!validation) return true;
 
         // Filter for critical violations only
-        // Exclude "lab split" — known scheduler limitation under tight constraints
         const critical = (validation.violations || []).filter((v) =>
-          /teacher clash|teacher double booking|lab block broken|multiple subjects|invalid cell/i.test(v)
+          /teacher clash|teacher double booking|lab split|lab block broken|multiple subjects|invalid cell/i.test(v)
         );
         return critical.length === 0;
       }),
