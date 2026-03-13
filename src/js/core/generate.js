@@ -3,6 +3,8 @@
  * @description Main generation flow: read inputs, build shell tables, invoke scheduler.
  */
 
+/* exported formatTime, resolveGenerationSeed, generateTimetable */
+
 // Section: TIMETABLE GENERATION MASTER FUNCTION
 
 function formatTime(d) {

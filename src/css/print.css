@@ -7,9 +7,7 @@
 @media print {
   /* Hide non-printable UI elements */
   .controls,
-  #viewToggleBtn,
   #exportAllClassesBtn,
-  #exportPdfBtn,
   #exportExcelBtn,
   #sidebarToggleBtn,
   .skeleton-wrap,

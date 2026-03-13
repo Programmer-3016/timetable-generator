@@ -24,6 +24,7 @@ A constraint-based college timetable generator with PDF import, drag-and-drop ed
 ### User Interface
 - **Faculty view** — Per-teacher timetable with clash detection and workload summary
 - **Lab view** — Shared lab room scheduling across all classes
+- **Schedule versioning** — Auto-save generations, load previous versions, side-by-side comparison
 - **Drag & drop** — Manually swap slots with instant conflict validation
 - **Keyboard shortcuts** — Quick actions for power users
 - **Responsive design** — Works on desktop and tablet screens
@@ -51,6 +52,7 @@ flowchart LR
     H --> I["📊 Render\nTimetables"]
     I --> J["👨‍🏫 Faculty View"]
     I --> K["🔬 Lab View"]
+    I --> M["📋 Versions"]
     I --> L["📤 Export\n(JPG/PDF/Excel)"]
 
     style A fill:#dbeafe,stroke:#2563eb
@@ -69,13 +71,14 @@ Project_T/
 ├── jest.config.js                  # Test runner config
 │
 ├── src/
-│   ├── css/                        # Modular stylesheets (6 files)
+│   ├── css/                        # Modular stylesheets (7 files)
 │   │   ├── base.css                # Reset, variables, typography
 │   │   ├── components.css          # Buttons, cards, modals, inputs
 │   │   ├── skeleton.css            # Loading skeleton animations
 │   │   ├── saas-theme.css          # Color theme & branding
 │   │   ├── responsive.css          # Breakpoint-based layouts
-│   │   └── print.css               # Print-only styles
+│   │   ├── print.css               # Print-only styles
+│   │   └── versioning.css          # Version panel & compare view
 │   │
 │   └── js/
 │       ├── core/                   # Scheduling engine & data layer
@@ -85,7 +88,6 @@ Project_T/
 │       │   ├── input-validator.js  # Form validation rules
 │       │   ├── scheduler.js        # Top-level scheduler entry
 │       │   └── scheduler/          # Multi-class constraint solver
-│       │       ├── index.js        # Scheduler public API
 │       │       ├── engine.js       # Core scheduling loop (largest file)
 │       │       ├── state.js        # Mutable scheduling state
 │       │       ├── assignment.js   # Slot assignment logic
@@ -125,11 +127,16 @@ Project_T/
 │       │       ├── ltp-utils.js    # L-T-P credit parsing
 │       │       └── constants.js    # Regex patterns & mappings
 │       │
-│       └── export/                 # Export modules
-│           ├── file-save.js        # JPG/PDF save logic
-│           ├── capture-helpers.js  # html2canvas wrappers
-│           ├── excel.js            # SheetJS Excel export
-│           └── bulk.js             # Bulk multi-class export
+│       ├── export/                 # Export modules
+│       │   ├── file-save.js        # JPG/PDF save logic
+│       │   ├── capture-helpers.js  # html2canvas wrappers
+│       │   ├── excel.js            # SheetJS Excel export
+│       │   └── bulk.js             # Bulk multi-class export
+│       │
+│       └── versioning/             # Schedule version management
+│           ├── version-store.js    # Save/load/delete in localStorage
+│           ├── version-ui.js       # Version panel & user actions
+│           └── version-compare.js  # Diff engine & comparison view
 │
 ├── tests/                          # Jest test suites
 │   ├── setup-globals.js            # Test environment globals
@@ -139,7 +146,9 @@ Project_T/
 │       ├── input-validator.test.js # Input validation tests
 │       ├── parser.test.js          # Input parsing tests
 │       ├── scoring.test.js         # Slot scoring tests
-│       └── validation.test.js      # Constraint validation tests
+│       ├── validation.test.js      # Constraint validation tests
+│       ├── version-store.test.js   # Version store CRUD tests
+│       └── version-compare.test.js # Version diff & compare tests
 │
 └── python/
     └── import_classifier/          # FastAPI backend service
@@ -228,15 +237,15 @@ pytest tests/ -v
 
 | Metric                     | Count   |
 | -------------------------- | ------- |
-| JavaScript files           | 45      |
-| CSS files                  | 6       |
+| JavaScript files           | 47      |
+| CSS files                  | 7       |
 | Python files               | 14      |
 | Total JS lines             | ~17,300 |
 | Total CSS lines            | ~4,000  |
 | Total Python lines         | ~2,900  |
 | JSDoc-documented functions | 330+    |
 | Section markers            | 165     |
-| Jest tests                 | 128     |
+| Jest tests                 | 481     |
 
 ---
 
@@ -244,7 +253,8 @@ pytest tests/ -v
 
 Planned improvements (not in any specific order):
 
-- [ ] Increase test coverage across scheduling engine
+- [x] Increase test coverage across scheduling engine
+- [x] CI/CD pipeline with automated testing
 - [ ] Add dark mode toggle
 - [ ] Mobile-responsive layout improvements
 - [ ] User authentication & cloud save
@@ -253,7 +263,6 @@ Planned improvements (not in any specific order):
 - [ ] Performance optimization for large timetables (50+ classes)
 - [ ] API rate limiting & input sanitization
 - [ ] Docker containerization for backend
-- [ ] CI/CD pipeline with automated testing
 
 ---
 

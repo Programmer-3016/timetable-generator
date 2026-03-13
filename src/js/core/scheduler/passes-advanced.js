@@ -1,5 +1,21 @@
 /* eslint-disable no-unused-vars */
-/* exported schedulerPassCompactPreLunch, schedulerPassCompactDayGaps */
+/* exported
+   schedulerPassFillRemaining,
+   schedulerPassAggressiveFill,
+   schedulerPassPostLunchFillerSweep,
+   schedulerPassGapSealFill,
+   schedulerPassFinalPostLunchGapFix,
+   schedulerPassFillPostLunchGaps,
+   schedulerPassEnsureSubjectDailyFive,
+   schedulerPassEnsureAtLeastOneMainPerDay,
+   schedulerPassFillSparseSchedule,
+   schedulerPassUltimateForceFill,
+   schedulerPassPromoteMainsBeforeLunch,
+   schedulerPassFillEmptyPreLunch,
+   schedulerPassCompactPostLunch,
+   schedulerPassCompactPreLunch,
+   schedulerPassCompactDayGaps
+*/
 
 /**
  * @module core/scheduler/passes-advanced.js

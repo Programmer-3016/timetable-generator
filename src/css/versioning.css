@@ -5,7 +5,7 @@
 /* -- Version Panel Layout -- */
 
 #versionPanel {
-  padding: 1.25rem;
+  padding: 20px;
   min-height: 200px;
 }
 
@@ -14,22 +14,22 @@
 .ver-compare-bar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding: 0.5rem 0.75rem;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 8px 12px;
   background: var(--surface-2, #f5f5f5);
   border-radius: 8px;
 }
 
 .ver-compare-hint {
-  font-size: 0.85rem;
+  font-size: 14px;
   color: var(--text-muted, #888);
   flex: 1;
 }
 
 .ver-compare-btn {
-  font-size: 0.8rem;
-  padding: 0.35rem 1rem;
+  font-size: 13px;
+  padding: 6px 16px;
 }
 
 /* -- Version List -- */
@@ -37,7 +37,7 @@
 .ver-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 /* -- Version Card -- */
@@ -45,8 +45,8 @@
 .ver-card {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.7rem 0.85rem;
+  gap: 10px;
+  padding: 11px 14px;
   background: var(--surface-1, #fff);
   border: 1px solid var(--border, #e0e0e0);
   border-radius: 8px;
@@ -70,7 +70,7 @@
 .ver-star {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: 19px;
   cursor: pointer;
   color: var(--text-muted, #aaa);
   padding: 0;
@@ -92,12 +92,12 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 2px;
 }
 
 .ver-label {
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 15px;
   color: var(--text, #1a1a1a);
   white-space: nowrap;
   overflow: hidden;
@@ -105,16 +105,16 @@
 }
 
 .ver-meta {
-  font-size: 0.78rem;
+  font-size: 12px;
   color: var(--text-muted, #888);
 }
 
 /* Validation badge */
 .ver-badge {
   flex-shrink: 0;
-  font-size: 0.72rem;
+  font-size: 12px;
   font-weight: 600;
-  padding: 0.2rem 0.5rem;
+  padding: 3px 8px;
   border-radius: 99px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -133,7 +133,7 @@
 /* Actions */
 .ver-actions {
   display: flex;
-  gap: 0.35rem;
+  gap: 6px;
   flex-shrink: 0;
 }
 
@@ -141,8 +141,8 @@
   background: none;
   border: 1px solid var(--border, #e0e0e0);
   border-radius: 6px;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.78rem;
+  padding: 4px 10px;
+  font-size: 12px;
   cursor: pointer;
   color: var(--text, #333);
   transition: background 0.12s, border-color 0.12s;
@@ -164,30 +164,30 @@
    ========================================================================== */
 
 #versionCompareView {
-  margin-top: 1.5rem;
+  margin-top: 24px;
 }
 
 .vc-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  margin-bottom: 12px;
 }
 
 .vc-title {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 17px;
   font-weight: 700;
 }
 
 .vc-close-btn {
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 24px;
   cursor: pointer;
   color: var(--text-muted, #888);
   line-height: 1;
-  padding: 0 0.25rem;
+  padding: 0 4px;
 }
 
 .vc-close-btn:hover {
@@ -195,22 +195,22 @@
 }
 
 .vc-summary {
-  font-size: 0.85rem;
+  font-size: 14px;
   color: var(--text-muted, #666);
-  margin-bottom: 1rem;
-  padding: 0.5rem 0.75rem;
+  margin-bottom: 16px;
+  padding: 8px 12px;
   background: var(--surface-2, #f9fafb);
   border-radius: 6px;
 }
 
 .vc-badge {
   display: inline-block;
-  font-size: 0.7rem;
+  font-size: 11px;
   font-weight: 600;
-  padding: 0.1rem 0.4rem;
+  padding: 2px 6px;
   border-radius: 99px;
   vertical-align: middle;
-  margin-left: 0.2rem;
+  margin-left: 3px;
 }
 
 .vc-badge--valid {
@@ -225,19 +225,19 @@
 
 /* Per-class diff block */
 .vc-class-block {
-  margin-bottom: 1.25rem;
+  margin-bottom: 20px;
 }
 
 .vc-class-title {
-  margin: 0 0 0.5rem;
-  font-size: 0.9rem;
+  margin: 0 0 8px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .vc-side-by-side {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  gap: 12px;
 }
 
 .vc-table-wrap {
@@ -245,22 +245,22 @@
 }
 
 .vc-table-label {
-  font-size: 0.75rem;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-muted, #888);
-  margin-bottom: 0.3rem;
+  margin-bottom: 5px;
   text-align: center;
 }
 
 .vc-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.78rem;
+  font-size: 12px;
 }
 
 .vc-table td {
   border: 1px solid var(--border, #e0e0e0);
-  padding: 0.25rem 0.4rem;
+  padding: 4px 6px;
   text-align: center;
   white-space: nowrap;
 }
@@ -277,7 +277,7 @@
 @media (max-width: 768px) {
   .ver-card {
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 6px;
   }
 
   .ver-actions {
@@ -289,3 +289,4 @@
     grid-template-columns: 1fr;
   }
 }
+
