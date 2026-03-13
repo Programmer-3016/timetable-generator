@@ -14,15 +14,8 @@ try:
 except Exception:  # pragma: no cover
     pdfplumber = None
 
-_CLASS_LABEL_HINT_RE = re.compile(r"\bsem(?:ester)?\b|\byear\b|\bsection\b", re.I)
-_SUBJECT_ROW_RE = re.compile(
-    r"^\s*([A-Z][A-Z0-9\s&()./]{0,40})\s*-\s*(.+?)\s*-\s*(.+?)\s*$"
-)
-_CREDIT_RE = re.compile(r"^\d{1,2}$")
 _TIME_RE = re.compile(r"\b\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}\b")
 _DAY_TOKENS = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}
-_NOISE_UPPER_TOKENS = {"TIME", "DAY", "LUNCH", "PERIOD", "ROOM", "ROOM NO", "ROOM NO.", "COORDINATOR"}
-
 
 def _build_process_classes_from_pdf_tables(pdf_bytes: bytes) -> list[dict[str, Any]]:
     if pdfplumber is None:

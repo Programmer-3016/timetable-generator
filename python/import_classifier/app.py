@@ -31,11 +31,6 @@ from .settings import (
 )
 from .signals import detect_all_signals
 
-try:
-    import pdfplumber
-except Exception:  # pragma: no cover
-    pdfplumber = None
-
 app = FastAPI(title="Timetable PDF Classifier", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,

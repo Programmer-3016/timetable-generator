@@ -56,23 +56,6 @@ KEYWORD_CATEGORIES = {
     ],
 }
 
-NON_TIMETABLE_KEYWORDS = {
-    "invoice",
-    "receipt",
-    "payment",
-    "transaction",
-    "amount",
-    "balance",
-    "gst",
-    "pan",
-    "aadhar",
-    "application form",
-    "declaration",
-    "affidavit",
-    "circular",
-    "notice",
-}
-
 TIME_RANGE_RE = re.compile(
     r"\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?\s*-\s*\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?\b"
 )
