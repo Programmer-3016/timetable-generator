@@ -20,7 +20,8 @@ global.gSubjectByShort = {};
 global.gWeeklyQuotaByClass = {};
 global.gCanonFoldMap = {};
 global.CLASS_KEYS = [];
-global.reportData = [];
+global.gFillerLabelsByClass = {};
+global.aggregateStats = {};
 
 // Stub helpers.js functions that validation/scoring depend on
 global.canonicalTeacherName = function (name) {
@@ -55,5 +56,18 @@ if (typeof generateClassKeys === "function") {
 // Load parser, input validator, and scheduler modules
 loadScript("src/js/core/parser.js");
 loadScript("src/js/core/input-validator.js");
+loadScript("src/js/core/scheduler/teacher-helpers.js");
+loadScript("src/js/core/scheduler/counts.js");
+loadScript("src/js/core/scheduler/caps.js");
+loadScript("src/js/core/scheduler/selection.js");
 loadScript("src/js/core/scheduler/validation.js");
 loadScript("src/js/core/scheduler/scoring.js");
+loadScript("src/js/core/scheduler/assignment.js");
+loadScript("src/js/core/scheduler/passes.js");
+loadScript("src/js/core/scheduler/passes-advanced.js");
+loadScript("src/js/core/scheduler/state.js");
+loadScript("src/js/core/scheduler/bootstrap.js");
+loadScript("src/js/core/scheduler/publish.js");
+loadScript("src/js/core/scheduler/render.js");
+loadScript("src/js/core/scheduler/engine.js");
+loadScript("src/js/core/generate.js");
