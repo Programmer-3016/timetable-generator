@@ -64,6 +64,25 @@
       if (el) el.style.display = "none";
     });
 
+    // -- Versions tab layout mode --
+    var appEl = document.querySelector(".app");
+    var controlsEl = document.querySelector(".controls");
+    var tabBarEl = document.getElementById("mainTabBar");
+    var verSlot = document.getElementById("verTabBarSlot");
+    var ttArea = document.querySelector(".timetable-area");
+
+    if (tabName === "versions") {
+      if (appEl) appEl.classList.add("app--versions-mode");
+      if (controlsEl) controlsEl.style.display = "none";
+      if (tabBarEl && verSlot) verSlot.appendChild(tabBarEl);
+    } else {
+      if (appEl) appEl.classList.remove("app--versions-mode");
+      if (controlsEl) controlsEl.style.display = "";
+      if (tabBarEl && ttArea && tabBarEl.parentElement !== ttArea) {
+        ttArea.insertBefore(tabBarEl, ttArea.firstChild);
+      }
+    }
+
     // -- Refresh version panel when switching to versions tab --
     if (tabName === "versions" && typeof renderVersionPanel === "function") {
       renderVersionPanel();

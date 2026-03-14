@@ -403,15 +403,52 @@
         <!-- Section: Versions Panel -->
 
         <div id="versionPanelWrap" style="display:none;">
-          <h3 class="lab-panel-title">Schedule Versions</h3>
-          <div id="versionPanel" class="placeholder-panel">
-            <div class="empty-state">
-              <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/>
-              </svg>
-              <p class="empty-state-title">No saved versions</p>
-              <p class="empty-state-text">Generate a timetable to automatically save a version here.</p>
-            </div>
+          <div class="ver-layout">
+            <aside class="ver-left-pane">
+              <div class="ver-left-head">
+                <button
+                  id="verSidebarToggle"
+                  type="button"
+                  class="ver-left-toggle"
+                  onclick="_toggleVersionSidebar()"
+                  title="Collapse timeline"
+                >
+                  <span class="material-symbols-outlined">menu</span>
+                </button>
+                <h2 class="ver-left-title">Timeline Evolution</h2>
+              </div>
+              <div id="versionPanel" class="placeholder-panel">
+                <div class="empty-state">
+                  <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/>
+                  </svg>
+                  <p class="empty-state-title">No saved versions</p>
+                  <p class="empty-state-text">Generate a timetable to automatically save a version here.</p>
+                </div>
+              </div>
+            </aside>
+
+            <section class="ver-right-pane">
+              <div id="verTabBarSlot" class="ver-tabbar-slot"></div>
+              <main class="ver-right-main">
+                <div class="ver-right-main-top">
+                  <button type="button" class="ver-create-btn" disabled title="Generate a timetable to create a new version">
+                    <span class="material-symbols-outlined">add</span>
+                    Create New Version
+                  </button>
+                </div>
+                <div id="versionDetailsView" class="ver-details-empty">
+                  <div class="empty-state">
+                    <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    <p class="empty-state-title">Select a version</p>
+                    <p class="empty-state-text">Click a version from the timeline to view details.</p>
+                  </div>
+                </div>
+                <div id="versionCompareView" style="display:none;"></div>
+              </main>
+            </section>
           </div>
         </div>
 

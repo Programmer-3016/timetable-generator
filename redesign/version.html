@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d20f2",
+                        "background-light": "#f8fafc",
+                        "sidebar-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<title>Schedule Versions History - Split Screen</title>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-background-light text-slate-900 font-display overflow-hidden;
+            }
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 23.5px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+            z-index: 0;
+        }
+        .tree-branch {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            width: 20px;
+            height: 2px;
+            background: #e2e8f0;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+<div class="fixed inset-0 bg-slate-900/50 z-50 hidden" id="mobile-sidebar">
+<aside class="w-64 h-full bg-white border-r border-slate-200 flex flex-col">
+<div class="p-6 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary size-8 rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">auto_awesome_motion</span>
+</div>
+<span class="font-bold text-xl tracking-tight">TimeTable.ai</span>
+</div>
+<button class="material-symbols-outlined text-slate-400" onclick="document.getElementById('mobile-sidebar').classList.add('hidden')">close</button>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">calendar_today</span>
+<span class="font-medium">Timetables</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">groups</span>
+<span class="font-medium">Faculty</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">science</span>
+<span class="font-medium">Labs</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-primary/5 text-primary rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">history</span>
+<span class="font-bold">Versions</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-100">
+<div class="flex items-center gap-3 p-2">
+<div class="size-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
+<img alt="User" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDT_dCbTn7hK1Uo-fkZCzwkd8M1H7087IEFldbGWRShAsm6rkAsXmnSx32vyGz4aYdePJDdrMaxrBWUA9Ctc-uDbplqPhcyu904cXr8vbkx-BPOefYSIojAXJyclbxZ0jSYxNb4wGSkR8BRq1FzJTEEf3DDwIcLzpqxxKVm2rbQdAornDuYsI7i_bxGXrJty5x-RUZmTveT3iYFOK9sufrf7IOfZgqP_NgeF97ZWuN4sUJ-Id04Wi9eG6nwr5j4hKmZgBTBWuy4EsY"/>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold truncate">Dr. Robert Chen</p>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<div class="flex flex-1 overflow-hidden">
+<div class="w-[400px] bg-white border-r border-slate-200 flex flex-col shrink-0">
+<div class="h-16 border-b border-slate-200 flex items-center px-6 gap-4 shrink-0">
+<button class="p-2 hover:bg-slate-100 rounded-lg transition-colors" onclick="document.getElementById('mobile-sidebar').classList.remove('hidden')">
+<span class="material-symbols-outlined text-slate-600">menu</span>
+</button>
+<h2 class="font-bold text-slate-900 tracking-tight">Timeline Evolution</h2>
+</div>
+<div class="flex-1 overflow-y-auto p-6 no-scrollbar relative">
+<div class="timeline-line"></div>
+<div class="space-y-8 relative">
+<div class="relative pl-12">
+<div class="absolute left-0 top-0 size-12 bg-primary rounded-full border-4 border-white shadow-lg shadow-primary/20 z-10 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">published_with_changes</span>
+</div>
+<div class="cursor-pointer bg-primary/5 border border-primary/20 p-4 rounded-xl ring-2 ring-primary/10">
+<h4 class="font-bold text-sm text-primary uppercase tracking-wider mb-1">Active Version</h4>
+<p class="font-bold text-slate-900 text-base">Spring 2024 Final v2</p>
+<p class="text-xs text-slate-500 mt-1">Oct 24, 2023 · 10:30 AM</p>
+</div>
+</div>
+<div class="relative pl-12">
+<div class="absolute left-0 top-0 size-12 bg-amber-400 rounded-full border-4 border-white shadow-md z-10 flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">edit_document</span>
+</div>
+<div class="cursor-pointer bg-white border border-slate-200 p-4 rounded-xl hover:border-amber-400 transition-colors">
+<h4 class="font-bold text-sm text-amber-600 uppercase tracking-wider mb-1">Current Draft</h4>
+<p class="font-bold text-slate-900 text-base">Summer 2024 Prelim</p>
+<p class="text-xs text-slate-500 mt-1">Oct 28, 2023 · 02:15 PM</p>
+</div>
+</div>
+<div class="relative pl-12">
+<div class="absolute left-0 top-0 size-12 bg-slate-200 rounded-full border-4 border-white shadow-sm z-10 flex items-center justify-center text-slate-500">
+<span class="material-symbols-outlined text-xl">archive</span>
+</div>
+<div class="cursor-pointer bg-white border border-slate-200 p-4 rounded-xl hover:border-slate-400 transition-colors">
+<h4 class="font-bold text-sm text-slate-500 uppercase tracking-wider mb-1">Archived</h4>
+<p class="font-bold text-slate-900 text-base">Fall 2023 Legacy</p>
+<p class="text-xs text-slate-500 mt-1">Aug 12, 2023 · 09:00 AM</p>
+</div>
+</div>
+<div class="relative pl-12">
+<div class="absolute left-0 top-0 size-12 bg-slate-100 rounded-full border-4 border-white z-10 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined text-xl">history</span>
+</div>
+<div class="cursor-pointer bg-white border border-slate-100 p-4 rounded-xl opacity-60">
+<p class="font-bold text-slate-900 text-base">Spring 2023 Final</p>
+<p class="text-xs text-slate-500 mt-1">Jan 05, 2023 · 08:45 AM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex-1 flex flex-col min-w-0 bg-slate-50">
+<header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+<div class="flex items-center gap-4 flex-1 max-w-xl">
+<div class="relative flex-1 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary">search</span>
+<input class="w-full bg-slate-100 border-transparent focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-full py-2 pl-10 pr-4 text-sm transition-all" placeholder="Search versions history..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+                        Create New Version
+                    </button>
+</div>
+</header>
+<div class="bg-white px-8 border-b border-slate-200">
+<div class="flex gap-8">
+<a class="py-4 text-sm font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700 transition-colors" href="#">Inputs</a>
+<a class="py-4 text-sm font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700 transition-colors" href="#">Timetables</a>
+<a class="py-4 text-sm font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700 transition-colors" href="#">Faculty</a>
+<a class="py-4 text-sm font-medium text-slate-500 border-b-2 border-transparent hover:text-slate-700 transition-colors" href="#">Labs</a>
+<a class="py-4 text-sm font-bold text-primary border-b-2 border-primary" href="#">Versions History</a>
+</div>
+</div>
+<main class="flex-1 overflow-y-auto p-12 no-scrollbar">
+<div class="max-w-4xl mx-auto">
+<div class="mb-8 flex items-center justify-between">
+<div>
+<h1 class="text-2xl font-bold text-slate-900">Version Details</h1>
+<p class="text-slate-500 mt-1">Deep dive into the selected iteration of the schedule.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-400 hover:text-slate-600 hover:bg-white border border-transparent hover:border-slate-200 rounded-lg transition-all">
+<span class="material-symbols-outlined">print</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-slate-600 hover:bg-white border border-transparent hover:border-slate-200 rounded-lg transition-all">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<div class="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
+<div class="h-2 bg-primary"></div>
+<div class="p-8">
+<div class="flex items-start justify-between mb-8">
+<div class="flex gap-6">
+<div class="size-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-4xl">published_with_changes</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="text-2xl font-bold text-slate-900">Spring 2024 Final v2</h3>
+<span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wide">Published</span>
+</div>
+<p class="text-base text-slate-500 mt-1 flex items-center gap-2">
+<span class="material-symbols-outlined text-base">schedule</span>
+                                            Created Oct 24, 2023 · 10:30 AM by Dr. Chen
+                                        </p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors shadow-md">View Live Schedule</button>
+<button class="px-6 py-2.5 border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors">Share</button>
+</div>
+</div>
+<div class="space-y-6">
+<div>
+<h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Description</h4>
+<p class="text-slate-600 text-lg leading-relaxed">
+                                        Current active schedule for all departments. Includes the final updated lab rotations and faculty availability overrides for the CS department. This version was finalized after the third round of coordination meetings.
+                                    </p>
+</div>
+<div class="grid grid-cols-3 gap-6 pt-6 border-t border-slate-100">
+<div class="bg-slate-50 p-4 rounded-xl">
+<p class="text-xs font-bold text-slate-400 uppercase tracking-tight mb-1">Total Classes</p>
+<p class="text-2xl font-bold text-slate-900">412</p>
+</div>
+<div class="bg-slate-50 p-4 rounded-xl">
+<p class="text-xs font-bold text-slate-400 uppercase tracking-tight mb-1">Conflicts Resolved</p>
+<p class="text-2xl font-bold text-slate-900">0</p>
+</div>
+<div class="bg-slate-50 p-4 rounded-xl">
+<p class="text-xs font-bold text-slate-400 uppercase tracking-tight mb-1">Efficiency</p>
+<p class="text-2xl font-bold text-slate-900">94.8%</p>
+</div>
+</div>
+</div>
+<div class="mt-8 flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">info</span>
+<span class="text-sm text-slate-600">This version is currently synced with the main display system.</span>
+</div>
+<button class="text-primary text-sm font-bold hover:underline">Manage Sync</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+</body></html>
