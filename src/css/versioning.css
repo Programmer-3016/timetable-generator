@@ -128,84 +128,13 @@
   display: none;
 }
 
-.ver-left-section-head {
-  margin-bottom: 14px;
-}
-
-.ver-left-section-title {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: .01em;
-}
-
-.ver-left-section-subtitle {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: #64748b;
-  line-height: 1.4;
-}
-
-/* -- Compare bar -- */
-.ver-compare-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  background: #eef2ff;
-  border: 1px solid #c7d2fe;
-  border-radius: 12px;
-  padding: 10px 14px;
-}
-
-.ver-compare-hint {
-  font-size: 12px;
-  color: #334155;
-  font-weight: 500;
-  flex: 1;
-}
-
-.ver-compare-btn {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 16px;
-  border: none;
-  border-radius: 8px;
-  background: #0d20f2;
-  color: #fff;
-}
-
-.ver-compare-btn:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-}
-
-.ver-bulk-delete-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 14px;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  background: #fff;
-  color: #dc2626;
-  cursor: pointer;
-  transition: background .15s ease;
-}
-
-.ver-bulk-delete-btn:hover {
-  background: #fef2f2;
-}
-
-.ver-bulk-delete-btn:disabled {
-  opacity: .4;
-  cursor: not-allowed;
-}
-
 /* -- Timeline -- */
+/* Timeline line — grows top-to-bottom */
+@keyframes verLineGrow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
 .ver-timeline-list {
   position: relative;
 }
@@ -217,15 +146,81 @@
   top: 0;
   bottom: 0;
   width: 2px;
-  background: #e2e8f0;
+  background: linear-gradient(180deg, #c7d2fe 0%, #e2e8f0 100%);
   z-index: 0;
+  transform-origin: top center;
+  animation: verLineGrow .5s ease-out both;
 }
 
+/* Node — pop-in with scale bounce */
+@keyframes verNodePop {
+  0%   { transform: scale(0); opacity: 0; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Card — slide in from left with fade */
+@keyframes verCardSlide {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Stagger using CSS counters via nth-child */
 .ver-timeline-item {
   position: relative;
   padding-left: 48px;
   margin-bottom: 32px;
   cursor: pointer;
+}
+
+.ver-timeline-item .ver-node {
+  animation: verNodePop .35s ease-out both;
+}
+
+.ver-timeline-item .ver-timeline-card {
+  animation: verCardSlide .3s ease-out both;
+}
+
+/* Staggered delays — up to 10 items per group */
+.ver-timeline-item:nth-child(1) .ver-node  { animation-delay: .05s; }
+.ver-timeline-item:nth-child(1) .ver-timeline-card { animation-delay: .1s; }
+.ver-timeline-item:nth-child(2) .ver-node  { animation-delay: .12s; }
+.ver-timeline-item:nth-child(2) .ver-timeline-card { animation-delay: .17s; }
+.ver-timeline-item:nth-child(3) .ver-node  { animation-delay: .19s; }
+.ver-timeline-item:nth-child(3) .ver-timeline-card { animation-delay: .24s; }
+.ver-timeline-item:nth-child(4) .ver-node  { animation-delay: .26s; }
+.ver-timeline-item:nth-child(4) .ver-timeline-card { animation-delay: .31s; }
+.ver-timeline-item:nth-child(5) .ver-node  { animation-delay: .33s; }
+.ver-timeline-item:nth-child(5) .ver-timeline-card { animation-delay: .38s; }
+.ver-timeline-item:nth-child(6) .ver-node  { animation-delay: .40s; }
+.ver-timeline-item:nth-child(6) .ver-timeline-card { animation-delay: .45s; }
+.ver-timeline-item:nth-child(7) .ver-node  { animation-delay: .47s; }
+.ver-timeline-item:nth-child(7) .ver-timeline-card { animation-delay: .52s; }
+.ver-timeline-item:nth-child(8) .ver-node  { animation-delay: .54s; }
+.ver-timeline-item:nth-child(8) .ver-timeline-card { animation-delay: .59s; }
+.ver-timeline-item:nth-child(9) .ver-node  { animation-delay: .61s; }
+.ver-timeline-item:nth-child(9) .ver-timeline-card { animation-delay: .66s; }
+.ver-timeline-item:nth-child(10) .ver-node { animation-delay: .68s; }
+.ver-timeline-item:nth-child(10) .ver-timeline-card { animation-delay: .73s; }
+
+/* Active node has a subtle pulse glow */
+@keyframes verActivePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(13, 32, 242, 0.25); }
+  50%      { box-shadow: 0 0 0 6px rgba(13, 32, 242, 0); }
+}
+
+.ver-timeline-item--active .ver-node {
+  animation: verNodePop .35s ease-out both, verActivePulse 2.5s ease-in-out 1s infinite;
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .ver-timeline-list::before,
+  .ver-timeline-item .ver-node,
+  .ver-timeline-item .ver-timeline-card,
+  .ver-timeline-item--active .ver-node {
+    animation: none !important;
+  }
 }
 
 .ver-timeline-item:last-child {
@@ -244,6 +239,11 @@
   justify-content: center;
   border: 4px solid #fff;
   z-index: 1;
+  transition: transform .15s ease;
+}
+
+.ver-timeline-item:hover .ver-node {
+  transform: scale(1.08);
 }
 
 .ver-node.ver-tone-active {
@@ -351,12 +351,6 @@
   line-height: 1.4;
 }
 
-.ver-compare-check {
-  width: 15px;
-  height: 15px;
-  accent-color: #0d20f2;
-}
-
 .ver-star {
   border: none;
   background: none;
@@ -411,12 +405,6 @@
   overflow-y: auto;
   flex: 1;
   min-height: 0;
-}
-
-.ver-details-empty .empty-state {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
 }
 
 #versionDetailsView,

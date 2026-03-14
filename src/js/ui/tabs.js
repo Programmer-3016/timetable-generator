@@ -89,7 +89,6 @@
     }
 
     // -- Keep legacy view class in sync so other code isn't broken --
-    var ttArea = document.querySelector(".timetable-area");
     if (ttArea) {
       ttArea.classList.remove("view-inputs", "view-timetable");
       if (tabName === "inputs") {
