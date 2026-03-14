@@ -29,9 +29,14 @@ function renderVersionPanel() {
   }
 
   var html = "";
+  html += '<div class="ver-left-section-head">';
+  html += '<h3 class="ver-left-section-title">Version History</h3>';
+  html += '<p class="ver-left-section-subtitle">Select a version to view details, compare, or delete.</p>';
+  html += '</div>';
   html += '<div class="ver-compare-bar" id="verCompareBar">';
-  html += '<span class="ver-compare-hint">Select 2 versions to compare</span>';
-  html += '<button type="button" class="secondary ver-compare-btn" id="verCompareBtn" disabled onclick="_onCompareClick()">Compare</button>';
+  html += '<span class="ver-compare-hint">Select versions to compare or delete</span>';
+  html += '<button type="button" class="ver-compare-btn" id="verCompareBtn" disabled onclick="_onCompareClick()">Compare</button>';
+  html += '<button type="button" class="ver-bulk-delete-btn" id="verBulkDeleteBtn" disabled onclick="_onBulkDeleteClick()"><span class="material-symbols-outlined" style="font-size:14px">delete</span> Delete</button>';
   html += "</div>";
 
   html += '<div class="ver-timeline-list">';
@@ -41,7 +46,7 @@ function renderVersionPanel() {
     var toneClass = _timelineToneClass(v, i);
     var toneLabel = _timelineToneLabel(v, i);
 
-    html += '<div class="ver-timeline-item' + (_selectedVersionId === v.id ? ' ver-timeline-item--active' : '') + '" data-version-id="' + v.id + '" onclick="_onVersionCardClick(' + v.id + ')">';
+    html += '<div class="ver-timeline-item ver-timeline-item--tone-' + _timelineToneKey(v, i) + '' + (_selectedVersionId === v.id ? ' ver-timeline-item--active' : '') + '" data-version-id="' + v.id + '" onclick="_onVersionCardClick(' + v.id + ')">';
     html += '<div class="ver-node ' + toneClass + '">';
     html += '<span class="material-symbols-outlined">' + _timelineToneIcon(v, i) + '</span>';
     html += '</div>';
@@ -58,9 +63,7 @@ function renderVersionPanel() {
     html += '</div>';
 
     html += '<p class="ver-timeline-name" id="verLabel' + v.id + '">' + _escVerHtml(v.label) + '</p>';
-    html += '<p class="ver-timeline-meta">' + _formatTimestamp(v.timestamp);
-    if (v.seed != null) html += ' • seed ' + v.seed;
-    html += ' • ' + (v.enabledKeys || []).length + ' classes</p>';
+    html += '<p class="ver-timeline-meta">' + _formatTimestamp(v.timestamp) + ' • ' + (v.enabledKeys || []).length + ' classes</p>';
     html += '</div>';
     html += '</div>';
   }
@@ -110,8 +113,20 @@ function _renderVersionDetails(v) {
 
   var badgeClass = v.valid ? 'ver-valid' : 'ver-invalid';
   var badgeLabel = v.valid ? 'Published' : 'Issues';
+  var stageLabel = _versionStageLabel(v);
+  var descText = _versionDescription(v);
 
   var html = '';
+  html += '<div class="ver-detail-top-tools">';
+  html += '<div>';
+  html += '<h2 class="ver-page-title">Version Details</h2>';
+  html += '<p class="ver-page-subtitle">Deep dive into the selected iteration of the schedule.</p>';
+  html += '</div>';
+  html += '<div class="ver-detail-tools">';
+  html += '<button type="button" class="ver-icon-btn" onclick="_onPrintClick()" title="Print details"><span class="material-symbols-outlined">print</span></button>';
+  html += '<button type="button" class="ver-icon-btn" onclick="_onDownloadClick(' + v.id + ')" title="Download version"><span class="material-symbols-outlined">download</span></button>';
+  html += '</div>';
+  html += '</div>';
   html += '<div class="ver-detail-card">';
   html += '<div class="ver-detail-topbar"></div>';
   html += '<div class="ver-detail-body">';
@@ -122,15 +137,23 @@ function _renderVersionDetails(v) {
   html += '<div class="ver-detail-text">';
   html += '<div class="ver-detail-title-row">';
   html += '<h3 class="ver-detail-title">' + _escVerHtml(v.label) + '</h3>';
+  if (stageLabel === 'Current Draft') {
+    html += '<span class="ver-badge ver-draft">Current Draft</span>';
+  }
   html += '<span class="ver-badge ' + badgeClass + '">' + badgeLabel + '</span>';
   html += '</div>';
-  html += '<p class="ver-detail-meta"><span class="material-symbols-outlined">schedule</span>' + _formatTimestamp(v.timestamp) + (v.seed != null ? (' • seed ' + v.seed) : '') + '</p>';
+  html += '<p class="ver-detail-meta"><span class="material-symbols-outlined">schedule</span>' + _formatTimestamp(v.timestamp) + '</p>';
   html += '</div>';
   html += '</div>';
   html += '<div class="ver-detail-cta">';
   html += '<button type="button" class="ver-btn-primary" onclick="_onLoadClick(' + v.id + ')">Load Schedule</button>';
   html += '<button type="button" class="ver-btn-secondary" onclick="_onRenameClick(' + v.id + ')">Rename</button>';
   html += '</div>';
+  html += '</div>';
+
+  html += '<div class="ver-detail-section">';
+  html += '<h4 class="ver-detail-section-title">Description</h4>';
+  html += '<p class="ver-detail-desc" id="verDescText' + v.id + '" onclick="_onDescClick(' + v.id + ')" title="Click to edit description">' + _escVerHtml(descText) + '</p>';
   html += '</div>';
 
   html += '<div class="ver-detail-stats">';
@@ -154,6 +177,12 @@ function _timelineToneClass(v, idx) {
   if (idx === 0) return 'ver-tone-active';
   if (v.starred) return 'ver-tone-draft';
   return 'ver-tone-archived';
+}
+
+function _timelineToneKey(v, idx) {
+  if (idx === 0) return 'active';
+  if (v.starred) return 'draft';
+  return 'archived';
 }
 
 function _timelineToneLabel(v, idx) {
@@ -202,8 +231,10 @@ function _onDeleteClick(id) {
 
 function _onCompareCheckChange() {
   var checks = document.querySelectorAll('.ver-compare-check:checked');
-  var btn = document.getElementById('verCompareBtn');
-  if (btn) btn.disabled = checks.length !== 2;
+  var compareBtn = document.getElementById('verCompareBtn');
+  var bulkBtn = document.getElementById('verBulkDeleteBtn');
+  if (compareBtn) compareBtn.disabled = checks.length !== 2;
+  if (bulkBtn) bulkBtn.disabled = checks.length < 1;
 }
 
 function _onCompareClick() {
@@ -218,6 +249,76 @@ function _onCompareClick() {
 
   var diff = diffScheduleVersions(v1, v2);
   if (diff) renderCompareView(diff);
+}
+
+function _onPrintClick() {
+  window.print();
+}
+
+function _onDownloadClick(id) {
+  var version = getVersionById(id);
+  if (!version) return;
+  var fileName = 'version-' + id + '.json';
+  var blob = new Blob([JSON.stringify(version, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function _onDescClick(id) {
+  var el = document.getElementById('verDescText' + id);
+  if (!el || el.querySelector('textarea')) return;
+
+  var version = getVersionById(id);
+  var editVal = (version && typeof version.description === 'string') ? version.description : '';
+
+  el.innerHTML = '<textarea class="ver-desc-edit" id="verDescEdit' + id + '" rows="3">' + _escVerHtml(editVal) + '</textarea>'
+    + '<div class="ver-desc-actions">'
+    + '<button type="button" class="ver-btn-primary ver-desc-save" onclick="_onDescSave(' + id + ')">Save</button>'
+    + '<button type="button" class="ver-btn-secondary ver-desc-cancel" onclick="renderVersionPanel()">Cancel</button>'
+    + '</div>';
+
+  var textarea = document.getElementById('verDescEdit' + id);
+  if (textarea) { textarea.focus(); textarea.select(); }
+}
+
+function _onDescSave(id) {
+  var textarea = document.getElementById('verDescEdit' + id);
+  if (!textarea) return;
+  var newDesc = textarea.value.trim();
+  updateVersionDescription(id, newDesc);
+  _selectedVersionId = id;
+  renderVersionPanel();
+  if (typeof showToast === 'function') {
+    showToast('Description updated.', { type: 'success', duration: 2000 });
+  }
+}
+
+function _onBulkDeleteClick() {
+  var checks = document.querySelectorAll('.ver-compare-check:checked');
+  if (checks.length < 1) return;
+
+  var ids = [];
+  for (var i = 0; i < checks.length; i++) {
+    ids.push(parseInt(checks[i].getAttribute('data-vid'), 10));
+  }
+
+  if (!confirm('Delete ' + ids.length + ' selected version' + (ids.length > 1 ? 's' : '') + '?')) return;
+
+  var deleted = bulkDeleteVersions(ids);
+  // Clear selection if current was deleted
+  for (var j = 0; j < ids.length; j++) {
+    if (_selectedVersionId === ids[j]) { _selectedVersionId = null; break; }
+  }
+  renderVersionPanel();
+  if (typeof showToast === 'function') {
+    showToast(deleted + ' version' + (deleted > 1 ? 's' : '') + ' deleted.', { type: 'info', duration: 2000 });
+  }
 }
 
 function onVersionAutoSave() {
@@ -244,9 +345,13 @@ function _formatTimestamp(isoStr) {
     var d = new Date(isoStr);
     var day = String(d.getDate()).padStart(2, '0');
     var mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
-    var hr = String(d.getHours()).padStart(2, '0');
+    var yr = d.getFullYear();
+    var rawHr = d.getHours();
+    var ampm = rawHr >= 12 ? 'PM' : 'AM';
+    var hr12 = rawHr % 12 || 12;
+    var hr = String(hr12).padStart(2, '0');
     var min = String(d.getMinutes()).padStart(2, '0');
-    return day + ' ' + mon + ' ' + hr + ':' + min;
+    return mon + ' ' + day + ', ' + yr + ' · ' + hr + ':' + min + ' ' + ampm;
   } catch (_) {
     return isoStr;
   }
@@ -258,6 +363,28 @@ function _escVerHtml(str) {
   return div.innerHTML;
 }
 
+function _versionStageLabel(v) {
+  var versions = loadScheduleVersions();
+  for (var i = 0; i < versions.length; i++) {
+    if (versions[i].id === v.id) {
+      if (i === 0) return 'Active Version';
+      if (v.starred) return 'Current Draft';
+      return 'Archived';
+    }
+  }
+  return v.starred ? 'Current Draft' : 'Archived';
+}
+
+function _versionDescription(v) {
+  if (typeof v.description === 'string' && v.description.trim()) {
+    return v.description.trim();
+  }
+  var base = v.valid
+    ? 'This version captures a stable timetable snapshot with validated class allocations.'
+    : 'This version contains pending constraint issues and may require review before use.';
+  return base + ' Snapshot saved on ' + _formatTimestamp(v.timestamp) + '.';
+}
+
 window._onVersionCardClick = _onVersionCardClick;
 window._onLoadClick = _onLoadClick;
 window._onRenameClick = _onRenameClick;
@@ -266,6 +393,11 @@ window._onDeleteClick = _onDeleteClick;
 window._onCompareCheckChange = _onCompareCheckChange;
 window._onCompareClick = _onCompareClick;
 window._toggleVersionSidebar = _toggleVersionSidebar;
+window._onPrintClick = _onPrintClick;
+window._onDownloadClick = _onDownloadClick;
+window._onDescClick = _onDescClick;
+window._onDescSave = _onDescSave;
+window._onBulkDeleteClick = _onBulkDeleteClick;
 
 function _toggleVersionSidebar() {
   var layout = document.querySelector('.ver-layout');

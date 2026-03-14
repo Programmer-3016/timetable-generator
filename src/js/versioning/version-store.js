@@ -14,7 +14,9 @@
    loadScheduleVersions,
    saveScheduleVersion,
    deleteScheduleVersion,
+   bulkDeleteVersions,
    renameScheduleVersion,
+   updateVersionDescription,
    toggleStarVersion,
    loadScheduleVersionById,
    getVersionById,
@@ -158,6 +160,47 @@ function renameScheduleVersion(id, newLabel) {
     }
   }
   return false;
+}
+
+/**
+ * Update the description of a version.
+ * @param {number} id
+ * @param {string} desc
+ * @returns {boolean} true if updated
+ */
+function updateVersionDescription(id, desc) {
+  var versions = loadScheduleVersions();
+  for (var i = 0; i < versions.length; i++) {
+    if (versions[i].id === id) {
+      versions[i].description = (desc || "").trim();
+      _saveVersionsToStorage(versions);
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Delete multiple versions by IDs.
+ * @param {Array<number>} ids
+ * @returns {number} count of deleted versions
+ */
+function bulkDeleteVersions(ids) {
+  if (!ids || !ids.length) return 0;
+  var versions = loadScheduleVersions();
+  var idSet = {};
+  for (var j = 0; j < ids.length; j++) { idSet[ids[j]] = true; }
+  var remaining = [];
+  var deleted = 0;
+  for (var i = 0; i < versions.length; i++) {
+    if (idSet[versions[i].id]) {
+      deleted++;
+    } else {
+      remaining.push(versions[i]);
+    }
+  }
+  if (deleted > 0) _saveVersionsToStorage(remaining);
+  return deleted;
 }
 
 /**
