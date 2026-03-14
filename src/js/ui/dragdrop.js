@@ -228,7 +228,7 @@ function flashSwapCells(cells, className) {
     c.classList.remove("swap-flash", "swap-error");
     void c.offsetWidth;
     c.classList.add(className);
-    setTimeout(() => c.classList.remove(className), 600);
+    setTimeout(() => c.classList.remove(className), 600); // matches CSS transition duration
   });
 }
 

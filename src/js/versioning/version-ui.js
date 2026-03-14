@@ -176,7 +176,7 @@ function _timelineToneIcon(v, idx) {
 function _onLoadClick(id) {
   var ok = loadScheduleVersionById(id);
   if (ok && typeof renderVersionPanel === 'function') {
-    setTimeout(function () { renderVersionPanel(); }, 200);
+    setTimeout(function () { renderVersionPanel(); }, 200); // wait for DOM to settle after load
   }
 }
 

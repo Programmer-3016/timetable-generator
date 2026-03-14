@@ -81,7 +81,7 @@ function triggerBlobDownload(blob, filename) {
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 30000);
+  setTimeout(() => URL.revokeObjectURL(url), 30000); // 30s delay to ensure download completes
 }
 
 async function createFileSaveTarget(suggestedFilename, options = {}) {

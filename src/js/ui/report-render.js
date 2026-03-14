@@ -295,8 +295,9 @@ function renderReport() {
     if (r.status === "err")
       statusHtml = `<span class='pill err'>✗ ${r.flags.join(" · ")}</span>`;
     const zebraClass = i % 2 === 0 ? "report-row-even" : "report-row-odd";
-    html += `<tr class="report-row ${zebraClass}" data-teacher="${r.teacher}">
-<td class="teacher-cell" title="${r.teacher}">${r.teacher}</td>
+    const safeTeacher = _escHtml(r.teacher);
+    html += `<tr class="report-row ${zebraClass}" data-teacher="${safeTeacher}">
+<td class="teacher-cell" title="${safeTeacher}">${safeTeacher}</td>
 <td class="num-cell">${r.theory}</td>
 <td class="num-cell">${r.labs}</td>
 <td class="num-cell">${hrs}</td>

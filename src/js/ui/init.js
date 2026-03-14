@@ -346,7 +346,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Updates visibility of class input rows based on count, page, and search state.
    */
   function applyCountVisibility() {
-    const n = parseInt(countSel?.value || "1");
+    const n = parseInt(countSel?.value || "1", 10);
     const pageSize = 5;
     const needle = normalizeSearchText(inputSearchQuery);
     const rawNeedle = String(inputSearchQuery || "").trim();
@@ -440,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   if (pagerNext)
     pagerNext.addEventListener("click", () => {
-      const n = parseInt(countSel?.value || "1");
+      const n = parseInt(countSel?.value || "1", 10);
       const totalPages = Math.max(1, Math.ceil(n / 5));
       if (pagerIndex < totalPages - 1) {
         pagerIndex++;
@@ -527,7 +527,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * @returns {number[]} Sorted 1-based class indices.
      */
     function parseClassRange(text, visiblePageOnly = false) {
-      const n = parseInt(countSel?.value || "5");
+      const n = parseInt(countSel?.value || "5", 10);
       let indices = new Set();
       // Adds index to set if within valid class range
       const add = (i) => {

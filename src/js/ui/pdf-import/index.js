@@ -4,7 +4,10 @@
  */
 
 const USE_BACKEND_IMPORT = true;
-const BACKEND_IMPORT_URL = "http://127.0.0.1:8001/api/import/process";
+// Configure via environment or override for production deployment
+const BACKEND_IMPORT_URL =
+  (typeof IMPORT_API_URL !== "undefined" && IMPORT_API_URL) ||
+  "http://127.0.0.1:8001/api/import/process";
 const BACKEND_TIMEOUT_MS = 300000;
 const BACKEND_APPLY_SCRIPT_SRC = "src/js/ui/pdf-import/backend-apply.js";
 const IMPORT_ERROR_MODAL_ID = "backendImportErrorOverlay";
