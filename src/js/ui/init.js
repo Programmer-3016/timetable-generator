@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
       inputsPanel.querySelectorAll("textarea").forEach(autoGrowTextarea);
     }, 100);
   }
-  window._autoGrowTextarea = autoGrowTextarea;
+
 
   const countSel = document.getElementById("classCount");
   const pagerPrev = document.getElementById("inputsPrev");

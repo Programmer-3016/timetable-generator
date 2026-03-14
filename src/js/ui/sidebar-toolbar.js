@@ -84,23 +84,23 @@ function applyClassNameFilter(query = "") {
  * Builds the class filter controls.
  */
 function buildToolbar() {
-    const classFilterInput = document.getElementById("classFilterInput");
-    if (classFilterInput) {
-      classFilterInput.value = gClassFilterQuery;
-      classFilterInput.addEventListener("input", (e) => {
-        applyClassNameFilter(e.target.value);
-      });
-    }
-    const clearClassFilterBtn = document.getElementById("clearClassFilterBtn");
-    if (clearClassFilterBtn) {
-      clearClassFilterBtn.addEventListener("click", () => {
-        const input = document.getElementById("classFilterInput");
-        if (input) input.value = "";
-        applyClassNameFilter("");
-      });
-    }
+  const classFilterInput = document.getElementById("classFilterInput");
+  if (classFilterInput) {
+    classFilterInput.value = gClassFilterQuery;
+    classFilterInput.addEventListener("input", (e) => {
+      applyClassNameFilter(e.target.value);
+    });
+  }
+  const clearClassFilterBtn = document.getElementById("clearClassFilterBtn");
+  if (clearClassFilterBtn) {
+    clearClassFilterBtn.addEventListener("click", () => {
+      const input = document.getElementById("classFilterInput");
+      if (input) input.value = "";
+      applyClassNameFilter("");
+    });
+  }
 
-    refreshSidebarToggleButton();
+  refreshSidebarToggleButton();
 }
 
 refreshSidebarToggleButton();

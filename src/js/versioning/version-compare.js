@@ -161,11 +161,6 @@ function closeCompareView() {
     container.innerHTML = "";
     container.style.display = "none";
   }
-  // Deselect compare checkboxes
-  var checks = document.querySelectorAll(".ver-compare-check");
-  for (var i = 0; i < checks.length; i++) {
-    checks[i].checked = false;
-  }
 }
 
 /** Escape HTML for safe insertion. */
