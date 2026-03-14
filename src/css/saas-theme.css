@@ -122,9 +122,7 @@ body {
 .controls input[type="text"]:focus,
 .controls input[type="number"]:focus,
 .controls input[type="time"]:focus,
-.controls select:focus,
-.controls input[type="text"]:focus,
-.controls input[type="number"]:focus {
+.controls select:focus {
   outline: none;
   border-color: var(--border-focus);
   background: #ffffff;

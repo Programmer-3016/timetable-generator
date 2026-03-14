@@ -79,7 +79,7 @@ function validateInputsBeforeGenerate() {
       lines.forEach((line) => {
         const parts = line.split("-").map((p) => p.trim());
         const creditPart = parts[parts.length - 1];
-        const credit = parseInt(creditPart);
+        const credit = parseInt(creditPart, 10);
         if (Number.isFinite(credit) && credit > 0) {
           totalCredits += credit;
         }

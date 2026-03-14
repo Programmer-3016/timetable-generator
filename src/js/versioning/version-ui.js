@@ -290,9 +290,7 @@ function _formatTimestamp(isoStr) {
 }
 
 function _escVerHtml(str) {
-  var div = document.createElement('div');
-  div.appendChild(document.createTextNode(str || ''));
-  return div.innerHTML;
+  return _escHtml(str);
 }
 
 function _versionStageLabel(v) {
