@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  frontend:
+    image: nginx:alpine
+    ports:
+      - "5501:80"
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./python/import_classifier
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./python/import_classifier/.env.example
+    restart: unless-stopped

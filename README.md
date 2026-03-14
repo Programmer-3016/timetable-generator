@@ -1,4 +1,4 @@
-# 📅 Timetable Generator
+# 📅 Antigravity — Timetable Generator
 
 ![CI](https://github.com/Programmer-3016/timetable-generator/actions/workflows/ci.yml/badge.svg)
 
@@ -67,8 +67,10 @@ flowchart LR
 ```
 Project_T/
 ├── timetable.html                  # Single-page app shell
-├── package.json                    # Node config (Jest, ESLint, Prettier)
+├── package.json                    # Node config (Jest, ESLint, esbuild)
 ├── jest.config.js                  # Test runner config
+├── scripts/
+│   └── build.js                    # Production bundler (esbuild)
 │
 ├── src/
 │   ├── css/                        # Modular stylesheets (7 files)
@@ -181,7 +183,7 @@ Project_T/
 
 ### Frontend
 
-No build step required — it's vanilla HTML/CSS/JS.
+No build step required for development — it's vanilla HTML/CSS/JS.
 
 ```bash
 # Option 1: Open directly
@@ -193,14 +195,22 @@ python3 -m http.server 5501
 # → http://localhost:5501/timetable.html
 ```
 
+### Production Build
+
+```bash
+npm run build
+# → dist/index.html (bundled & minified: 46 JS → 1, 7 CSS → 1)
+```
+
 ### Backend (PDF Import)
 
 ```bash
 cd python/import_classifier
+cp .env.example .env              # Review default settings
 python3 -m venv .venv
 source .venv/bin/activate         # Linux/macOS
 pip install -r requirements.txt
-python3 -m import_classifier.app
+uvicorn import_classifier.app:app --host 127.0.0.1 --port 8001 --reload
 # → API at http://127.0.0.1:8001
 ```
 
@@ -217,6 +227,15 @@ source .venv/bin/activate
 pytest tests/ -v
 ```
 
+### Docker (Full Stack)
+
+```bash
+npm run build                     # Build frontend bundle first
+docker compose up --build
+# → Frontend at http://localhost:5501
+# → Backend  at http://localhost:8001
+```
+
 ---
 
 ## 🛠️ Tech Stack
@@ -224,6 +243,7 @@ pytest tests/ -v
 | Layer       | Technology                                     |
 | ----------- | ---------------------------------------------- |
 | Frontend    | Vanilla HTML + CSS + JavaScript (no framework) |
+| Build       | esbuild (production bundling & minification)   |
 | Styling     | Modular CSS with CSS variables, Inter font     |
 | Backend     | Python 3 · FastAPI · Uvicorn                   |
 | PDF Parsing | PyMuPDF · pdfplumber · Tesseract OCR           |
@@ -262,7 +282,7 @@ Planned improvements (not in any specific order):
 - [ ] Better error messages & user guidance
 - [ ] Performance optimization for large timetables (50+ classes)
 - [ ] API rate limiting & input sanitization
-- [ ] Docker containerization for backend
+- [x] Docker containerization for backend
 
 ---
 
