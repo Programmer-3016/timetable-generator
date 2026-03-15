@@ -613,7 +613,7 @@ function pdfImportSanitizeOcrLine(rawLine) {
 /** @returns {string[]} Sanitized text lines extracted from a Tesseract OCR result object. */
 function pdfImportExtractLinesFromOcrResult(ocrResult) {
   // lines extracted from structured OCR data
-  const fromStructured = ((ocrResult?.data?.lines || []) || [])
+  const fromStructured = (ocrResult?.data?.lines || [])
     .map((entry) => pdfImportSanitizeOcrLine(entry?.text || ""))
     .filter(Boolean);
 
@@ -1092,5 +1092,3 @@ function pdfImportAssessImportQuality(lines, classes) {
     summary: `${classCount} class(es), ${rawLineCount} raw line(s), ${issues.length} blocking issue(s).`,
   };
 }
-
-// Subsection: Form Apply and File Workflow

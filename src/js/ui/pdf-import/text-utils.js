@@ -759,8 +759,6 @@ function pdfImportLooksLikeNoiseSubject(text) {
   if (/^\s*room\s*[-:]/i.test(t)) return true;
   if (/^\s*day\s*[-:]/i.test(t)) return true;
   if (/\bday\b/i.test(t)) return true;
-  if (/\bday\b/i.test(t) && /\b(?:mon|tue|wed|thu|fri|sat|sun|\d{1,2})\b/i.test(t))
-    return true;
   if (/^\s*(?:mon|tue|wed|thu|fri|sat|sun)\s*[-:]/i.test(t)) return true;
   if (/\b\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}\b/.test(t)) return true;
   if (/\beven\s+semester\b/i.test(t)) return true;

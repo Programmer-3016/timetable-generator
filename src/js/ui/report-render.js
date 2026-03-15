@@ -5,8 +5,6 @@
  * @description Report table UI rendering and sorting interactions.
  */
 
-// Section: REPORT TABLE RENDERING
-
 // Section: CLASH DASHBOARD METRICS
 
 /**

@@ -178,5 +178,3 @@ function pdfImportExtractLtpFromLine(line) {
 
   return "";
 }
-
-// Subsection: Subject Entry Construction
