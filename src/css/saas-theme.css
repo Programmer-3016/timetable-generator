@@ -607,6 +607,7 @@ button:disabled {
   padding: 0;
   margin: 0;
   overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 /* Remove the pseudo-divider that was used before */
@@ -710,6 +711,7 @@ td.break {
   color: #032d60;
   padding: 6px 10px;
   line-height: 1.35;
+  position: relative;
 }
 
 /* Suppress browser focus ring on editable timetable cells */
@@ -796,34 +798,45 @@ td.break {
 }
 
 .empty-state {
-  padding: 64px 24px;
+  padding: 72px 24px;
   gap: 14px;
   min-height: 220px;
+  background: linear-gradient(180deg, transparent 0%, rgba(241, 245, 249, 0.5) 100%);
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
 }
 
 .empty-state-icon {
   width: 56px;
   height: 56px;
+  padding: 0;
+  background: none;
+  border-radius: 0;
   color: #032d60;
+  box-shadow: none;
   filter: none;
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
 .empty-state-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #181818;
+  font-size: 17px;
+  font-weight: 800;
+  color: #032d60;
   margin: 8px 0 0;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .empty-state-text {
   font-size: 13.5px;
   color: #706e6b;
-  max-width: 300px;
-  line-height: 1.6;
+  max-width: 320px;
+  line-height: 1.65;
   margin: 0;
   text-align: center;
+}
+
+.empty-state-text strong {
+  color: var(--primary);
+  font-weight: 700;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1368,25 +1381,40 @@ td.break {
 /* ═══════════════════════════════════════════════════════
    SECTION 12: EXPORT FOOTER
 ═══════════════════════════════════════════════════════ */
-/* Export footer — styled as a compact bar (#14 prep) */
+/* Export footer — styled as a sticky bar */
 #globalExport {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
-  padding: 14px 16px;
-  margin: 8px 0 0;
-  background: #f4f6f9;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(248, 250, 252, 0.85);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  box-shadow: var(--shadow-sm);
+  border-radius: 12px 12px 0 0;
+  padding: 12px 20px;
+  margin: 0;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
 }
 
 #globalExport .link-btn {
-  font-size: 12.5px;
-  padding: 7px 14px;
+  font-size: 13px;
+  padding: 8px 16px;
   gap: 6px;
+  border-radius: 8px;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    transform 100ms ease;
+}
+
+#globalExport .link-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.12);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1577,7 +1605,7 @@ td.break {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 18: FULLWIDE (SIDEBAR COLLAPSED) MODE
+   SECTION 16: FULLWIDE (SIDEBAR COLLAPSED) MODE
 ═══════════════════════════════════════════════════════ */
 body.fullwide .controls {
   padding: 0;
@@ -1591,20 +1619,16 @@ body.fullwide #sidebarToggleBtn {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 19: SUBJECT COLOR CODING IN TIMETABLE CELLS
+   SECTION 17: SUBJECT COLOR CODING IN TIMETABLE CELLS
    Pastel-coded by slot number — automatically applied
 ═══════════════════════════════════════════════════════ */
-.subject-cell {
-  position: relative;
-}
-
 .subject-cell:not(:empty) {
   background: #f0f7ff;
   border-left: 2px solid #0176d3;
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 20: MISC UI POLISH
+   SECTION 18: MISC UI POLISH
 ═══════════════════════════════════════════════════════ */
 /* Smooth, consistent focus ring for all interactive elements */
 *:focus-visible {
@@ -1693,7 +1717,7 @@ a:hover {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 21: PREMIUM SKELETON LOADERS
+   SECTION 19: PREMIUM SKELETON LOADERS
    Overrides skeleton.css for a polished SaaS look.
 ═══════════════════════════════════════════════════════ */
 
@@ -1793,14 +1817,10 @@ a:hover {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 22: MICRO-INTERACTIONS & POLISH
+   SECTION 20: MICRO-INTERACTIONS & POLISH
 ═══════════════════════════════════════════════════════ */
 
 /* Smooth hover lift for cards */
-.class-block {
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-
 .class-block:hover {
   box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
 }
@@ -1825,78 +1845,7 @@ tbody tr {
 }
 
 /* ═══════════════════════════════════════════════════════
-   SECTION 24: ENHANCED EMPTY STATES
-═══════════════════════════════════════════════════════ */
-.empty-state {
-  padding: 72px 24px;
-  background: linear-gradient(180deg, transparent 0%, rgba(241, 245, 249, 0.5) 100%);
-  border-radius: 0 0 var(--radius-card) var(--radius-card);
-}
-
-.empty-state-icon {
-  width: 56px;
-  height: 56px;
-  padding: 0;
-  background: none;
-  border-radius: 0;
-  color: #032d60;
-  box-shadow: none;
-  opacity: 0.8;
-}
-
-.empty-state-title {
-  font-size: 17px;
-  font-weight: 800;
-  color: #032d60;
-  letter-spacing: -0.02em;
-}
-
-.empty-state-text {
-  font-size: 13.5px;
-  color: #706e6b;
-  max-width: 320px;
-  line-height: 1.65;
-}
-
-.empty-state-text strong {
-  color: var(--primary);
-  font-weight: 700;
-}
-
-/* ═══════════════════════════════════════════════════════
-   SECTION 25: STICKY EXPORT BAR
-═══════════════════════════════════════════════════════ */
-#globalExport {
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  background: rgba(248, 250, 252, 0.85);
-  border: 1px solid var(--border);
-  border-radius: 12px 12px 0 0;
-  padding: 12px 20px;
-  margin: 0;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-}
-
-#globalExport .link-btn {
-  font-size: 13px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  transition:
-    background var(--transition),
-    border-color var(--transition),
-    transform 100ms ease;
-}
-
-#globalExport .link-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.12);
-}
-
-/* ═══════════════════════════════════════════════════════
-   SECTION 26: TOOLTIP ON HOVER (for sidebar labels)
+   SECTION 21: TOOLTIP ON HOVER (for sidebar labels)
 ═══════════════════════════════════════════════════════ */
 [data-tooltip] {
   position: relative;

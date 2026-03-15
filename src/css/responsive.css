@@ -349,16 +349,6 @@
     width: 100%;
   }
 
-  /* Report panel */
-  #reportPanel {
-    overflow-x: auto;
-  }
-
-  #reportPanel table {
-    min-width: 760px;
-    width: 100%;
-    table-layout: auto;
-  }
 }
 
 /* ═══════════════════════════════════════════════════════
