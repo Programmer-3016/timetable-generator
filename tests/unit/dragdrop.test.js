@@ -43,7 +43,7 @@ beforeEach(() => {
 
   document.body.innerHTML = "";
 
-  // ── Undo / Redo buttons ──────────────────────────
+  // Undo / Redo buttons
   const undoBtn = document.createElement("button");
   undoBtn.id = "swapUndoBtn";
   document.body.appendChild(undoBtn);
@@ -52,7 +52,7 @@ beforeEach(() => {
   redoBtn.id = "swapRedoBtn";
   document.body.appendChild(redoBtn);
 
-  // ── Global state ─────────────────────────────────
+  // Global state
   global.gSchedules = { A: [["M", "P", "C"]] };
   global.gEnabledKeys = ["A"];
   global.gSubjectByShort = {
@@ -65,7 +65,7 @@ beforeEach(() => {
   global.gTeacherForShort = { A: { M: "Dr. A", P: "Dr. B", C: "Dr. C" } };
   global.gCanonFoldMap = {};
 
-  // ── Timetable row with subject cells ─────────────
+  // Timetable row with subject cells
   const table = document.createElement("table");
   const row = document.createElement("tr");
 

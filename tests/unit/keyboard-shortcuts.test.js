@@ -176,9 +176,7 @@ describe("Ctrl+Shift+Z → Redo swap", function () {
 ═══════════════════════════════════════════════════════ */
 
 describe("Arrow keys → Pager navigation", function () {
-  // ─────────────────────────────────────────────────────
-  //   ArrowLeft / ArrowRight on inputs tab
-  // ─────────────────────────────────────────────────────
+  // ArrowLeft / ArrowRight on inputs tab
 
   test("ArrowLeft clicks inputsPrev when inputs tab is active", function () {
     activateTab("inputs");
@@ -216,9 +214,7 @@ describe("Arrow keys → Pager navigation", function () {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  // ─────────────────────────────────────────────────────
-  //   Suppressed when focus is in a text field
-  // ─────────────────────────────────────────────────────
+  // Suppressed when focus is in a text field
 
   test("does not click pager when focus is in an INPUT", function () {
     activateTab("inputs");

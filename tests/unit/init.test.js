@@ -36,7 +36,7 @@ function getInitBody() {
  * the init body so all internal closures execute.
  */
 function bootInit() {
-  // --- classInputsPanel with table > tbody ---
+  // classInputsPanel with table > tbody
   const panel = document.createElement("div");
   panel.id = "classInputsPanel";
   const table = document.createElement("table");
@@ -45,12 +45,12 @@ function bootInit() {
   panel.appendChild(table);
   document.body.appendChild(panel);
 
-  // --- classCount select ---
+  // classCount select
   const countSel = document.createElement("select");
   countSel.id = "classCount";
   document.body.appendChild(countSel);
 
-  // --- pager controls ---
+  // pager controls
   const prev = document.createElement("button");
   prev.id = "inputsPrev";
   document.body.appendChild(prev);
@@ -63,7 +63,7 @@ function bootInit() {
   pageLabel.id = "inputsPageLabel";
   document.body.appendChild(pageLabel);
 
-  // --- search controls ---
+  // search controls
   const searchInput = document.createElement("input");
   searchInput.id = "inputsSearch";
   document.body.appendChild(searchInput);
@@ -76,7 +76,7 @@ function bootInit() {
   searchMeta.id = "inputsSearchMeta";
   document.body.appendChild(searchMeta);
 
-  // --- settings inputs ---
+  // settings inputs
   ["startTime", "slots", "days", "duration", "lunchPeriod", "lunchDuration", "labCount"].forEach(
     (id) => {
       const inp = document.createElement("input");
@@ -85,12 +85,12 @@ function bootInit() {
     }
   );
 
-  // --- .timetable-area ---
+  // .timetable-area
   const ttArea = document.createElement("div");
   ttArea.className = "timetable-area";
   document.body.appendChild(ttArea);
 
-  // --- .controls ---
+  // .controls
   const controls = document.createElement("div");
   controls.className = "controls";
   document.body.appendChild(controls);
