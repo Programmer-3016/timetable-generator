@@ -83,11 +83,19 @@ function showImportErrorModal(title, message) {
   okBtn.className = "primary";
   okBtn.style.minWidth = "84px";
 
-  const close = () => { // Removes the modal and cleans up event listeners
+  /** Removes the modal and cleans up event listeners.
+   * @returns {void}
+   */
+  const close = () => {
     document.removeEventListener("keydown", onKeyDown);
     overlay.remove();
   };
-  const onKeyDown = (event) => { // Handles Escape key to close the error modal
+  /**
+   * Handles Escape key to close the error modal.
+   * @param {KeyboardEvent} event - Keyboard event.
+   * @returns {void}
+   */
+  const onKeyDown = (event) => {
     if (event.key === "Escape") close();
   };
 

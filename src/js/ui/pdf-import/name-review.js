@@ -174,7 +174,13 @@ function pdfImportBuildTeacherDisplayMap(
 ) {
   const byCanonical = {};
 
-  const pushDisplay = (canonInput, rawDisplay) => { // Registers a raw display name under its canonical form
+  /**
+   * Registers a raw display name under its canonical form.
+   * @param {string} canonInput - Canonical teacher name input.
+   * @param {string} rawDisplay - Raw display name to register.
+   * @returns {void}
+   */
+  const pushDisplay = (canonInput, rawDisplay) => {
     const canon = normalizeTeacherName(canonInput || "");
     const raw = String(rawDisplay || "").trim();
     if (!canon || !raw || /^not\s*mentioned$/i.test(raw)) return;
@@ -241,7 +247,12 @@ function pdfImportRewriteTeacherNamesByAlias(classes, displayMap = {}) {
     return corrected || original;
   };
 
-  const rewriteLine = (line) => { // Rewrites all teacher tokens in a subject line
+  /**
+   * Rewrites all teacher tokens in a subject line using the display map.
+   * @param {string} line - Original subject line.
+   * @returns {string} Rewritten subject line.
+   */
+  const rewriteLine = (line) => {
     const txt = String(line || "");
     if (!txt.trim()) return txt;
     const parts = txt
@@ -407,7 +418,12 @@ function pdfImportReviewTeacherNamesAfterImport(classes) {
     `${pairs.length} similar name pair(s) found. Confirm and correct names before filling inputs.`;
 
   return new Promise((resolve) => {
-    const close = (result) => { // Hides overlay and resolves the review promise
+    /**
+     * Hides overlay and resolves the review promise.
+     * @param {Object} result - Review result to resolve with.
+     * @returns {void}
+     */
+    const close = (result) => {
       overlay.style.display = "none";
       document.removeEventListener("keydown", onKeyDown);
       overlay.removeEventListener("click", onBackdropClick);
@@ -424,7 +440,10 @@ function pdfImportReviewTeacherNamesAfterImport(classes) {
         classes: rewrittenClasses,
       });
 
-    // Applies merge/separate decisions and name corrections
+    /**
+     * Applies merge/separate decisions and name corrections.
+     * @returns {void}
+     */
     const onApply = () => {
       const mergePairs = [];
       const separatePairs = [];
@@ -471,11 +490,21 @@ function pdfImportReviewTeacherNamesAfterImport(classes) {
       });
     };
 
-    const onKeyDown = (event) => { // Handles Escape key to trigger skip
+    /**
+     * Handles Escape key to trigger skip.
+     * @param {KeyboardEvent} event - Keyboard event.
+     * @returns {void}
+     */
+    const onKeyDown = (event) => {
       if (event.key === "Escape") onSkip();
     };
 
-    const onBackdropClick = (event) => { // Handles backdrop click to trigger skip
+    /**
+     * Handles backdrop click to trigger skip.
+     * @param {MouseEvent} event - Mouse event.
+     * @returns {void}
+     */
+    const onBackdropClick = (event) => {
       if (event.target === overlay) onSkip();
     };
 

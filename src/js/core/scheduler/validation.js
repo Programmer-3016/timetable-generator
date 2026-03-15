@@ -148,7 +148,11 @@ function schedulerIsFullyValid(scheduleState) {
     (typeof window !== "undefined" ? window.__ttLastScheduleState : null);
   const violations = [];
   const seen = new Set();
-  // Deduplicates and records a validation violation message
+  /**
+   * Deduplicates and records a validation violation message.
+   * @param {string} msg - Violation message to record.
+   * @returns {void}
+   */
   const pushViolation = (msg) => {
     const text = String(msg || "").trim();
     if (!text || seen.has(text)) return;
@@ -201,7 +205,12 @@ function schedulerIsFullyValid(scheduleState) {
     state.lunchClassIndex :
     Math.floor(classesPerDay / 2);
 
-  // Counts how many times a short appears in the schedule for a class
+  /**
+   * Counts how many times a short appears in the schedule for a class.
+   * @param {string} classKey - Class identifier.
+   * @param {string} short - Subject short code.
+   * @returns {number} Total occurrences across all days.
+   */
   const countOccurrences = (classKey, short) => {
     let count = 0;
     const byDay = schedulesByClass[classKey] || [];

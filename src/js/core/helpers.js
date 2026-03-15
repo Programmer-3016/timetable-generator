@@ -513,7 +513,10 @@ function showToast(message, {
   toast.appendChild(countdown);
   host.appendChild(toast);
 
-  const dismiss = () => { // removes the toast with a fade-out animation
+  /** Removes the toast with a fade-out animation.
+   * @returns {void}
+   */
+  const dismiss = () => {
     toast.classList.add("toast-hide");
     setTimeout(() => toast.remove(), 220);
   };

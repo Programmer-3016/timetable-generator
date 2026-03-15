@@ -706,6 +706,7 @@ function schedulerRenderMultiClassesEngine({
     }
     return changed;
   }
+  /** Logs filler subjects that have no assigned teacher (informational). */
   (function noteTeacherlessFillers() {
     const lines = [];
     for (const k of keys) {

@@ -294,7 +294,13 @@ function pdfImportClassifyEntries(entries) {
   const nonLabEntries = (entries || []).filter((entry) => !pdfImportIsLabEntry(entry)); // Entries excluding labs for threshold calc
   const ltpSplit = pdfImportResolveLtpThreshold(nonLabEntries);
 
-  const pushUnique = (arr, short) => { // Pushes short code only if not already present
+  /**
+   * Pushes a short code into an array only if not already present.
+   * @param {string[]} arr - Target array.
+   * @param {string} short - Subject short code to add.
+   * @returns {void}
+   */
+  const pushUnique = (arr, short) => {
     if (!short) return;
     if (!arr.includes(short)) arr.push(short);
   };

@@ -83,7 +83,9 @@ function withStickyDisabled(fn) {
     }
     throw e;
   }
-  // Removes the temporary export stylesheet after capture completes
+  /** Removes the temporary export stylesheet after capture completes.
+   * @returns {void}
+   */
   const finalize = () => {
     try {
       style.remove();

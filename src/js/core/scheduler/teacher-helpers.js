@@ -47,6 +47,17 @@ function schedulerIsRealTeacher(name) {
   return s !== "" && !/^not\s*mentioned$/i.test(s);
 }
 
+/**
+ * Returns a deduplicated list of real teacher names for a given class+subject short.
+ * Falls back to single-teacher maps when list-based lookup is empty.
+ * @param {Object} params
+ * @param {Object} params.teacherListForShort - Per-class map of short to teacher arrays.
+ * @param {Object} params.teacherForShort - Per-class map of short to single teacher.
+ * @param {Object} params.teacherForShortGlobal - Global fallback map of short to teacher.
+ * @param {string} params.key - Class identifier.
+ * @param {string} params.short - Subject short code.
+ * @returns {string[]} Deduplicated list of real teacher names, or empty array.
+ */
 function schedulerGetShortTeacherList({
   teacherListForShort,
   teacherForShort,

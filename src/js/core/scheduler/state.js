@@ -103,7 +103,11 @@ function schedulerPopulateClassSubjectMapsAndQuotas({
   fillerShortsByClass,
   isLabPair,
 }) {
-  // Returns true if the pair has at least one usable (non-placeholder) teacher
+  /**
+   * Returns true if the pair has at least one usable (non-placeholder) teacher.
+   * @param {Object} pair - A subject-teacher pair entry.
+   * @returns {boolean} True if a real teacher is assigned.
+   */
   const hasUsableTeacherForPair = (pair) => {
     const list = Array.isArray(pair?.teachers) ?
       pair.teachers
