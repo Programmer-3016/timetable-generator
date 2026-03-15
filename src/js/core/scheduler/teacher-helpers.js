@@ -28,16 +28,6 @@ function schedulerGetAssignedTeacherValue({ assignedTeacher, key, day, col }) {
 ═══════════════════════════════════════════════════════ */
 
 /**
- * @description Returns a deduplicated list of teachers for a subject short in a class.
- * @param {Object} params
- * @param {Object} params.teacherListForShort - Per-class teacher list map.
- * @param {Object} params.teacherForShort - Per-class single-teacher fallback map.
- * @param {Object} params.teacherForShortGlobal - Global single-teacher fallback map.
- * @param {string} params.key - Class identifier.
- * @param {string} params.short - Subject short code.
- * @returns {string[]} Teacher names for the given short.
- */
-/**
  * Returns true if the name is a real teacher (not blank or "Not Mentioned").
  * @param {string} name - Teacher name to validate.
  * @returns {boolean} True if the name represents a real teacher.

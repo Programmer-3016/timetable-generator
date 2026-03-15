@@ -1,5 +1,5 @@
 /**
- * @file Global type declarations for the Antigravity timetable generator.
+ * @file Global type declarations for the Timetable Generator.
  *
  * Provides TypeScript-compatible type information for:
  *  - Browser globals defined across script-tag modules
