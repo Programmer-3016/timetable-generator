@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
+import os
 import re
 
-APP_HOST = "127.0.0.1"
-APP_PORT = 8001
+# Server host — override via APP_HOST env var
+APP_HOST = os.environ.get("APP_HOST", "127.0.0.1")
+# Server port — override via APP_PORT env var
+APP_PORT = int(os.environ.get("APP_PORT", "8001"))
 
-MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024
+# Maximum upload size in bytes (default: 20 MB)
+MAX_FILE_SIZE_BYTES = int(os.environ.get("MAX_FILE_SIZE_BYTES", str(20 * 1024 * 1024)))
 
-THRESHOLD_ALLOW = 78.0
+# Minimum confidence score to accept a PDF as a timetable (0-100)
+THRESHOLD_ALLOW = float(os.environ.get("THRESHOLD_ALLOW", "78.0"))
 
 WEIGHTS = {
     "day_pattern": 20.0,
