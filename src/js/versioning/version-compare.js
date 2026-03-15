@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @module versioning/version-compare.js
  * @description Compute cell-level diffs between two schedule versions and

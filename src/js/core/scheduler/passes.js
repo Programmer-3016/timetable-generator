@@ -1,3 +1,4 @@
+// @ts-check
 /* exported schedulerPlaceLabBlock, schedulerPlaceInitialLabsAcrossClasses, schedulerClampMainsToTarget, schedulerResolveFinalTeacherClashes */
 
 /**

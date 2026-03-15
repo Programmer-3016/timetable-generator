@@ -1,3 +1,4 @@
+// @ts-check
 /* exported schedulerGetAssignedTeacherValue, schedulerGetShortTeacherList, schedulerIsRealTeacher, schedulerIsLabShortFor, schedulerGetTeachersForCell, schedulerGetTeacherForCell, schedulerSameSubjectCode, schedulerIsAdjacentToSameSubjectLab */
 
 /**

@@ -1,3 +1,4 @@
+// @ts-check
 /* exported schedulerCreateTeacherTheoryCountByClass, schedulerCreateClassContainers, schedulerPopulateClassSubjectMapsAndQuotas, schedulerBuildFillerTargetsAndCounts, schedulerMergeFillerTargetsIntoWeeklyQuota */
 
 /**

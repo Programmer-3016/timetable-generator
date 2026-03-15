@@ -1,3 +1,4 @@
+// @ts-check
 /* exported pdfImportNormalizeLtpTriplet, pdfImportExtractLtpFromColumns, pdfImportExtractLtpFromLine */
 
 /**

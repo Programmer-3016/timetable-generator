@@ -1,3 +1,4 @@
+// @ts-check
 /* exported schedulerRebuildTracking, schedulerBoostMainOnLabDays, schedulerEnforceMainTargets, schedulerEnforceClassOneFillerTargets, schedulerValidateCompaction, schedulerEnforceFixedSlots */
 
 /**

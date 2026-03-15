@@ -1,3 +1,4 @@
+// @ts-check
 /* exported schedulerBoostTeachers, schedulerEnsureDailyTeacherPresence, schedulerForceMainToFive, schedulerFinalizeSubjectFive, schedulerEmergencyP5Filler, schedulerAbsoluteNoGapSweep, schedulerEmergencyFillEmpty */
 
 /**

@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @file src/js/core/scheduler/passes-advanced.js
  * @module core/scheduler/passes-advanced
