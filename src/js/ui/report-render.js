@@ -163,6 +163,7 @@ function buildClashDashboardMetrics() {
 
 /**
  * Renders the per-teacher report table with clash dashboard, sortable columns, and click-to-focus interactions.
+ * @returns {void}
  */
 function renderReport() {
   const panel = document.getElementById("reportPanel");
@@ -174,7 +175,12 @@ function renderReport() {
     dir
   } = reportSort;
   const asc = dir === "asc" ? 1 : -1;
-  /** Comparator function for sorting report rows by the active column and direction. */
+  /**
+   * Comparator function for sorting report rows by the active column and direction.
+   * @param {Object} a - First report row.
+   * @param {Object} b - Second report row.
+   * @returns {number}
+   */
   const cmp = (a, b) => {
     let va, vb;
     switch (key) {
@@ -444,6 +450,7 @@ function renderReport() {
         if (e.target === overlay) overlay.remove();
       });
       // Escape key close
+      /** @param {KeyboardEvent} e - The keyboard event. */
       const escHandler = (e) => {
         if (e.key === "Escape") { overlay.remove(); document.removeEventListener("keydown", escHandler); }
       };
@@ -458,7 +465,8 @@ function renderReport() {
 
 /**
  * Scrolls the viewport to the first timetable cell assigned to the given teacher.
- * @param {string} teacher - Teacher name to locate
+ * @param {string} teacher - Teacher name to locate.
+ * @returns {void}
  */
 function focusTeacherCell(teacher) {
   const cells = Array.from(document.querySelectorAll(".subject-cell"));

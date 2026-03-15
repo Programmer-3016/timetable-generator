@@ -141,6 +141,7 @@ function rebuildAggregateStatsFromPublishedSchedule() {
 
 /**
  * Orchestrates the full report pipeline: rebuilds subject info, aggregates teacher stats, folds canonical names, and renders the report table.
+ * @returns {void}
  */
 function buildAndRenderReport() {
   renderSubjectInfo();

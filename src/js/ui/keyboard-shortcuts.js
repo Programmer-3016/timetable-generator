@@ -8,7 +8,13 @@
    Section: GLOBAL KEYBOARD SHORTCUTS
 ═══════════════════════════════════════════════════════ */
 
-document.addEventListener("keydown", function (e) {
+document.addEventListener("keydown",
+  /**
+   * Handles global keyboard shortcuts.
+   * @param {KeyboardEvent} e - The keyboard event.
+   * @returns {void}
+   */
+  function (e) {
   // Ctrl+G or Cmd+G → Generate
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "g") {
     e.preventDefault();

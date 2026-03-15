@@ -12,6 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ───────────────────────────────────────────────────
      Subsection: AUTO-GROW TEXTAREAS IN INPUT PANEL
   ─────────────────────────────────────────────────── */
+  /**
+   * Adjusts a textarea's height to fit its content.
+   * @param {HTMLTextAreaElement} el - The textarea element to resize.
+   * @returns {void}
+   */
   function autoGrowTextarea(el) {
     if (!el || el.tagName !== "TEXTAREA") return;
     el.style.height = "auto";
@@ -61,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Ensures at least n input rows exist in the class inputs table.
    * @param {number} n - Number of rows to create.
+   * @returns {void}
    */
   function ensureInputRows(n) {
     const tbody = document.querySelector("#classInputsPanel table tbody");
@@ -165,6 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Restores input panel state from a previously collected state object.
    * @param {Object} state - State object from collectState.
+   * @returns {void}
    */
   function applyState(state) {
     if (!state || typeof state !== "object") return;
@@ -217,7 +224,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /** Persists the current input panel state to localStorage. */
+  /**
+   * Persists the current input panel state to localStorage.
+   * @returns {void}
+   */
   function saveState() {
     try {
       const obj = collectState();
@@ -227,7 +237,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /** Debounces save calls to avoid excessive localStorage writes. */
+  /**
+   * Debounces save calls to avoid excessive localStorage writes.
+   * @returns {void}
+   */
   function scheduleSave() {
     if (saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(saveState, 400);
@@ -303,6 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
   /**
    * Removes all search snippet annotations from a table row.
    * @param {HTMLElement} row - The table row element.
+   * @returns {void}
    */
   function clearRowSearchArtifacts(row) {
     if (!row) return;
@@ -313,6 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Appends a search snippet annotation below a form field.
    * @param {HTMLElement} field - The input/textarea element.
    * @param {string} snippetHtml - HTML string for the snippet.
+   * @returns {void}
    */
   function setFieldSearchSnippet(field, snippetHtml) {
     if (!field || !field.parentElement || !snippetHtml) return;
@@ -358,6 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * Updates visibility of class input rows based on count, page, and search state.
+   * @returns {void}
    */
   function applyCountVisibility() {
     const n = parseInt(countSel?.value || "1", 10);
@@ -526,12 +542,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const cancelBtn = document.getElementById("qfCancel");
     const classRangeInput = /** @type {HTMLInputElement|null} */ (document.getElementById("qfClassRange"));
 
-    /** Opens the Quick Fill modal overlay. */
+    /**
+     * Opens the Quick Fill modal overlay.
+     * @returns {void}
+     */
     function openQF() {
       if (overlay) overlay.style.display = "flex";
     }
 
-    /** Closes the Quick Fill modal overlay. */
+    /**
+     * Closes the Quick Fill modal overlay.
+     * @returns {void}
+     */
     function closeQF() {
       if (overlay) overlay.style.display = "none";
     }
@@ -545,7 +567,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function parseClassRange(text, visiblePageOnly = false) {
       const n = parseInt(countSel?.value || "5", 10);
       let indices = new Set();
-      // Adds index to set if within valid class range
+      /**
+       * @param {number} i - Class index to add.
+       * @returns {void}
+       */
       const add = (i) => {
         if (i >= 1 && i <= n) indices.add(i);
       };
@@ -614,10 +639,16 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           return;
         }
-        // Checks if a parsed pair represents a lab subject
+        /**
+         * @param {Object} p - Parsed subject pair.
+         * @returns {boolean}
+         */
         const isLabPair = (p) =>
           /\bLAB\b/i.test(p.short) || /\bLAB\b/i.test(p.subject);
-        // Checks if a pair has no meaningful teacher assigned
+        /**
+         * @param {Object} p - Parsed subject pair.
+         * @returns {boolean}
+         */
         const isTeacherMissingOrNotMentioned = (p) => {
           const teacherText = (p.teacher || "").trim(); // Trimmed teacher string
           return (
@@ -650,7 +681,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
           }
         }
-        // Deduplicates an array preserving order
+        /**
+         * @param {Array} arr - Array to deduplicate.
+         * @returns {Array}
+         */
         const uniq = (arr) => Array.from(new Set(arr));
         const mainsUnique = uniq(mainsShorts);
         const seen = new Set();

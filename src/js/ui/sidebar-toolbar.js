@@ -10,7 +10,10 @@
    Section: SIDEBAR & TOOLBAR CONTROLS
 ═══════════════════════════════════════════════════════ */
 
-/** Updates the sidebar toggle button text and title based on current state. */
+/**
+ * Updates the sidebar toggle button text and title based on current state.
+ * @returns {void}
+ */
 function refreshSidebarToggleButton() {
   const btn = document.getElementById("sidebarToggleBtn");
   if (!btn) return;
@@ -21,7 +24,10 @@ function refreshSidebarToggleButton() {
     : "Hide controls for full-width timetable";
 }
 
-/** Toggles the sidebar between collapsed and expanded states. */
+/**
+ * Toggles the sidebar between collapsed and expanded states.
+ * @returns {void}
+ */
 function toggleSidebarLayout() {
   document.body.classList.toggle("fullwide");
   refreshSidebarToggleButton();
@@ -46,6 +52,7 @@ function extractClassKeyFromBlock(blockId) {
 /**
  * Filters visible class blocks by name/key matching a query string.
  * @param {string} [query=""] - Filter text to match against class labels.
+ * @returns {void}
  */
 function applyClassNameFilter(query = "") {
   gClassFilterQuery = String(query || "");
@@ -88,6 +95,7 @@ function applyClassNameFilter(query = "") {
 
 /**
  * Builds the class filter controls.
+ * @returns {void}
  */
 function buildToolbar() {
   const classFilterInput = /** @type {HTMLInputElement} */ (document.getElementById("classFilterInput"));

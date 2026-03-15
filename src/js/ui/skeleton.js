@@ -18,8 +18,9 @@
   /**
    * Returns an HTML string for a shimmer skeleton that mimics the real
    * timetable table (N columns, M days).
-   * @param {number} cols  Number of period columns (default 8)
-   * @param {number} rows  Number of day rows (default 5)
+   * @param {number} cols - Number of period columns (default 8).
+   * @param {number} rows - Number of day rows (default 5).
+   * @returns {string} HTML string for the skeleton table.
    */
   function buildSkeletonHTML(cols, rows) {
     // More natural varied bar widths for subjects
@@ -148,7 +149,8 @@
   /**
    * Smoothly fade out the shimmer skeletons, then remove the skeleton class.
    * The real timetable content has already been written by the time this runs.
-   * @param {string[]} ids
+   * @param {string[]} ids - Element IDs of skeleton containers to clear.
+   * @returns {void}
    */
   function clearSkeletons(ids) {
     (ids || []).forEach(function (id) {
@@ -177,6 +179,7 @@
   /**
    * Wait until generateTimetable is defined (it's in generate.js which loads
    * before this file) then wrap it with the skeleton logic.
+   * @returns {void}
    */
   function installSkeleton() {
     var _original = window.generateTimetable;
@@ -185,6 +188,10 @@
       return;
     }
 
+    /**
+     * Wraps the original generateTimetable with skeleton loading shim.
+     * @param {Object} [options] - Generation options.
+     */
     window.generateTimetable = function generateTimetableWithSkeleton(options) {
       options = options || {};
 

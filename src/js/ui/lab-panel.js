@@ -10,6 +10,10 @@
    Section: LAB USAGE & LAB TIMETABLE RENDERING
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Renders the lab usage overview table showing slot occupancy.
+ * @returns {void}
+ */
 function renderLabUsage() {
   const wrap = document.getElementById("labUsage");
   if (!wrap) return;
@@ -48,6 +52,7 @@ function renderLabUsage() {
 
 /**
  * Renders per-lab-room timetable grids showing occupancy.
+ * @returns {void}
  */
 function renderLabTimetables() {
   const wrapOuter = document.getElementById("labPanelWrap");

@@ -41,6 +41,8 @@
    * Switch to the given tab. Updates button states, panel visibility, and
    * the legacy view-inputs / view-timetable CSS classes so existing code
    * (skeleton.js, init.js persistence, etc.) continues to work.
+   * @param {string} tabName - The tab identifier to activate.
+   * @returns {void}
    */
   function switchTab(tabName) {
     if (!TAB_CONFIG[tabName]) return;
@@ -123,6 +125,7 @@
 
   /**
    * Enable Faculty and Labs tabs (called after timetable is generated).
+   * @returns {void}
    */
   function enablePostGenerateTabs() {
     var tabFaculty = /** @type {HTMLButtonElement} */ (document.getElementById("tabFaculty"));
@@ -135,6 +138,7 @@
 
   /**
    * Get the currently active tab name.
+   * @returns {string} The active tab identifier.
    */
   function getActiveTab() {
     return activeTab;
@@ -148,6 +152,10 @@
   /* ───────────────────────────────────────────────────
      Subsection: WIRE UP TAB CLICKS
   ─────────────────────────────────────────────────── */
+  /**
+   * Wires up tab button click handlers and restores the saved tab.
+   * @returns {void}
+   */
   function initTabs() {
     var btns = document.querySelectorAll(".tab-nav .tab-btn");
     btns.forEach(function (btn) {

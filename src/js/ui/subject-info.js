@@ -12,9 +12,14 @@
 
 /**
  * Renders per-class subject info tables with slot counts and credit details.
+ * @returns {void}
  */
 function renderSubjectInfo() {
-  // Normalizes an LTP string (e.g. "3-1-0") into a consistent format
+  /**
+   * Normalizes an LTP string (e.g. "3-1-0") into a consistent format.
+   * @param {string} value - Raw LTP value.
+   * @returns {string} Normalized LTP string, or empty string.
+   */
   const normalizeLtp = (value) => {
     const text = String(value || "").trim();
     if (!text) return "";
@@ -26,7 +31,11 @@ function renderSubjectInfo() {
     if (t === 0 && p === 0) return String(l);
     return `${l} - ${t} - ${p}`;
   };
-  // Formats teacher list from a subject pair for display
+  /**
+   * Formats teacher list from a subject pair for display.
+   * @param {Object} pair - Subject-teacher pair object.
+   * @returns {string} Comma-separated teacher names or "Not Mentioned".
+   */
   const formatTeachers = (pair) => {
     const list = Array.isArray(pair?.teachers) ?
       pair.teachers
@@ -37,7 +46,14 @@ function renderSubjectInfo() {
     const one = String(pair?.teacher || "").trim();
     return one || "Not Mentioned";
   };
-  // Resolves LTP value from pair data or imported LTP lookup
+  /**
+   * Resolves LTP value from pair data or imported LTP lookup.
+   * @param {string} classKey - Class key.
+   * @param {string} short - Subject short code.
+   * @param {string} _subjectText - Subject text (unused).
+   * @param {string} [pairLtp=""] - LTP value from the pair data.
+   * @returns {string} Normalized LTP string, or empty string.
+   */
   const resolveLtp = (classKey, short, _subjectText, pairLtp = "") => {
     const direct = normalizeLtp(pairLtp);
     if (direct) return direct;
@@ -49,7 +65,12 @@ function renderSubjectInfo() {
     if (!match || !match.ltp) return "";
     return normalizeLtp(match.ltp);
   };
-  // Counts slot occurrences per subject short for a given class
+  /**
+   * Counts slot occurrences per subject short for a given class.
+   * @param {string} classKey - Class key.
+   * @param {string} tableSel - CSS selector for the timetable element.
+   * @returns {Object} Map of subject shorts to occurrence counts.
+   */
   const countMap = (classKey, tableSel) => {
     // Prefer scheduler state as source of truth; DOM can drift after manual edits.
     const byDay = gSchedules && gSchedules[classKey];

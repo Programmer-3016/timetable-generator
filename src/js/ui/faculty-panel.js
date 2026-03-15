@@ -10,6 +10,10 @@
    Section: FACULTY TIMETABLE PANEL
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Builds the faculty selector dropdown and populates it with teacher names.
+ * @returns {void}
+ */
 function buildFacultyPanel() {
   const panel = document.getElementById("facultyPanel");
   const sel = /** @type {HTMLSelectElement} */ (document.getElementById("facultySelect"));
@@ -31,7 +35,11 @@ function buildFacultyPanel() {
     /* ═══════════════════════════════════════════════════════
        Section: FACULTY DATA AGGREGATION
     ═══════════════════════════════════════════════════════ */
-    // Pushes teacher pairs from a class into the canonToDisplay map
+    /**
+     * Pushes teacher pairs from a class into the canonToDisplay map.
+     * @param {Array<{teacher?: string}>} pairs - Teacher pair objects to process.
+     * @returns {void}
+     */
     const pushPairs = (pairs) => {
       (pairs || []).forEach((p) => {
         const t = p.teacher && p.teacher.trim();
@@ -94,6 +102,7 @@ function buildFacultyPanel() {
 /**
  * Renders a timetable grid for a single faculty member.
  * @param {string} teacher - Teacher display name.
+ * @returns {void}
  */
 function renderFacultyTimetable(teacher) {
   const target = document.getElementById("facultyTT");
@@ -241,7 +250,11 @@ function renderFacultyTimetable(teacher) {
      Section: CELL NAVIGATION
   ═══════════════════════════════════════════════════════ */
 
-  // Scrolls to and briefly highlights a cell with a blue border
+  /**
+   * Scrolls to and briefly highlights a cell with a blue border.
+   * @param {HTMLElement} el - The element to highlight.
+   * @returns {void}
+   */
   const flashCell = (el) => {
     const prev = el.style.boxShadow;
     el.scrollIntoView({
@@ -254,7 +267,13 @@ function renderFacultyTimetable(teacher) {
       el.style.boxShadow = prev || "";
     }, 1200);
   };
-  // Finds a timetable cell by class key, day, and absolute period index
+  /**
+   * Finds a timetable cell by class key, day, and absolute period index.
+   * @param {string} k - Class key.
+   * @param {number} d - Day index.
+   * @param {number} pAbs - Absolute period index.
+   * @returns {HTMLElement|null}
+   */
   const findClassCell = (k, d, pAbs) => {
     const id = `tt-${k}-${d | 0}-${pAbs | 0}`;
     return document.getElementById(id);

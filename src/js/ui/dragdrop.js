@@ -21,6 +21,7 @@ let gPostSwapRefreshTimer = null;
 
 /**
  * Debounced refresh of report, faculty, and lab views after a swap.
+ * @returns {void}
  */
 function refreshViewsAfterScheduleShift() {
   if (gPostSwapRefreshTimer) clearTimeout(gPostSwapRefreshTimer);
@@ -230,6 +231,7 @@ function applySwapCellState(state) {
  * Applies a CSS flash animation to swapped cells.
  * @param {HTMLElement[]} cells - Array of cell elements to flash.
  * @param {string} className - CSS class for the flash effect.
+ * @returns {void}
  */
 function flashSwapCells(cells, className) {
   (cells || []).forEach((c) => {
@@ -248,6 +250,7 @@ function flashSwapCells(cells, className) {
 /**
  * Pushes a swap entry onto the undo stack and clears redo stack.
  * @param {Object} entry - Swap history entry with before/after states.
+ * @returns {void}
  */
 function pushSwapHistory(entry) {
   if (!entry) return;
@@ -259,6 +262,7 @@ function pushSwapHistory(entry) {
 
 /**
  * Enables/disables the undo and redo buttons based on stack state.
+ * @returns {void}
  */
 function updateDragSwapControls() {
   const undoBtn = /** @type {HTMLButtonElement|null} */ (document.getElementById("swapUndoBtn"));
@@ -269,6 +273,7 @@ function updateDragSwapControls() {
 
 /**
  * Clears both undo and redo stacks and updates button state.
+ * @returns {void}
  */
 function resetDragSwapHistory() {
   gSwapUndoStack = [];
@@ -278,6 +283,7 @@ function resetDragSwapHistory() {
 
 /**
  * Undoes the last timetable swap and pushes it to the redo stack.
+ * @returns {void}
  */
 function undoTimetableSwap() {
   const entry = gSwapUndoStack.pop();
@@ -299,6 +305,7 @@ function undoTimetableSwap() {
 
 /**
  * Redoes a previously undone timetable swap.
+ * @returns {void}
  */
 function redoTimetableSwap() {
   const entry = gSwapRedoStack.pop();
@@ -328,6 +335,7 @@ window.redoTimetableSwap = redoTimetableSwap;
 
 /**
  * Binds drag-and-drop swap handlers to all subject cells.
+ * @returns {void}
  */
 function enableDragAndDrop() {
   /** @type {HTMLElement|null} */
