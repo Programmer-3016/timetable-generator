@@ -1599,13 +1599,6 @@ body.fullwide #sidebarToggleBtn {
   border-left: 2px solid #0176d3;
 }
 
-/* Lab cells — green hue override */
-td[data-lab] .subject-cell,
-.subject-cell[data-lab] {
-  background: hsl(145 70% 95%);
-  border-left: 2px solid hsl(145 55% 55%);
-}
-
 /* ═══════════════════════════════════════════════════════
    SECTION 20: MISC UI POLISH
 ═══════════════════════════════════════════════════════ */
@@ -1699,12 +1692,6 @@ a:hover {
    SECTION 21: PREMIUM SKELETON LOADERS
    Overrides skeleton.css for a polished SaaS look.
 ═══════════════════════════════════════════════════════ */
-
-/* Blue-wave sweep for shimmer bars */
-@keyframes gentleBlueWave {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
 
 /* Skeleton fade-out */
 @keyframes skeletonFadeOut {
@@ -1812,12 +1799,6 @@ a:hover {
 
 .class-block:hover {
   box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
-}
-
-/* Button press ripple effect */
-@keyframes btnRipple {
-  0% { transform: scale(0); opacity: 0.4; }
-  100% { transform: scale(2.5); opacity: 0; }
 }
 
 /* Tab transition — smooth press effect */

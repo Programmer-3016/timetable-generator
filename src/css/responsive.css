@@ -183,15 +183,6 @@
     hyphens: none;
   }
 
-  /* Timetable 2-col grid → single col */
-  .timetable-area.view-timetable #timetableWrap {
-    grid-template-columns: 1fr;
-  }
-
-  .timetable-area.view-timetable #timetableWrap::before {
-    display: none;
-  }
-
   /* Export buttons stack */
   #globalExport {
     flex-direction: column;
