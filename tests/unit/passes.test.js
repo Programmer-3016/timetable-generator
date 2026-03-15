@@ -5,7 +5,9 @@
  *   from core/scheduler/passes.js.
  */
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: HELPERS
+═══════════════════════════════════════════════════════ */
 
 /** Creates a 2D schedule grid (days × classesPerDay) filled with null. */
 function makeGrid(days, classesPerDay) {
@@ -38,7 +40,9 @@ function makeTeacherPerDay(days) {
   return Array.from({ length: days }, () => ({}));
 }
 
-// ─── schedulerPlaceLabBlock ──────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPlaceLabBlock
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPlaceLabBlock", () => {
   test("is defined as a function", () => {
@@ -343,7 +347,9 @@ describe("schedulerPlaceLabBlock", () => {
   });
 });
 
-// ─── schedulerPlaceInitialLabsAcrossClasses ──────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPlaceInitialLabsAcrossClasses
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPlaceInitialLabsAcrossClasses", () => {
   test("is defined as a function", () => {
@@ -402,7 +408,9 @@ describe("schedulerPlaceInitialLabsAcrossClasses", () => {
   });
 });
 
-// ─── schedulerClampMainsToTarget ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerClampMainsToTarget
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerClampMainsToTarget", () => {
   test("is defined as a function", () => {
@@ -527,7 +535,9 @@ describe("schedulerClampMainsToTarget", () => {
   });
 });
 
-// ─── schedulerResolveFinalTeacherClashes ──────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerResolveFinalTeacherClashes
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerResolveFinalTeacherClashes", () => {
   test("is defined as a function", () => {

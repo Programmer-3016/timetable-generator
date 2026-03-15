@@ -3,7 +3,9 @@
  * @description Tests for core/generate.js pure functions: formatTime, resolveGenerationSeed.
  */
 
-// ─── formatTime ──────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: formatTime
+═══════════════════════════════════════════════════════ */
 
 describe("formatTime", () => {
   test("is defined as a function", () => {
@@ -35,7 +37,9 @@ describe("formatTime", () => {
   });
 });
 
-// ─── resolveGenerationSeed ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: resolveGenerationSeed
+═══════════════════════════════════════════════════════ */
 
 describe("resolveGenerationSeed", () => {
   test("is defined as a function", () => {

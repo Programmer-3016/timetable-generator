@@ -9,7 +9,9 @@
 
 const fc = require("fast-check");
 
-// ─── Arbitraries (Random Input Generators) ────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: ARBITRARIES (RANDOM INPUT GENERATORS)
+═══════════════════════════════════════════════════════ */
 
 const TEACHER_POOL = [
   "Dr. Kumar", "Dr. Sharma", "Prof. Verma", "Ms. Gupta", "Mr. Singh",
@@ -112,7 +114,9 @@ const schedulerInputArb = fc.record({
   });
 });
 
-// ─── Test Helpers ─────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: TEST HELPERS
+═══════════════════════════════════════════════════════ */
 
 /** Sets up periodTimings global for a given slot/lunch configuration. */
 function setupTimings(numSlots, lunchAfter) {
@@ -199,13 +203,17 @@ function runEngine(input) {
   };
 }
 
-// ─── Property Tests ──────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: PROPERTY TESTS
+═══════════════════════════════════════════════════════ */
 
 const PROPERTY_RUNS = 50;
 
 describe("Property-Based: Scheduler Invariants", () => {
 
-  // ── Invariant 1: Structural Integrity ──────────────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: INVARIANT 1 — STRUCTURAL INTEGRITY
+  ─────────────────────────────────────────────────── */
 
   test("every cell is null or a string (structural integrity)", () => {
     fc.assert(
@@ -230,7 +238,9 @@ describe("Property-Based: Scheduler Invariants", () => {
     );
   });
 
-  // ── Invariant 2: Schedule Dimensions ───────────────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: INVARIANT 2 — SCHEDULE DIMENSIONS
+  ─────────────────────────────────────────────────── */
 
   test("schedule grid has correct dimensions (days × classesPerDay)", () => {
     fc.assert(
@@ -252,7 +262,9 @@ describe("Property-Based: Scheduler Invariants", () => {
     );
   });
 
-  // ── Invariant 3: No Teacher Clashes (Cross-Class) ─────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: INVARIANT 3 — NO TEACHER CLASHES (CROSS-CLASS)
+  ─────────────────────────────────────────────────── */
 
   test("no teacher teaches two classes at the same time slot", () => {
     fc.assert(
@@ -287,7 +299,9 @@ describe("Property-Based: Scheduler Invariants", () => {
     );
   });
 
-  // ── Invariant 4: Lab Sessions Occupy Consecutive Slots ────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: INVARIANT 4 — LAB SESSIONS OCCUPY CONSECUTIVE SLOTS
+  ─────────────────────────────────────────────────── */
 
   test("lab subjects always appear in adjacent pairs (never orphan)", () => {
     fc.assert(
@@ -320,7 +334,9 @@ describe("Property-Based: Scheduler Invariants", () => {
     );
   });
 
-  // ── Invariant 5: Lab Blocks Don't Span Lunch ──────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: INVARIANT 5 — LAB BLOCKS DON'T SPAN LUNCH
+  ─────────────────────────────────────────────────── */
 
   test("no lab block straddles the lunch boundary", () => {
     fc.assert(
@@ -351,7 +367,9 @@ describe("Property-Based: Scheduler Invariants", () => {
     );
   });
 
-  // ── Invariant 6: Lab Room No Double-Booking ───────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: INVARIANT 6 — LAB ROOM NO DOUBLE-BOOKING
+  ─────────────────────────────────────────────────── */
 
   test("no lab room is double-booked at the same day/slot across classes", () => {
     fc.assert(
@@ -387,7 +405,9 @@ describe("Property-Based: Scheduler Invariants", () => {
     );
   });
 
-  // ── Invariant 7: Subject Quota Not Exceeded ───────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: INVARIANT 7 — SUBJECT QUOTA NOT EXCEEDED
+  ─────────────────────────────────────────────────── */
 
   test("no main subject exceeds its weekly quota", () => {
     fc.assert(
@@ -427,7 +447,9 @@ describe("Property-Based: Scheduler Invariants", () => {
     );
   });
 
-  // ── Meta-Invariant: schedulerIsFullyValid() ───────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: META-INVARIANT — schedulerIsFullyValid()
+  ─────────────────────────────────────────────────── */
 
   test("schedulerIsFullyValid() reports no critical violations", () => {
     fc.assert(
@@ -445,7 +467,9 @@ describe("Property-Based: Scheduler Invariants", () => {
     );
   });
 
-  // ── Invariant 8: Determinism (same seed → same output) ────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: INVARIANT 8 — DETERMINISM (SAME SEED → SAME OUTPUT)
+  ─────────────────────────────────────────────────── */
 
   test("same seed always produces the same schedule", () => {
     fc.assert(

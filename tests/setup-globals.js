@@ -8,6 +8,10 @@
 const fs = require("fs");
 const path = require("path");
 
+/* ═══════════════════════════════════════════════════════
+   Section: BROWSER GLOBAL STUBS
+═══════════════════════════════════════════════════════ */
+
 // Stub browser-only globals that source files may reference
 global.window = global;
 global.showToast = function () {};
@@ -23,6 +27,10 @@ global.CLASS_KEYS = [];
 global.gFillerLabelsByClass = {};
 global.aggregateStats = {};
 
+/* ═══════════════════════════════════════════════════════
+   Section: HELPER STUBS
+═══════════════════════════════════════════════════════ */
+
 // Stub helpers.js functions that validation/scoring depend on
 global.canonicalTeacherName = function (name) {
   return String(name || "").trim().toLowerCase().replace(/\s+/g, " ");
@@ -35,6 +43,10 @@ global.normalizeTeacherName = function (name) {
 global.resolveTeacherAliasCanonical = function (name) {
   return name;
 };
+
+/* ═══════════════════════════════════════════════════════
+   Section: SCRIPT LOADING
+═══════════════════════════════════════════════════════ */
 
 // Load source files by eval'ing them so function declarations become global
 function loadScript(relPath) {

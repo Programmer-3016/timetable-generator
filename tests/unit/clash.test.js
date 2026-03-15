@@ -5,7 +5,9 @@
  *   and structural integrity.
  */
 
-// ─── Helper: builds a minimal valid state ────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: HELPER: BUILDS A MINIMAL VALID STATE
+═══════════════════════════════════════════════════════ */
 
 /**
  * Creates a minimal schedule state for testing.
@@ -34,7 +36,9 @@ function makeState(overrides = {}) {
   };
 }
 
-// ─── Cross-class teacher clash detection ─────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: CROSS-CLASS TEACHER CLASH DETECTION
+═══════════════════════════════════════════════════════ */
 
 describe("Teacher clash detection (cross-class)", () => {
   test("no clash when different teachers teach at same slot", () => {
@@ -159,7 +163,9 @@ describe("Teacher clash detection (cross-class)", () => {
   });
 });
 
-// ─── Lab block integrity ────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: LAB BLOCK INTEGRITY
+═══════════════════════════════════════════════════════ */
 
 describe("Lab block integrity", () => {
   test("valid: lab occupies 2 adjacent slots", () => {
@@ -240,7 +246,9 @@ describe("Lab block integrity", () => {
   });
 });
 
-// ─── Lab room double-booking ─────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: LAB ROOM DOUBLE-BOOKING
+═══════════════════════════════════════════════════════ */
 
 describe("Lab room double-booking", () => {
   test("no conflict when different rooms assigned", () => {
@@ -300,7 +308,9 @@ describe("Lab room double-booking", () => {
   });
 });
 
-// ─── Weekly quota validation ─────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: WEEKLY QUOTA VALIDATION
+═══════════════════════════════════════════════════════ */
 
 describe("Weekly quota (main subject credit fulfillment)", () => {
   test("valid when all main subjects meet their target", () => {
@@ -349,7 +359,9 @@ describe("Weekly quota (main subject credit fulfillment)", () => {
   });
 });
 
-// ─── Filler count integrity ─────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: FILLER COUNT INTEGRITY
+═══════════════════════════════════════════════════════ */
 
 describe("Filler count integrity", () => {
   test("no violation when filler counts are within target", () => {
@@ -399,7 +411,9 @@ describe("Filler count integrity", () => {
   });
 });
 
-// ─── Structural integrity ────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: STRUCTURAL INTEGRITY
+═══════════════════════════════════════════════════════ */
 
 describe("Structural integrity", () => {
   test("detects missing schedule matrix", () => {
@@ -444,7 +458,9 @@ describe("Structural integrity", () => {
   });
 });
 
-// ─── Utility: schedulerNormalizeList ─────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: UTILITY: schedulerNormalizeList
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerNormalizeList (extended)", () => {
   test("handles nested null values", () => {
@@ -466,7 +482,9 @@ describe("schedulerNormalizeList (extended)", () => {
   });
 });
 
-// ─── Utility: schedulerBuildSetMapSnapshot ───────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: UTILITY: schedulerBuildSetMapSnapshot
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerBuildSetMapSnapshot", () => {
   test("is defined as a function", () => {
@@ -493,7 +511,9 @@ describe("schedulerBuildSetMapSnapshot", () => {
   });
 });
 
-// ─── Utility: schedulerBuildTeacherListSnapshot ──────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: UTILITY: schedulerBuildTeacherListSnapshot
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerBuildTeacherListSnapshot", () => {
   test("is defined as a function", () => {
@@ -514,7 +534,9 @@ describe("schedulerBuildTeacherListSnapshot", () => {
   });
 });
 
-// ─── Utility: schedulerTeacherValidationKey ──────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: UTILITY: schedulerTeacherValidationKey
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerTeacherValidationKey", () => {
   test("is defined as a function", () => {
@@ -541,7 +563,9 @@ describe("schedulerTeacherValidationKey", () => {
   });
 });
 
-// ─── Utility: schedulerGetTeachersForValidationCell ──────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: UTILITY: schedulerGetTeachersForValidationCell
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerGetTeachersForValidationCell", () => {
   test("is defined as a function", () => {
@@ -600,7 +624,9 @@ describe("schedulerGetTeachersForValidationCell", () => {
   });
 });
 
-// ─── Complex multi-day multi-class scenarios ─────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: COMPLEX MULTI-DAY MULTI-CLASS SCENARIOS
+═══════════════════════════════════════════════════════ */
 
 describe("Complex multi-day scenarios", () => {
   test("full week schedule with no clashes passes validation", () => {

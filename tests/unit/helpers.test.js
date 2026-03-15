@@ -3,7 +3,9 @@
  * @description Tests for utility functions in core/helpers.js
  */
 
-// ─── normalizeTeacherName ────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: normalizeTeacherName
+═══════════════════════════════════════════════════════ */
 
 describe("normalizeTeacherName", () => {
   test("is defined as a function", () => {
@@ -50,7 +52,9 @@ describe("normalizeTeacherName", () => {
   });
 });
 
-// ─── createSeededRandom ──────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: createSeededRandom
+═══════════════════════════════════════════════════════ */
 
 describe("createSeededRandom", () => {
   test("is defined as a function", () => {
@@ -93,7 +97,9 @@ describe("createSeededRandom", () => {
   });
 });
 
-// ─── teacherPairKey ──────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: teacherPairKey
+═══════════════════════════════════════════════════════ */
 
 describe("teacherPairKey", () => {
   test("is defined as a function", () => {
@@ -121,7 +127,9 @@ describe("teacherPairKey", () => {
   });
 });
 
-// ─── generateClassKeys ──────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: generateClassKeys
+═══════════════════════════════════════════════════════ */
 
 describe("generateClassKeys", () => {
   test("is defined as a function", () => {
@@ -157,7 +165,9 @@ describe("generateClassKeys", () => {
   });
 });
 
-// ─── isSingleAdjacentTransposition ──────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: isSingleAdjacentTransposition
+═══════════════════════════════════════════════════════ */
 
 describe("isSingleAdjacentTransposition", () => {
   test("is defined as a function", () => {
@@ -192,7 +202,9 @@ describe("isSingleAdjacentTransposition", () => {
   });
 });
 
-// ─── editDistanceAtMostOne ──────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: editDistanceAtMostOne
+═══════════════════════════════════════════════════════ */
 
 describe("editDistanceAtMostOne", () => {
   test("is defined as a function", () => {
@@ -228,7 +240,9 @@ describe("editDistanceAtMostOne", () => {
   });
 });
 
-// ─── shouldFoldTeacherCanonicalNames ────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: shouldFoldTeacherCanonicalNames
+═══════════════════════════════════════════════════════ */
 
 describe("shouldFoldTeacherCanonicalNames", () => {
   test("is defined as a function", () => {
@@ -264,7 +278,9 @@ describe("shouldFoldTeacherCanonicalNames", () => {
   });
 });
 
-// ─── buildTeacherFoldMapFromCanonicalNames ──────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: buildTeacherFoldMapFromCanonicalNames
+═══════════════════════════════════════════════════════ */
 
 describe("buildTeacherFoldMapFromCanonicalNames", () => {
   test("is defined as a function", () => {
@@ -294,7 +310,9 @@ describe("buildTeacherFoldMapFromCanonicalNames", () => {
   });
 });
 
-// ─── buildTeacherFoldMapFromRawNames ────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: buildTeacherFoldMapFromRawNames
+═══════════════════════════════════════════════════════ */
 
 describe("buildTeacherFoldMapFromRawNames", () => {
   test("is defined as a function", () => {

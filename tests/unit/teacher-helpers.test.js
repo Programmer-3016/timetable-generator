@@ -4,7 +4,9 @@
  *   lab detection, adjacency checks, and subject code normalization.
  */
 
-// ─── schedulerIsRealTeacher ──────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerIsRealTeacher
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerIsRealTeacher", () => {
   test("is defined as a function", () => {
@@ -43,7 +45,9 @@ describe("schedulerIsRealTeacher", () => {
   });
 });
 
-// ─── schedulerGetAssignedTeacherValue ────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerGetAssignedTeacherValue
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerGetAssignedTeacherValue", () => {
   test("is defined as a function", () => {
@@ -91,7 +95,9 @@ describe("schedulerGetAssignedTeacherValue", () => {
   });
 });
 
-// ─── schedulerGetShortTeacherList ────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerGetShortTeacherList
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerGetShortTeacherList", () => {
   test("is defined as a function", () => {
@@ -187,7 +193,9 @@ describe("schedulerGetShortTeacherList", () => {
   });
 });
 
-// ─── schedulerIsLabShortFor ──────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerIsLabShortFor
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerIsLabShortFor", () => {
   test("is defined as a function", () => {
@@ -239,7 +247,9 @@ describe("schedulerIsLabShortFor", () => {
   });
 });
 
-// ─── schedulerGetTeachersForCell ──────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerGetTeachersForCell
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerGetTeachersForCell", () => {
   test("is defined as a function", () => {
@@ -333,7 +343,9 @@ describe("schedulerGetTeachersForCell", () => {
   });
 });
 
-// ─── schedulerGetTeacherForCell ──────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerGetTeacherForCell
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerGetTeacherForCell", () => {
   test("is defined as a function", () => {
@@ -359,7 +371,9 @@ describe("schedulerGetTeacherForCell", () => {
   });
 });
 
-// ─── schedulerSameSubjectCode ────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerSameSubjectCode
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerSameSubjectCode", () => {
   test("is defined as a function", () => {
@@ -390,7 +404,9 @@ describe("schedulerSameSubjectCode", () => {
   });
 });
 
-// ─── schedulerIsAdjacentToSameSubjectLab ─────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerIsAdjacentToSameSubjectLab
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerIsAdjacentToSameSubjectLab", () => {
   test("is defined as a function", () => {

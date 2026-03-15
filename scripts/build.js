@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Production build script.
+ * @file scripts/build.js
+ * @description Production build script.
  *
  * Reads timetable.html, concatenates all local JS and CSS files in
  * their original order, minifies them with esbuild, and writes a
@@ -17,7 +18,13 @@ const ROOT = path.resolve(__dirname, "..");
 const SRC_HTML = path.join(ROOT, "timetable.html");
 const DIST = path.join(ROOT, "dist");
 
-/* ── helpers ─────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   Section: HELPERS
+═══════════════════════════════════════════════════════ */
+
+/* ───────────────────────────────────────────────────
+   Subsection: helpers
+─────────────────────────────────────────────────── */
 
 /** Extract attribute values from tags matching a regex pattern */
 function extractPaths(html, regex) {
@@ -41,7 +48,13 @@ function concat(filePaths) {
     .join("\n");
 }
 
-/* ── main ────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   Section: MAIN BUILD PIPELINE
+═══════════════════════════════════════════════════════ */
+
+/* ───────────────────────────────────────────────────
+   Subsection: main
+─────────────────────────────────────────────────── */
 
 async function build() {
   const startTime = Date.now();
@@ -49,21 +62,29 @@ async function build() {
 
   const html = fs.readFileSync(SRC_HTML, "utf8");
 
-  // ── 1. Collect local script paths (skip CDN scripts) ──────────
+  /* ───────────────────────────────────────────────────
+     Subsection: COLLECT LOCAL SCRIPT PATHS
+  ─────────────────────────────────────────────────── */
   const scriptRe = /<script\s+src="(src\/[^"]+)"><\/script>/g;
   const jsPaths = extractPaths(html, scriptRe);
   console.log(`  📦 ${jsPaths.length} JS files found`);
 
-  // ── 2. Collect local CSS paths (skip Google Fonts) ────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: COLLECT LOCAL CSS PATHS
+  ─────────────────────────────────────────────────── */
   const cssRe = /<link\s+rel="stylesheet"\s+href="(src\/[^"]+)"\s*\/?>/g;
   const cssPaths = extractPaths(html, cssRe);
   console.log(`  🎨 ${cssPaths.length} CSS files found`);
 
-  // ── 3. Concatenate ────────────────────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: CONCATENATION
+  ─────────────────────────────────────────────────── */
   const jsBundle = concat(jsPaths);
   const cssBundle = concat(cssPaths);
 
-  // ── 4. Minify with esbuild ────────────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: MINIFY WITH ESBUILD
+  ─────────────────────────────────────────────────── */
   const [jsResult, cssResult] = await Promise.all([
     esbuild.transform(jsBundle, {
       loader: "js",
@@ -77,14 +98,18 @@ async function build() {
     }),
   ]);
 
-  // ── 5. Prepare dist/ ─────────────────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: PREPARE DIST
+  ─────────────────────────────────────────────────── */
   if (fs.existsSync(DIST)) fs.rmSync(DIST, { recursive: true });
   fs.mkdirSync(DIST, { recursive: true });
 
   fs.writeFileSync(path.join(DIST, "bundle.min.js"), jsResult.code);
   fs.writeFileSync(path.join(DIST, "bundle.min.css"), cssResult.code);
 
-  // ── 6. Generate production HTML ───────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: GENERATE PRODUCTION HTML
+  ─────────────────────────────────────────────────── */
   let prodHtml = html;
 
   // Replace local CSS links with single bundle
@@ -108,13 +133,17 @@ async function build() {
 
   fs.writeFileSync(path.join(DIST, "index.html"), prodHtml);
 
-  // ── 7. Copy static assets ────────────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: COPY STATIC ASSETS
+  ─────────────────────────────────────────────────── */
   const favicon = path.join(ROOT, "favicon.svg");
   if (fs.existsSync(favicon)) {
     fs.copyFileSync(favicon, path.join(DIST, "favicon.svg"));
   }
 
-  // ── 8. Report ────────────────────────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: REPORT
+  ─────────────────────────────────────────────────── */
   const jsSize = (jsResult.code.length / 1024).toFixed(1);
   const cssSize = (cssResult.code.length / 1024).toFixed(1);
   const elapsed = Date.now() - startTime;

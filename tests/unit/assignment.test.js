@@ -4,7 +4,9 @@
  *   from core/scheduler/assignment.js.
  */
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: HELPERS
+═══════════════════════════════════════════════════════ */
 
 /** Builds a minimal context for schedulerCanAssign with sensible defaults. */
 function makeAssignCtx(overrides = {}) {
@@ -41,7 +43,9 @@ function makeAssignCtx(overrides = {}) {
   };
 }
 
-// ─── schedulerCanAssign ──────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerCanAssign
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerCanAssign", () => {
   test("is defined as a function", () => {
@@ -276,7 +280,9 @@ describe("schedulerCanAssign", () => {
   });
 });
 
-// ─── schedulerPickTeacherForSlot ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPickTeacherForSlot
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPickTeacherForSlot", () => {
   test("is defined as a function", () => {

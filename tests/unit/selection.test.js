@@ -3,7 +3,9 @@
  * @description Tests for scheduler/selection.js: common-teacher, slot preference, lecture picking.
  */
 
-// ─── schedulerIsCommonFor ────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerIsCommonFor
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerIsCommonFor", () => {
   test("is defined as a function", () => {
@@ -74,7 +76,9 @@ describe("schedulerIsCommonFor", () => {
   });
 });
 
-// ─── schedulerPreferredForSlot ───────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPreferredForSlot
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPreferredForSlot", () => {
   test("is defined as a function", () => {
@@ -147,7 +151,9 @@ describe("schedulerPreferredForSlot", () => {
   });
 });
 
-// ─── schedulerPickLectureIndex ───────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPickLectureIndex
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPickLectureIndex", () => {
   test("is defined as a function", () => {

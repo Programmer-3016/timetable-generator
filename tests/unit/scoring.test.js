@@ -3,6 +3,10 @@
  * @description Tests for schedulerScoreCandidateObjective — the quality scoring function.
  */
 
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerScoreCandidateObjective
+═══════════════════════════════════════════════════════ */
+
 describe("schedulerScoreCandidateObjective", () => {
   test("returns negative score for null state", () => {
     const score = schedulerScoreCandidateObjective(null);

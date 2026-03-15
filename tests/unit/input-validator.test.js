@@ -47,7 +47,9 @@ function setupValidatorDOM({
   });
 }
 
-// ─── validateInputsBeforeGenerate ───────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: validateInputsBeforeGenerate
+═══════════════════════════════════════════════════════ */
 
 describe("validateInputsBeforeGenerate", () => {
   afterEach(() => {

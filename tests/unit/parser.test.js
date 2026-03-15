@@ -3,6 +3,10 @@
  * @description Tests for parsePairs — the input parsing engine.
  */
 
+/* ═══════════════════════════════════════════════════════
+   Section: parsePairs
+═══════════════════════════════════════════════════════ */
+
 describe("parsePairs", () => {
   beforeEach(() => {
     // Create a mock textarea element for parsePairs to read from

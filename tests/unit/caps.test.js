@@ -3,7 +3,9 @@
  * @description Tests for scheduler/caps.js: bucket/cap helpers.
  */
 
-// ─── schedulerEnsureTeacherPrePostBucket ─────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerEnsureTeacherPrePostBucket
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerEnsureTeacherPrePostBucket", () => {
   test("is defined as a function", () => {
@@ -68,7 +70,9 @@ describe("schedulerEnsureTeacherPrePostBucket", () => {
   });
 });
 
-// ─── schedulerGetFillerTotal ─────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerGetFillerTotal
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerGetFillerTotal", () => {
   test("is defined as a function", () => {
@@ -116,7 +120,9 @@ describe("schedulerGetFillerTotal", () => {
   });
 });
 
-// ─── schedulerGetFillerCap ───────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerGetFillerCap
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerGetFillerCap", () => {
   test("is defined as a function", () => {
@@ -169,7 +175,9 @@ describe("schedulerGetFillerCap", () => {
   });
 });
 
-// ─── schedulerGetFillerSubjectCap ────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerGetFillerSubjectCap
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerGetFillerSubjectCap", () => {
   test("is defined as a function", () => {

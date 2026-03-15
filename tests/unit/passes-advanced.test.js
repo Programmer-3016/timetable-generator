@@ -4,7 +4,9 @@
  *   core/scheduler/passes-advanced.js.
  */
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: HELPERS
+═══════════════════════════════════════════════════════ */
 
 /** Creates a full `ctx` object for advanced passes with sensible defaults. */
 function makeAdvCtx(overrides = {}) {
@@ -80,7 +82,9 @@ function makeAdvCtx(overrides = {}) {
   };
 }
 
-// ─── schedulerPassFillRemaining ──────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassFillRemaining
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassFillRemaining", () => {
   test("is defined as a function", () => {
@@ -145,7 +149,9 @@ describe("schedulerPassFillRemaining", () => {
   });
 });
 
-// ─── schedulerPassAggressiveFill ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassAggressiveFill
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassAggressiveFill", () => {
   test("is defined as a function", () => {
@@ -187,7 +193,9 @@ describe("schedulerPassAggressiveFill", () => {
   });
 });
 
-// ─── schedulerPassCompactPreLunch ────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassCompactPreLunch
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassCompactPreLunch", () => {
   test("is defined as a function", () => {
@@ -209,7 +217,9 @@ describe("schedulerPassCompactPreLunch", () => {
   });
 });
 
-// ─── schedulerPassCompactDayGaps ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassCompactDayGaps
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassCompactDayGaps", () => {
   test("is defined as a function", () => {
@@ -228,7 +238,9 @@ describe("schedulerPassCompactDayGaps", () => {
   });
 });
 
-// ─── schedulerPassPostLunchFillerSweep ───────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassPostLunchFillerSweep
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassPostLunchFillerSweep", () => {
   test("is defined as a function", () => {
@@ -257,7 +269,9 @@ describe("schedulerPassPostLunchFillerSweep", () => {
   });
 });
 
-// ─── schedulerPassFillEmptyPreLunch ──────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassFillEmptyPreLunch
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassFillEmptyPreLunch", () => {
   test("is defined as a function", () => {
@@ -294,7 +308,9 @@ describe("schedulerPassFillEmptyPreLunch", () => {
   });
 });
 
-// ─── schedulerPassUltimateForceFill ──────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassUltimateForceFill
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassUltimateForceFill", () => {
   test("is defined as a function", () => {
@@ -337,7 +353,9 @@ describe("schedulerPassUltimateForceFill", () => {
   });
 });
 
-// ─── schedulerPassCompactPostLunch ───────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassCompactPostLunch
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassCompactPostLunch", () => {
   test("is defined as a function", () => {
@@ -360,7 +378,9 @@ describe("schedulerPassCompactPostLunch", () => {
   });
 });
 
-// ─── schedulerPassFillSparseSchedule ─────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassFillSparseSchedule
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassFillSparseSchedule", () => {
   test("is defined as a function", () => {
@@ -387,7 +407,9 @@ describe("schedulerPassFillSparseSchedule", () => {
   });
 });
 
-// ─── schedulerPassEnsureAtLeastOneMainPerDay ─────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassEnsureAtLeastOneMainPerDay
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassEnsureAtLeastOneMainPerDay", () => {
   test("is defined as a function", () => {
@@ -420,7 +442,9 @@ describe("schedulerPassEnsureAtLeastOneMainPerDay", () => {
   });
 });
 
-// ─── schedulerPassGapSealFill ────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPassGapSealFill
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPassGapSealFill", () => {
   test("is defined as a function", () => {

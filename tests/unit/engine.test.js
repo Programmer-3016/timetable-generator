@@ -5,7 +5,9 @@
  *   These are integration-style tests that exercise the full scheduling pipeline.
  */
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: HELPERS
+═══════════════════════════════════════════════════════ */
 
 /** Sets up periodTimings global for a given number of class periods + lunch. */
 function setupPeriodTimings(numClasses, lunchAfter) {
@@ -69,7 +71,9 @@ beforeEach(() => {
   stubDOM();
 });
 
-// ─── schedulerRenderMultiClassesEngine ───────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerRenderMultiClassesEngine
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerRenderMultiClassesEngine", () => {
   test("is defined as a function", () => {

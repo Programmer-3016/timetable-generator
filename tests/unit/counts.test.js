@@ -3,7 +3,9 @@
  * @description Tests for scheduler/counts.js: occurrence counting and target lookups.
  */
 
-// ─── schedulerCountOccurrences ───────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerCountOccurrences
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerCountOccurrences", () => {
   test("is defined as a function", () => {
@@ -87,7 +89,9 @@ describe("schedulerCountOccurrences", () => {
   });
 });
 
-// ─── schedulerGetTargetForShort ──────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerGetTargetForShort
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerGetTargetForShort", () => {
   test("is defined as a function", () => {

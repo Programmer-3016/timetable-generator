@@ -12,6 +12,10 @@ const compareSrc = fs.readFileSync(
 
 eval(compareSrc);
 
+/* ═══════════════════════════════════════════════════════
+   Section: HELPERS
+═══════════════════════════════════════════════════════ */
+
 // Helper: build a version object for testing
 function makeVersion(id, label, opts) {
   opts = opts || {};
@@ -35,6 +39,10 @@ function makeVersion(id, label, opts) {
     },
   };
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: diffScheduleVersions
+═══════════════════════════════════════════════════════ */
 
 describe("version-compare.js", () => {
 
@@ -147,6 +155,10 @@ describe("version-compare.js", () => {
     });
   });
 
+  /* ═══════════════════════════════════════════════════════
+     Section: renderCompareView
+  ═══════════════════════════════════════════════════════ */
+
   describe("renderCompareView", () => {
     beforeEach(() => {
       document.body.innerHTML = '<div id="versionCompareView" style="display:none;"></div>';
@@ -173,6 +185,10 @@ describe("version-compare.js", () => {
       expect(container.style.display).toBe("none");
     });
   });
+
+  /* ═══════════════════════════════════════════════════════
+     Section: closeCompareView
+  ═══════════════════════════════════════════════════════ */
 
   describe("closeCompareView", () => {
     test("hides and clears the compare view", () => {

@@ -3,6 +3,10 @@
  * @description Tests for schedulerIsFullyValid — the schedule validation engine.
  */
 
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerIsFullyValid
+═══════════════════════════════════════════════════════ */
+
 describe("schedulerIsFullyValid", () => {
   test("returns invalid for null state", () => {
     const result = schedulerIsFullyValid(null);
@@ -106,6 +110,10 @@ describe("schedulerIsFullyValid", () => {
     expect(result.violations.some((v) => v.includes("Lab block broken"))).toBe(true);
   });
 });
+
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerNormalizeList
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerNormalizeList", () => {
   test("returns empty array for falsy values", () => {

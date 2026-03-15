@@ -3,7 +3,9 @@
  * @description Tests for scheduler/bootstrap.js: teacher maps, lab capacity, filler capacity.
  */
 
-// ─── schedulerBuildTeacherFoldMapFromData ────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerBuildTeacherFoldMapFromData
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerBuildTeacherFoldMapFromData", () => {
   test("is defined as a function", () => {
@@ -77,7 +79,9 @@ describe("schedulerBuildTeacherFoldMapFromData", () => {
   });
 });
 
-// ─── schedulerBuildGlobalTeacherForShort ─────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerBuildGlobalTeacherForShort
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerBuildGlobalTeacherForShort", () => {
   test("is defined as a function", () => {
@@ -132,7 +136,9 @@ describe("schedulerBuildGlobalTeacherForShort", () => {
   });
 });
 
-// ─── schedulerReadLabCapacityFromDom ────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerReadLabCapacityFromDOM
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerReadLabCapacityFromDom", () => {
   test("is defined as a function", () => {
@@ -189,7 +195,9 @@ describe("schedulerReadLabCapacityFromDom", () => {
   });
 });
 
-// ─── schedulerComputeFillerCapacityForClass ──────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerComputeFillerCapacityForClass
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerComputeFillerCapacityForClass", () => {
   test("is defined as a function", () => {

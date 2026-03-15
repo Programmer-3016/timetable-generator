@@ -3,7 +3,9 @@
  * @description Tests for scheduler/publish.js: aggregate stats and published state.
  */
 
-// ─── schedulerMergeTeacherAggregateStats ─────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerMergeTeacherAggregateStats
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerMergeTeacherAggregateStats", () => {
   test("is defined as a function", () => {
@@ -133,7 +135,9 @@ describe("schedulerMergeTeacherAggregateStats", () => {
   });
 });
 
-// ─── schedulerBuildPublishedState ────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerBuildPublishedState
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerBuildPublishedState", () => {
   test("is defined as a function", () => {

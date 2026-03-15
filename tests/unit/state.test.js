@@ -4,7 +4,9 @@
  *   subject map population, filler targets, and quota merging.
  */
 
-// ─── schedulerCreateTeacherTheoryCountByClass ────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerCreateTeacherTheoryCountByClass
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerCreateTeacherTheoryCountByClass", () => {
   test("is defined as a function", () => {
@@ -22,7 +24,9 @@ describe("schedulerCreateTeacherTheoryCountByClass", () => {
   });
 });
 
-// ─── schedulerCreateClassContainers ──────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerCreateClassContainers
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerCreateClassContainers", () => {
   test("is defined as a function", () => {
@@ -111,7 +115,9 @@ describe("schedulerCreateClassContainers", () => {
   });
 });
 
-// ─── schedulerPopulateClassSubjectMapsAndQuotas ──────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerPopulateClassSubjectMapsAndQuotas
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerPopulateClassSubjectMapsAndQuotas", () => {
   test("is defined as a function", () => {
@@ -407,7 +413,9 @@ describe("schedulerPopulateClassSubjectMapsAndQuotas", () => {
   });
 });
 
-// ─── schedulerBuildFillerTargetsAndCounts ─────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerBuildFillerTargetsAndCounts
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerBuildFillerTargetsAndCounts", () => {
   test("is defined as a function", () => {
@@ -461,7 +469,9 @@ describe("schedulerBuildFillerTargetsAndCounts", () => {
   });
 });
 
-// ─── schedulerMergeFillerTargetsIntoWeeklyQuota ──────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerMergeFillerTargetsIntoWeeklyQuota
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerMergeFillerTargetsIntoWeeklyQuota", () => {
   test("is defined as a function", () => {

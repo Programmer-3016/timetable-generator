@@ -41,6 +41,10 @@ global.switchTab = jest.fn();
 // Load the source
 eval(storeSrc);
 
+/* ═══════════════════════════════════════════════════════
+   Section: HELPERS
+═══════════════════════════════════════════════════════ */
+
 // Helper: create a mock snapshot
 function mockSnapshot(seed) {
   return {
@@ -70,6 +74,10 @@ describe("version-store.js", () => {
     jest.clearAllMocks();
   });
 
+/* ═══════════════════════════════════════════════════════
+   Section: loadScheduleVersions
+═══════════════════════════════════════════════════════ */
+
   describe("loadScheduleVersions", () => {
     test("returns empty array when no data stored", () => {
       expect(loadScheduleVersions()).toEqual([]);
@@ -92,6 +100,10 @@ describe("version-store.js", () => {
       expect(result[0].label).toBe("V1");
     });
   });
+
+/* ═══════════════════════════════════════════════════════
+   Section: saveScheduleVersion
+═══════════════════════════════════════════════════════ */
 
   describe("saveScheduleVersion", () => {
     test("saves a version with correct fields", () => {
@@ -175,6 +187,10 @@ describe("version-store.js", () => {
     });
   });
 
+/* ═══════════════════════════════════════════════════════
+   Section: deleteScheduleVersion
+═══════════════════════════════════════════════════════ */
+
   describe("deleteScheduleVersion", () => {
     test("deletes existing version", () => {
       saveScheduleVersion(mockSnapshot(), mockValidation(true));
@@ -187,6 +203,10 @@ describe("version-store.js", () => {
       expect(deleteScheduleVersion(999)).toBe(false);
     });
   });
+
+/* ═══════════════════════════════════════════════════════
+   Section: renameScheduleVersion
+═══════════════════════════════════════════════════════ */
 
   describe("renameScheduleVersion", () => {
     test("renames existing version", () => {
@@ -206,6 +226,10 @@ describe("version-store.js", () => {
       expect(getVersionById(saved.id).label).toBe("Original");
     });
   });
+
+/* ═══════════════════════════════════════════════════════
+   Section: toggleStarVersion
+═══════════════════════════════════════════════════════ */
 
   describe("toggleStarVersion", () => {
     test("toggles star on", () => {
@@ -227,6 +251,10 @@ describe("version-store.js", () => {
     });
   });
 
+/* ═══════════════════════════════════════════════════════
+   Section: getVersionById
+═══════════════════════════════════════════════════════ */
+
   describe("getVersionById", () => {
     test("returns version by ID", () => {
       var saved = saveScheduleVersion(mockSnapshot(), mockValidation(true), "Find Me");
@@ -238,6 +266,10 @@ describe("version-store.js", () => {
       expect(getVersionById(999)).toBeNull();
     });
   });
+
+/* ═══════════════════════════════════════════════════════
+   Section: loadScheduleVersionById
+═══════════════════════════════════════════════════════ */
 
   describe("loadScheduleVersionById", () => {
     test("restores globals from version", () => {
@@ -282,6 +314,10 @@ describe("version-store.js", () => {
       expect(switchTab).toHaveBeenCalledWith("timetables");
     });
   });
+
+/* ═══════════════════════════════════════════════════════
+   Section: CONSTANTS
+═══════════════════════════════════════════════════════ */
 
   describe("constants", () => {
     test("VERSION_STORAGE_KEY is defined", () => {

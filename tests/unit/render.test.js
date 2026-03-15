@@ -23,7 +23,9 @@ function buildMockTable({ key, days, periods }) {
   return table;
 }
 
-// ─── schedulerRenderClassToDOM ───────────────────────────────────────────────
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerRenderClassToDOM
+═══════════════════════════════════════════════════════ */
 
 describe("schedulerRenderClassToDOM", () => {
   afterEach(() => {
