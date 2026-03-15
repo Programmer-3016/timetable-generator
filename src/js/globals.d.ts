@@ -139,6 +139,15 @@ interface Window {
   /** Teacher assignment map */
   gAssignedTeacher?: Record<string, any>;
 
+  /** Main timetable generation entry point (wrapped by skeleton shim) */
+  generateTimetable?: (options?: Record<string, any>) => void;
+
+  /** Render multi-class schedules to the DOM */
+  renderMultiClasses?: (params: Record<string, any>) => any;
+
+  /** Apply parsed backend import data to the UI */
+  applyBackendImportData?: (data: any) => Promise<any>;
+
   /* ─────────────────────────────────────────────────────
      Subsection: EXTERNAL LIBRARIES
   ─────────────────────────────────────────────────────── */
