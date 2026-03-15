@@ -90,7 +90,9 @@ Project_T/
 │       │   ├── input-validator.js  # Form validation rules
 │       │   ├── scheduler.js        # Top-level scheduler entry
 │       │   └── scheduler/          # Multi-class constraint solver
-│       │       ├── engine.js       # Core scheduling loop (largest file)
+│       │       ├── engine.js       # Core scheduling loop and orchestration
+│       │       ├── engine-scheduling.js  # Extracted scheduling passes
+│       │       ├── engine-compaction.js  # Extracted compaction passes
 │       │       ├── state.js        # Mutable scheduling state
 │       │       ├── assignment.js   # Slot assignment logic
 │       │       ├── selection.js    # Subject/teacher selection
@@ -142,15 +144,30 @@ Project_T/
 │
 ├── tests/                          # Jest test suites
 │   ├── setup-globals.js            # Test environment globals
-│   └── unit/                       # Unit test files
-│       ├── clash.test.js           # Clash detection tests
-│       ├── helpers.test.js         # Helper utility tests
-│       ├── input-validator.test.js # Input validation tests
-│       ├── parser.test.js          # Input parsing tests
-│       ├── scoring.test.js         # Slot scoring tests
-│       ├── validation.test.js      # Constraint validation tests
-│       ├── version-store.test.js   # Version store CRUD tests
-│       └── version-compare.test.js # Version diff & compare tests
+│   ├── property/                   # Property-based tests (fast-check)
+│   │   └── scheduler-invariants.test.js
+│   └── unit/                       # Unit test files (21 files)
+│       ├── assignment.test.js
+│       ├── bootstrap.test.js
+│       ├── caps.test.js
+│       ├── clash.test.js
+│       ├── counts.test.js
+│       ├── engine.test.js
+│       ├── generate.test.js
+│       ├── helpers.test.js
+│       ├── input-validator.test.js
+│       ├── parser.test.js
+│       ├── passes.test.js
+│       ├── passes-advanced.test.js
+│       ├── publish.test.js
+│       ├── render.test.js
+│       ├── scoring.test.js
+│       ├── selection.test.js
+│       ├── state.test.js
+│       ├── teacher-helpers.test.js
+│       ├── validation.test.js
+│       ├── version-store.test.js
+│       └── version-compare.test.js
 │
 └── python/
     └── import_classifier/          # FastAPI backend service
@@ -257,12 +274,12 @@ docker compose up --build
 
 | Metric                     | Count   |
 | -------------------------- | ------- |
-| JavaScript files           | 47      |
+| JavaScript files           | 49      |
 | CSS files                  | 7       |
 | Python files               | 14      |
-| Total JS lines             | ~17,300 |
-| Total CSS lines            | ~4,000  |
-| Total Python lines         | ~2,900  |
+| Total JS lines             | ~18,900 |
+| Total CSS lines            | ~4,600  |
+| Total Python lines         | ~2,800  |
 | JSDoc-documented functions | 330+    |
 | Section markers            | 165     |
 | Jest tests                 | 481     |
@@ -278,7 +295,7 @@ Planned improvements (not in any specific order):
 - [ ] Add dark mode toggle
 - [ ] Mobile-responsive layout improvements
 - [ ] User authentication & cloud save
-- [ ] Undo/redo for drag-and-drop operations
+- [x] Undo/redo for drag-and-drop operations
 - [ ] Better error messages & user guidance
 - [ ] Performance optimization for large timetables (50+ classes)
 - [ ] API rate limiting & input sanitization
