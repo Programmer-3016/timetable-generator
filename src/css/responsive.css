@@ -4,7 +4,9 @@
  *   Handles sidebar collapse, table scrolling, input card layout, and touch targets.
  */
 
-/* Section: Responsive */
+/* ═══════════════════════════════════════════════════════
+   Section: RESPONSIVE BREAKPOINTS
+═══════════════════════════════════════════════════════ */
 @media (max-width: 1200px) {
   .timetable-area.view-timetable #timetableWrap {
     grid-template-columns: 1fr;
@@ -73,7 +75,9 @@
   }
 }
 
-/* Section: Mobile Layout (< 768px) */
+/* ═══════════════════════════════════════════════════════
+   Section: MOBILE LAYOUT
+═══════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   html,
   body {
@@ -357,7 +361,9 @@
   }
 }
 
-/* Section: Small Mobile (< 640px) */
+/* ═══════════════════════════════════════════════════════
+   Section: SMALL MOBILE
+═══════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
   .class-inputs-topbar {
     flex-direction: column;

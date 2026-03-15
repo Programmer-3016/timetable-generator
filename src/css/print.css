@@ -3,7 +3,9 @@
  * @description Print-friendly styles. Hides interactive UI and forces crisp borders.
  */
 
-/* Section: Print-Friendly Rules */
+/* ═══════════════════════════════════════════════════════
+   Section: PRINT-FRIENDLY RULES
+═══════════════════════════════════════════════════════ */
 @media print {
   /* Hide non-printable UI elements */
   .controls,

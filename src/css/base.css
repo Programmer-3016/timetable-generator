@@ -3,7 +3,9 @@
  * @description Base styles — CSS custom properties (theme tokens), resets, and app layout grid.
  */
 
-/* Section: Theme Tokens */
+/* ═══════════════════════════════════════════════════════
+   Section: THEME TOKENS
+═══════════════════════════════════════════════════════ */
 :root {
   --border: #d8dde6;
   --bg: #f4f6f9;
@@ -14,7 +16,9 @@
   --primary-dark: #014486;
 }
 
-/* Section: Base */
+/* ═══════════════════════════════════════════════════════
+   Section: BASE
+═══════════════════════════════════════════════════════ */
 * {
   box-sizing: border-box;
 }
@@ -41,7 +45,9 @@ body {
   line-height: 1.35;
 }
 
-/* Section: App Layout */
+/* ═══════════════════════════════════════════════════════
+   Section: APP LAYOUT
+═══════════════════════════════════════════════════════ */
 .app {
   width: 100%;
   max-width: none;

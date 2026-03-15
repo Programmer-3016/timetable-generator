@@ -10,7 +10,9 @@
    is being computed. Fades out smoothly when done.
 ═══════════════════════════════════════════════════════ */
 
-/* Section: Keyframes */
+/* ═══════════════════════════════════════════════════════
+   Section: KEYFRAMES
+═══════════════════════════════════════════════════════ */
 @keyframes skeletonShimmer {
   0%   { background-position: -800px 0; }
   100% { background-position: 800px 0; }
@@ -46,7 +48,9 @@
   40%           { opacity: 1; }
 }
 
-/* Section: Skeleton Container */
+/* ═══════════════════════════════════════════════════════
+   Section: SKELETON CONTAINER
+═══════════════════════════════════════════════════════ */
 .skeleton-wrap {
   padding: 14px 18px 18px;
   border-radius: 14px;
@@ -63,7 +67,9 @@
   pointer-events: none;
 }
 
-/* Section: Title Bar */
+/* ═══════════════════════════════════════════════════════
+   Section: TITLE BAR
+═══════════════════════════════════════════════════════ */
 .skeleton-title-bar {
   display: block;
   height: 16px;
@@ -75,7 +81,9 @@
   animation: skeletonShimmer 1.6s ease-in-out infinite;
 }
 
-/* Section: Table Structure */
+/* ═══════════════════════════════════════════════════════
+   Section: TABLE STRUCTURE
+═══════════════════════════════════════════════════════ */
 .skeleton-table {
   width: 100%;
   border-collapse: separate;
@@ -142,7 +150,9 @@
   opacity: 0.7;
 }
 
-/* Section: Shimmer Bars */
+/* ═══════════════════════════════════════════════════════
+   Section: SHIMMER BARS
+═══════════════════════════════════════════════════════ */
 .skeleton-bar {
   display: block;
   height: 7px;
@@ -152,7 +162,9 @@
   animation: skeletonShimmer 1.6s ease-in-out infinite;
 }
 
-/* Section: Generating Label */
+/* ═══════════════════════════════════════════════════════
+   Section: GENERATING LABEL
+═══════════════════════════════════════════════════════ */
 .skeleton-generating-label {
   display: flex;
   align-items: center;

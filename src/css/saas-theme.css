@@ -1063,7 +1063,9 @@ td.break {
   color: #d97706;
 }
 
-/* ── Detail Popup Modal ── */
+/* ───────────────────────────────────────────────────
+   Subsection: DETAIL POPUP MODAL
+─────────────────────────────────────────────────── */
 .detail-popup-overlay {
   position: fixed;
   inset: 0;
@@ -1162,7 +1164,9 @@ td.break {
   flex: 1;
 }
 
-/* ── Popup Content Styles ── */
+/* ───────────────────────────────────────────────────
+   Subsection: POPUP CONTENT STYLES
+─────────────────────────────────────────────────── */
 
 .detail-empty {
   font-size: 13.5px;
