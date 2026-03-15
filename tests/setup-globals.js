@@ -65,6 +65,8 @@ loadScript("src/js/core/scheduler/scoring.js");
 loadScript("src/js/core/scheduler/assignment.js");
 loadScript("src/js/core/scheduler/passes.js");
 loadScript("src/js/core/scheduler/passes-advanced.js");
+loadScript("src/js/core/scheduler/engine-scheduling.js");
+loadScript("src/js/core/scheduler/engine-compaction.js");
 loadScript("src/js/core/scheduler/state.js");
 loadScript("src/js/core/scheduler/bootstrap.js");
 loadScript("src/js/core/scheduler/publish.js");
