@@ -8,7 +8,9 @@
  * - Extracted from core/scheduler.js without behavior changes.
  */
 
-// Section: LAB PLACEMENT
+/* ═══════════════════════════════════════════════════════
+   Section: LAB PLACEMENT
+═══════════════════════════════════════════════════════ */
 
 function schedulerPlaceLabBlock({
   key,
@@ -234,7 +236,9 @@ function schedulerPlaceInitialLabsAcrossClasses({
   });
 }
 
-// Section: MAIN SUBJECT CLAMPING
+/* ═══════════════════════════════════════════════════════
+   Section: MAIN SUBJECT CLAMPING
+═══════════════════════════════════════════════════════ */
 
 /**
  * Clamps each main subject's weekly count to its target, replacing excess
@@ -388,7 +392,9 @@ function schedulerClampMainsToTarget({
   return changed;
 }
 
-// Section: TEACHER CLASH RESOLUTION
+/* ═══════════════════════════════════════════════════════
+   Section: TEACHER CLASH RESOLUTION
+═══════════════════════════════════════════════════════ */
 
 /**
  * Resolves remaining teacher clashes across all classes by reassigning teachers,

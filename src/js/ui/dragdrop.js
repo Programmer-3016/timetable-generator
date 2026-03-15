@@ -5,14 +5,18 @@
  * @description Drag-and-drop swap with clash-safe validation.
  */
 
-// Section: DRAG-AND-DROP CELL SWAP
+/* ═══════════════════════════════════════════════════════
+   Section: DRAG-AND-DROP CELL SWAP
+═══════════════════════════════════════════════════════ */
 
 const MAX_SWAP_HISTORY = 120;
 let gSwapUndoStack = [];
 let gSwapRedoStack = [];
 let gPostSwapRefreshTimer = null;
 
-// Section: VIEW REFRESH
+/* ═══════════════════════════════════════════════════════
+   Section: VIEW REFRESH
+═══════════════════════════════════════════════════════ */
 
 /**
  * Debounced refresh of report, faculty, and lab views after a swap.
@@ -60,7 +64,9 @@ function refreshViewsAfterScheduleShift() {
   }, 0);
 }
 
-// Section: TEACHER RESOLUTION
+/* ═══════════════════════════════════════════════════════
+   Section: TEACHER RESOLUTION
+═══════════════════════════════════════════════════════ */
 
 /**
  * Splits and deduplicates a teacher string into a normalized array.
@@ -156,7 +162,9 @@ function getSlotTeacherList(key, day, col) {
   return fallback ? [fallback] : [];
 }
 
-// Section: SWAP STATE MANAGEMENT
+/* ═══════════════════════════════════════════════════════
+   Section: SWAP STATE MANAGEMENT
+═══════════════════════════════════════════════════════ */
 
 /**
  * Captures the current state of a cell for undo/redo history.
@@ -232,7 +240,9 @@ function flashSwapCells(cells, className) {
   });
 }
 
-// Section: SWAP HISTORY
+/* ═══════════════════════════════════════════════════════
+   Section: SWAP HISTORY
+═══════════════════════════════════════════════════════ */
 
 /**
  * Pushes a swap entry onto the undo stack and clears redo stack.
@@ -311,7 +321,9 @@ function redoTimetableSwap() {
 window.undoTimetableSwap = undoTimetableSwap;
 window.redoTimetableSwap = redoTimetableSwap;
 
-// Section: DRAG AND DROP BINDING
+/* ═══════════════════════════════════════════════════════
+   Section: DRAG AND DROP BINDING
+═══════════════════════════════════════════════════════ */
 
 /**
  * Binds drag-and-drop swap handlers to all subject cells.

@@ -5,7 +5,9 @@
  * @description Shared constants, global runtime state, and helper utilities.
  */
 
-// Section: HELPER FUNCTIONS
+/* ═══════════════════════════════════════════════════════
+   Section: HELPER FUNCTIONS
+═══════════════════════════════════════════════════════ */
 
 function normalizeTeacherName(t) {
   if (!t) return "";
@@ -60,7 +62,9 @@ function generateClassKeys(n) {
   return keys;
 }
 
-// Section: Global State Variables
+/* ═══════════════════════════════════════════════════════
+   Section: GLOBAL STATE VARIABLES
+═══════════════════════════════════════════════════════ */
 
 const CLASS_KEYS = generateClassKeys(50);
 
@@ -116,7 +120,9 @@ let aggregateStats = {};
 
 let gCanonFoldMap = {};
 
-// Section: TEACHER ALIAS HELPERS
+/* ═══════════════════════════════════════════════════════
+   Section: TEACHER ALIAS HELPERS
+═══════════════════════════════════════════════════════ */
 
 function isSingleAdjacentTransposition(a, b) {
   const x = String(a || "");
@@ -391,7 +397,9 @@ window.setTeacherAliasDecisions = setTeacherAliasDecisions;
 window.resolveTeacherAliasCanonical = resolveTeacherAliasCanonical;
 window.isTeacherPairForcedSeparate = isTeacherPairForcedSeparate;
 
-// Section: UI FEEDBACK HELPERS (toast)
+/* ═══════════════════════════════════════════════════════
+   Section: UI FEEDBACK HELPERS
+═══════════════════════════════════════════════════════ */
 
 function ensureToastHost() {
   let host = document.getElementById("toastHost");

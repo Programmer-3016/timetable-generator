@@ -13,7 +13,9 @@ function schedulerGetAssignedTeacherValue({ assignedTeacher, key, day, col }) {
   return assignedTeacher[key][day][col];
 }
 
-// Section: TEACHER LIST RESOLUTION
+/* ═══════════════════════════════════════════════════════
+   Section: TEACHER LIST RESOLUTION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Returns a deduplicated list of teachers for a subject short in a class.
@@ -52,7 +54,9 @@ function schedulerGetShortTeacherList({
   return schedulerIsRealTeacher(fallback) ? [fallback] : [];
 }
 
-// Section: LAB DETECTION
+/* ═══════════════════════════════════════════════════════
+   Section: LAB DETECTION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Checks whether a subject short represents a lab for a given class.
@@ -116,7 +120,9 @@ function schedulerGetTeacherForCell({ getTeachersForCell, key, short, day, col }
   return list.length ? list[0] : null;
 }
 
-// Section: ADJACENCY CHECKS
+/* ═══════════════════════════════════════════════════════
+   Section: ADJACENCY CHECKS
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Normalizes a subject name for adjacency comparison by removing "lab" and non-alphanumeric chars.

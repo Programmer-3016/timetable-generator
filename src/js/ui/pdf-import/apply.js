@@ -5,7 +5,9 @@
  * @description Apply parsed import payload into existing timetable input fields.
  */
 
-// Section: IMPORT HELPERS
+/* ═══════════════════════════════════════════════════════
+   Section: IMPORT HELPERS
+═══════════════════════════════════════════════════════ */
 
 function pdfImportSetInputValue(id, value) {
   const el = document.getElementById(id);
@@ -125,7 +127,9 @@ function pdfImportNormalizeClock(value) {
   return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
 }
 
-// Section: SETTINGS RESOLUTION
+/* ═══════════════════════════════════════════════════════
+   Section: SETTINGS RESOLUTION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Resolves and validates timetable settings from raw import data with clamping.
@@ -256,7 +260,9 @@ function pdfImportNormalizeFixedSlots(rawList) {
   return out;
 }
 
-// Section: DATA APPLICATION
+/* ═══════════════════════════════════════════════════════
+   Section: DATA APPLICATION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Applies parsed import data (classes and settings) to the timetable input form.

@@ -14,7 +14,9 @@ function pdfImportParseTeacherFromSubjectLine(line) {
   return parts[parts.length - 1] || "";
 }
 
-// Section: DISPLAY NAME RESOLUTION
+/* ═══════════════════════════════════════════════════════
+   Section: DISPLAY NAME RESOLUTION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Selects the best display name from a set of teacher name variants (longest/most words first).
@@ -54,7 +56,9 @@ function pdfImportEscapeHtml(text) {
     .replace(/'/g, "&#39;");
 }
 
-// Section: AMBIGUITY DETECTION
+/* ═══════════════════════════════════════════════════════
+   Section: AMBIGUITY DETECTION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Collects pairs of teacher names that may refer to the same person across classes.
@@ -206,7 +210,9 @@ function pdfImportBuildTeacherDisplayMap(
   return out;
 }
 
-// Section: ALIAS REWRITING
+/* ═══════════════════════════════════════════════════════
+   Section: ALIAS REWRITING
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Rewrites teacher names in class subject lines using alias resolution and display map.
@@ -268,7 +274,9 @@ function pdfImportRewriteTeacherNamesByAlias(classes, displayMap = {}) {
   });
 }
 
-// Section: REVIEW MODAL
+/* ═══════════════════════════════════════════════════════
+   Section: REVIEW MODAL
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Shows a modal for reviewing teacher name ambiguities and returns resolved classes.

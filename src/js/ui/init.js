@@ -3,10 +3,14 @@
  * @description DOMContentLoaded wiring: input persistence, pager, quick fill, view toggle.
  */
 
-// Section: DOM INITIALIZATION (DOMContentLoaded)
+/* ═══════════════════════════════════════════════════════
+   Section: DOM INITIALIZATION
+═══════════════════════════════════════════════════════ */
 
 document.addEventListener("DOMContentLoaded", () => {
-  // -- Auto-grow textareas in input panel --
+  /* ───────────────────────────────────────────────────
+     Subsection: AUTO-GROW TEXTAREAS IN INPUT PANEL
+  ─────────────────────────────────────────────────── */
   function autoGrowTextarea(el) {
     if (!el || el.tagName !== "TEXTAREA") return;
     el.style.height = "auto";
@@ -48,7 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Section: INPUT ROW MANAGEMENT
+  /* ═══════════════════════════════════════════════════════
+     Section: INPUT ROW MANAGEMENT
+  ═══════════════════════════════════════════════════════ */
 
   /**
    * Ensures at least n input rows exist in the class inputs table.
@@ -104,7 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let pagerIndex = 0; // Current page index (0-based), 5 classes per page
   let inputSearchQuery = "";
 
-  // Section: STATE PERSISTENCE
+  /* ═══════════════════════════════════════════════════════
+     Section: STATE PERSISTENCE
+  ═══════════════════════════════════════════════════════ */
 
   const STORAGE_KEY = "tt_inputs_v1";
   let saveTimer = null;
@@ -223,7 +231,9 @@ document.addEventListener("DOMContentLoaded", () => {
     saveTimer = setTimeout(saveState, 400);
   }
 
-  // Section: SEARCH UTILITIES
+  /* ═══════════════════════════════════════════════════════
+     Section: SEARCH UTILITIES
+  ═══════════════════════════════════════════════════════ */
 
   /**
    * Normalizes text for search comparison (lowercase, collapsed whitespace).
@@ -340,7 +350,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return haystack.includes(normalizedNeedle);
   }
 
-  // Section: COUNT VISIBILITY
+  /* ═══════════════════════════════════════════════════════
+     Section: COUNT VISIBILITY
+  ═══════════════════════════════════════════════════════ */
 
   /**
    * Updates visibility of class input rows based on count, page, and search state.
@@ -501,7 +513,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   if (inputsPanel) inputsPanel.addEventListener("input", scheduleSave);
 
-  // Section: QUICK FILL MODAL
+  /* ═══════════════════════════════════════════════════════
+     Section: QUICK FILL MODAL
+  ═══════════════════════════════════════════════════════ */
 
   (function setupQuickFill() {
     const btn = document.getElementById("quickFillBtn");

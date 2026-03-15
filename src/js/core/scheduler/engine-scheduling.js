@@ -1,6 +1,16 @@
 /* exported schedulerBoostTeachers, schedulerEnsureDailyTeacherPresence, schedulerForceMainToFive, schedulerFinalizeSubjectFive, schedulerEmergencyP5Filler, schedulerAbsoluteNoGapSweep, schedulerEmergencyFillEmpty */
 
 /**
+ * @module core/scheduler/engine-scheduling.js
+ * @description Late-stage scheduling passes: teacher boosting, daily presence
+ *   enforcement, subject-five finalization, gap sweeping, and emergency fill.
+ */
+
+/* ═══════════════════════════════════════════════════════
+   Section: TEACHER BOOSTING
+═══════════════════════════════════════════════════════ */
+
+/**
  * Places lectures from teachers who are below the per-class theory max
  * into any remaining empty slots.
  */
@@ -54,6 +64,10 @@ function schedulerBoostTeachers({ ctx, key }) {
     }
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: DAILY TEACHER PRESENCE
+═══════════════════════════════════════════════════════ */
 
 /**
  * Ensures every teacher with remaining lectures appears at least once each day,
@@ -185,6 +199,10 @@ function schedulerEnsureDailyTeacherPresence({ ctx, key }) {
     }
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: FORCE MAIN TO FIVE
+═══════════════════════════════════════════════════════ */
 
 /**
  * Force-places main subjects until they hit their weekly quota,
@@ -402,6 +420,10 @@ function schedulerForceMainToFive({ ctx, key }) {
     }
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: FINALIZE SUBJECT FIVE
+═══════════════════════════════════════════════════════ */
 
 /**
  * Last-resort pass: relocates other main subjects to different days/slots
@@ -683,6 +705,10 @@ function schedulerFinalizeSubjectFive({ ctx, key }) {
   }
 }
 
+/* ═══════════════════════════════════════════════════════
+   Section: EMERGENCY P5 FILLER
+═══════════════════════════════════════════════════════ */
+
 /** Places a filler in the first post-lunch slot (P5) if it remains empty and filler budget allows. */
 function schedulerEmergencyP5Filler({ ctx, key }) {
   const {
@@ -752,6 +778,10 @@ function schedulerEmergencyP5Filler({ ctx, key }) {
     }
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: ABSOLUTE NO-GAP SWEEP
+═══════════════════════════════════════════════════════ */
 
 /**
  * Sweeps every empty slot in the schedule and fills it with the best-fit filler,
@@ -848,6 +878,10 @@ function schedulerAbsoluteNoGapSweep({ ctx, key }) {
     }
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: EMERGENCY FILL EMPTY
+═══════════════════════════════════════════════════════ */
 
 /** Emergency fallback: if a class schedule is completely empty, fills it with round-robin mains. */
 function schedulerEmergencyFillEmpty({ ctx, key }) {

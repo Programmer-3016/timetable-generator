@@ -8,7 +8,9 @@
 (function () {
   "use strict";
 
-  // Section: TAB BAR NAVIGATION
+  /* ═══════════════════════════════════════════════════════
+     Section: TAB BAR NAVIGATION
+  ═══════════════════════════════════════════════════════ */
 
   var TAB_STORAGE_KEY = "tt_active_tab_v1";
 
@@ -43,7 +45,9 @@
     if (!TAB_CONFIG[tabName]) return;
     activeTab = tabName;
 
-    // -- Update tab button active states --
+    /* ───────────────────────────────────────────────────
+       Subsection: UPDATE TAB BUTTON ACTIVE STATES
+    ─────────────────────────────────────────────────── */
     var btns = document.querySelectorAll(".tab-nav .tab-btn");
     btns.forEach(function (btn) {
       if (btn.getAttribute("data-tab") === tabName) {
@@ -53,7 +57,9 @@
       }
     });
 
-    // -- Show / hide panels --
+    /* ───────────────────────────────────────────────────
+       Subsection: SHOW / HIDE PANELS
+    ─────────────────────────────────────────────────── */
     var cfg = TAB_CONFIG[tabName];
     cfg.panelShow.forEach(function (id) {
       var el = document.getElementById(id);
@@ -64,7 +70,9 @@
       if (el) el.style.display = "none";
     });
 
-    // -- Versions tab layout mode --
+    /* ───────────────────────────────────────────────────
+       Subsection: VERSIONS TAB LAYOUT MODE
+    ─────────────────────────────────────────────────── */
     var appEl = document.querySelector(".app");
     var controlsEl = document.querySelector(".controls");
     var tabBarEl = document.getElementById("mainTabBar");
@@ -83,12 +91,16 @@
       }
     }
 
-    // -- Refresh version panel when switching to versions tab --
+    /* ───────────────────────────────────────────────────
+       Subsection: REFRESH VERSION PANEL WHEN SWITCHING TO VERSIONS TAB
+    ─────────────────────────────────────────────────── */
     if (tabName === "versions" && typeof renderVersionPanel === "function") {
       renderVersionPanel();
     }
 
-    // -- Keep legacy view class in sync so other code isn't broken --
+    /* ───────────────────────────────────────────────────
+       Subsection: KEEP LEGACY VIEW CLASS IN SYNC
+    ─────────────────────────────────────────────────── */
     if (ttArea) {
       ttArea.classList.remove("view-inputs", "view-timetable");
       if (tabName === "inputs") {
@@ -98,7 +110,9 @@
       }
     }
 
-    // -- Persist --
+    /* ───────────────────────────────────────────────────
+       Subsection: PERSIST
+    ─────────────────────────────────────────────────── */
     try {
       localStorage.setItem(TAB_STORAGE_KEY, tabName);
     } catch (_) {
@@ -130,7 +144,9 @@
   window.enablePostGenerateTabs = enablePostGenerateTabs;
   window.getActiveTab = getActiveTab;
 
-  // -- Wire up tab clicks --
+  /* ───────────────────────────────────────────────────
+     Subsection: WIRE UP TAB CLICKS
+  ─────────────────────────────────────────────────── */
   function initTabs() {
     var btns = document.querySelectorAll(".tab-nav .tab-btn");
     btns.forEach(function (btn) {

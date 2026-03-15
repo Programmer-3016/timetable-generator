@@ -82,7 +82,9 @@ function schedulerPickTeacherForSlot({
   return best ? best.teacher : null;
 }
 
-// Section: ASSIGNMENT VALIDATION
+/* ═══════════════════════════════════════════════════════
+   Section: ASSIGNMENT VALIDATION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Checks whether a subject can be assigned to a specific slot without violating constraints.

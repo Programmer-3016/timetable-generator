@@ -6,7 +6,9 @@
  *   lab room conflicts, period caps, and overall constraint satisfaction.
  */
 
-// Section: SCHEDULE VALIDATION
+/* ═══════════════════════════════════════════════════════
+   Section: SCHEDULE VALIDATION
+═══════════════════════════════════════════════════════ */
 
 function schedulerNormalizeList(value) {
   if (!value) return [];
@@ -16,7 +18,9 @@ function schedulerNormalizeList(value) {
   return [];
 }
 
-// Section: SNAPSHOT BUILDERS
+/* ═══════════════════════════════════════════════════════
+   Section: SNAPSHOT BUILDERS
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Creates a plain-object snapshot of a Set/Object/Array map for the given keys.
@@ -52,7 +56,9 @@ function schedulerBuildTeacherListSnapshot(source = {}, keys = []) {
   return out;
 }
 
-// Section: VALIDATION KEY HELPERS
+/* ═══════════════════════════════════════════════════════
+   Section: VALIDATION KEY HELPERS
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Returns the canonical clash-detection key for a teacher name.
@@ -121,7 +127,9 @@ function schedulerGetTeachersForValidationCell(state, key, short, day, col) {
   return isReal(fallback) ? [String(fallback).trim()] : [];
 }
 
-// Section: FULL VALIDATION
+/* ═══════════════════════════════════════════════════════
+   Section: FULL VALIDATION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Performs full constraint validation on a completed schedule state.

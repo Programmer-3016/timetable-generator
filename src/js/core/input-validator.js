@@ -6,7 +6,9 @@
  * Does NOT modify any existing logic — purely additive.
  */
 
-// Section: INPUT VALIDATION
+/* ═══════════════════════════════════════════════════════
+   Section: INPUT VALIDATION
+═══════════════════════════════════════════════════════ */
 
 /**
  * Validate inputs before running the scheduler.

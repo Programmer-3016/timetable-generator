@@ -5,7 +5,9 @@
  * @description Input parser for subject-teacher lines and normalization helpers.
  */
 
-// Section: SUBJECT/TEACHER PAIR PARSER
+/* ═══════════════════════════════════════════════════════
+   Section: SUBJECT/TEACHER PAIR PARSER
+═══════════════════════════════════════════════════════ */
 
 function parsePairs(textareaId = "pairs") {
   const el = document.getElementById(textareaId);
@@ -13,7 +15,9 @@ function parsePairs(textareaId = "pairs") {
   const raw = el.value.trim();
   if (!raw) return [];
 
-  // Section: SUBJECT NAME NORMALIZATION
+  /* ═══════════════════════════════════════════════════════
+     Section: SUBJECT NAME NORMALIZATION
+  ═══════════════════════════════════════════════════════ */
 
   /** Normalizes a subject short code to a canonical uppercase form. */
   const normalizeShort = (s) => {
@@ -70,7 +74,9 @@ function parsePairs(textareaId = "pairs") {
     return hasSpaces && hasLower && (manyWords || longish || hasStop);
   };
 
-  // Section: SUBJECT/TEACHER DETECTION
+  /* ═══════════════════════════════════════════════════════
+     Section: SUBJECT/TEACHER DETECTION
+  ═══════════════════════════════════════════════════════ */
 
   /** Checks if a text fragment looks like a person’s name (2–4 capitalized words, no subject keywords). */
   const looksLikePersonNameChunk = (text) => {
@@ -294,7 +300,9 @@ function parsePairs(textareaId = "pairs") {
         teacher = a3;
       }
 
-      // Section: CREDIT SCANNING
+      /* ═══════════════════════════════════════════════════════
+         Section: CREDIT SCANNING
+      ═══════════════════════════════════════════════════════ */
 
       /** Extracts a credit value from a string, returning the cleaned text and credits. */
       const scanForCredits = (s) => {

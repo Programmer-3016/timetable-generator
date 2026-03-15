@@ -6,6 +6,10 @@
 
 /* exported diffScheduleVersions, renderCompareView, closeCompareView */
 
+/* ═══════════════════════════════════════════════════════
+   Section: DIFF COMPUTATION
+═══════════════════════════════════════════════════════ */
+
 /**
  * Compute diff between two version snapshots.
  * Returns per-class, per-day, per-slot diff entries.
@@ -74,6 +78,10 @@ function diffScheduleVersions(v1, v2) {
     v2Valid: v2.valid,
   };
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: COMPARE VIEW RENDERING
+═══════════════════════════════════════════════════════ */
 
 /**
  * Render the compare view into the versions panel.
@@ -151,6 +159,10 @@ function renderCompareView(diff) {
   container.innerHTML = html;
   container.style.display = "block";
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: UTILITIES
+═══════════════════════════════════════════════════════ */
 
 /**
  * Close/hide the compare view.

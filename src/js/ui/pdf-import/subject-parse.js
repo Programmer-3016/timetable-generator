@@ -5,7 +5,9 @@
  * @description Subject-row reconstruction and dedupe from extracted PDF lines.
  */
 
-// Section: ENTRY PARSING HELPERS
+/* ═══════════════════════════════════════════════════════
+   Section: ENTRY PARSING HELPERS
+═══════════════════════════════════════════════════════ */
 
 function pdfImportParseSubjectTableLines(lines) {
   const entries = [];
@@ -395,7 +397,9 @@ function pdfImportParseSubjectTableLines(lines) {
   return pdfImportDedupeSubjects(entries);
 }
 
-// Section: SUBJECT DEDUPLICATION
+/* ═══════════════════════════════════════════════════════
+   Section: SUBJECT DEDUPLICATION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Deduplicates subject entries by short+subject+teacher key, preserving LTP.

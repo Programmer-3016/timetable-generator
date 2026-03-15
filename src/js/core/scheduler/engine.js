@@ -29,7 +29,9 @@ function schedulerRenderMultiClassesEngine({
     return;
   }
 
-  // Section: CONFIGURATION & UTILITY HELPERS
+  /* ═══════════════════════════════════════════════════════
+     Section: CONFIGURATION & UTILITY HELPERS
+  ═══════════════════════════════════════════════════════ */
 
   /** Checks if a subject pair is a lab by testing its short/subject name. */
   const isLab = (pair) =>
@@ -101,7 +103,9 @@ function schedulerRenderMultiClassesEngine({
     data,
     buildTeacherFoldMapFromRawNames,
   });
-  // Section: TEACHER RESOLUTION
+  /* ═══════════════════════════════════════════════════════
+     Section: TEACHER RESOLUTION
+  ═══════════════════════════════════════════════════════ */
 
   /** Returns the canonical fold-map key for a teacher name, used for clash detection. */
   const teacherClashKey = (name) => {
@@ -347,7 +351,9 @@ function schedulerRenderMultiClassesEngine({
   const mainPostLunchCountByClass = {};
   keys.forEach((k) => (mainPostLunchCountByClass[k] = {}));
 
-  // Section: SLOT ASSIGNMENT & VALIDATION
+  /* ═══════════════════════════════════════════════════════
+     Section: SLOT ASSIGNMENT & VALIDATION
+  ═══════════════════════════════════════════════════════ */
 
   /** Increments the post-lunch main-subject counter if the slot is after lunch. */
   function recordMainPostLunchIfNeeded(key, short, col) {
@@ -415,7 +421,9 @@ function schedulerRenderMultiClassesEngine({
     });
   }
 
-  // Section: LAB PLACEMENT
+  /* ═══════════════════════════════════════════════════════
+     Section: LAB PLACEMENT
+  ═══════════════════════════════════════════════════════ */
 
   /**
    * Places a 2-period lab block on the given day for a class, choosing the best
@@ -509,7 +517,9 @@ function schedulerRenderMultiClassesEngine({
     return classIdx % 2 === 0 ? pre : post;
   }
 
-  // Section: FILLER & GAP MANAGEMENT
+  /* ═══════════════════════════════════════════════════════
+     Section: FILLER & GAP MANAGEMENT
+  ═══════════════════════════════════════════════════════ */
 
   /**
    * Attempts to replace post-lunch filler slots with main lectures from teachers
@@ -698,7 +708,9 @@ function schedulerRenderMultiClassesEngine({
     }
   }
 
-  // Section: MAIN SUBJECT SCHEDULING PASSES
+  /* ═══════════════════════════════════════════════════════
+     Section: MAIN SUBJECT SCHEDULING PASSES
+  ═══════════════════════════════════════════════════════ */
 
     /** Builds a shared context object for all advanced scheduling passes. */
     const getAdvancedPassCtx = () => ({
@@ -900,7 +912,9 @@ function fillRemaining(key) {
     }
   }
 
-  // Section: COMPACTION & POST-PROCESSING
+  /* ═══════════════════════════════════════════════════════
+     Section: COMPACTION & POST-PROCESSING
+  ═══════════════════════════════════════════════════════ */
 
   /**
    * Rebuilds all tracking maps (teacher minutes, theory counts, filler counts, etc.)
@@ -1117,7 +1131,9 @@ function fillRemaining(key) {
     rebuildTrackingFromSchedule();
   }
 
-  // Section: FIXED SLOT ENFORCEMENT
+  /* ═══════════════════════════════════════════════════════
+     Section: FIXED SLOT ENFORCEMENT
+  ═══════════════════════════════════════════════════════ */
 
   /**
    * Locks imported fixed slots into the schedule, overriding whatever was
@@ -1182,7 +1198,9 @@ function fillRemaining(key) {
 
   validatePostLunchCompaction();
 
-  // Section: DOM RENDERING
+  /* ═══════════════════════════════════════════════════════
+     Section: DOM RENDERING
+  ═══════════════════════════════════════════════════════ */
 
   /** Renders the finalized schedule for a class into the timetable DOM table. */
   function renderClassToDOM(key) {

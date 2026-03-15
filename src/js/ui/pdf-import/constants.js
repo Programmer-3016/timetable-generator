@@ -6,14 +6,20 @@
  *   for detecting titles, semesters, subject codes, and classification signals.
  */
 
-// Section: PDF IMPORT CONSTANTS
+/* ═══════════════════════════════════════════════════════
+   Section: PDF IMPORT CONSTANTS
+═══════════════════════════════════════════════════════ */
 
-// --- Title, semester, and section detection regexes
+/* ───────────────────────────────────────────────────
+   Subsection: TITLE, SEMESTER, AND SECTION DETECTION REGEXES
+─────────────────────────────────────────────────── */
 const PDF_IMPORT_TITLE_RE =
   /\b(?:BCA|MCA|MBA|B\.?\s*TECH|M\.?\s*TECH|BBA|BSC|B\.?\s*SC)\b/i;
 const PDF_IMPORT_SEM_YEAR_RE = /\b(?:sem(?:ester)?|year)\b/i;
 const PDF_IMPORT_SECTION_RE = /\bsection\b/i;
-// --- Day name lists and code-to-name mapping
+/* ───────────────────────────────────────────────────
+   Subsection: DAY NAME LISTS AND CODE-TO-NAME MAPPING
+─────────────────────────────────────────────────── */
 const PDF_IMPORT_DAY_NAMES = [
   "Monday",
   "Tuesday",
@@ -41,7 +47,9 @@ const PDF_IMPORT_DAY_CODE_TO_NAME = {
   SAT: "Saturday",
   SUN: "Sunday",
 };
-// --- Tokens to reject as subject short-forms
+/* ───────────────────────────────────────────────────
+   Subsection: TOKENS TO REJECT AS SUBJECT SHORT-FORMS
+─────────────────────────────────────────────────── */
 const PDF_IMPORT_SHORT_BLOCKLIST = new Set([
   "ROOM",
   "DAY",
@@ -64,7 +72,9 @@ const PDF_IMPORT_SHORT_BLOCKLIST = new Set([
   "DR",
   "PROF",
 ]);
-// --- Roman numeral tokens and LTP/long-short allowlists
+/* ───────────────────────────────────────────────────
+   Subsection: ROMAN NUMERAL TOKENS AND LTP/LONG-SHORT ALLOWLISTS
+─────────────────────────────────────────────────── */
 const PDF_IMPORT_ROMAN_TOKEN_SET = new Set([
   "I",
   "II",
@@ -82,7 +92,9 @@ const PDF_IMPORT_LONG_SHORT_ALLOWLIST = new Set([
   "PROJECT",
   "SEMINAR",
 ]);
-// --- Common OCR misread tokens to ignore
+/* ───────────────────────────────────────────────────
+   Subsection: COMMON OCR MISREAD TOKENS TO IGNORE
+─────────────────────────────────────────────────── */
 const PDF_IMPORT_OCR_ARTIFACT_TOKEN_SET = new Set([
   "DYE",
   "ODE",

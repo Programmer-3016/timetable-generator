@@ -5,7 +5,9 @@
 
 /* exported formatTime, resolveGenerationSeed, generateTimetable */
 
-// Section: TIMETABLE GENERATION MASTER FUNCTION
+/* ═══════════════════════════════════════════════════════
+   Section: TIMETABLE GENERATION MASTER FUNCTION
+═══════════════════════════════════════════════════════ */
 
 function formatTime(d) {
   return (
@@ -15,7 +17,9 @@ function formatTime(d) {
   );
 }
 
-// Section: SEED MANAGEMENT
+/* ═══════════════════════════════════════════════════════
+   Section: SEED MANAGEMENT
+═══════════════════════════════════════════════════════ */
 
 /** Derives a deterministic seed for a given generation attempt. */
 function resolveGenerationSeed(baseSeed, attemptIndex = 0) {
@@ -116,7 +120,9 @@ function generateTimetable(options = {}) {
   gFillerLabelsByClass = {};
   gEnabledKeys = [];
 
-  // Section: FILLER PARSING
+  /* ═══════════════════════════════════════════════════════
+     Section: FILLER PARSING
+  ═══════════════════════════════════════════════════════ */
 
   /** Parses a filler-shorts input field into a set of shorts, labels, and credits. */
   function parseFillerWithLabels(id) {
@@ -189,7 +195,9 @@ function generateTimetable(options = {}) {
     return result;
   }
 
-  // Section: SUBJECT PAIR PARSING
+  /* ═══════════════════════════════════════════════════════
+     Section: SUBJECT PAIR PARSING
+  ═══════════════════════════════════════════════════════ */
 
   /** Parses a comma-separated input field into a Set of uppercase short codes. */
   function parseShortsSet(id) {

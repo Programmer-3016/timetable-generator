@@ -20,7 +20,9 @@ function pdfImportBuildLtpMap(entries) {
   return map;
 }
 
-// Section: LTP EXTRACTION
+/* ═══════════════════════════════════════════════════════
+   Section: LTP EXTRACTION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Checks if a token resembles a subject code (e.g., "VAC", "IMC201").
@@ -218,7 +220,9 @@ function pdfImportBuildLtpMapFromHints(lines) {
   return out;
 }
 
-// Subsection: Classification and Class-Level Payload Assembly
+/* ───────────────────────────────────────────────────
+   Subsection: Classification and Class-Level Payload Assembly
+─────────────────────────────────────────────────── */
 function pdfImportGetEntryLtpLoad(entry) {
   const ltp = pdfImportNormalizeLtpTriplet(entry?.ltp || "");
   if (!ltp) return null;
@@ -250,7 +254,9 @@ function pdfImportResolveLtpThreshold(entries) {
   return min + (max - min) / 2;
 }
 
-// Section: ENTRY CLASSIFICATION
+/* ═══════════════════════════════════════════════════════
+   Section: ENTRY CLASSIFICATION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Checks if an entry is a lab based on its short code or subject name.
@@ -340,7 +346,9 @@ function pdfImportClassifyEntries(entries) {
   };
 }
 
-// Section: OUTPUT FORMATTING
+/* ═══════════════════════════════════════════════════════
+   Section: OUTPUT FORMATTING
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Formats an entry as a "short - subject - teacher" line.

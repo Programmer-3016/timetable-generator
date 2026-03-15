@@ -24,8 +24,16 @@
    MAX_VERSIONS
 */
 
+/* ═══════════════════════════════════════════════════════
+   Section: CONSTANTS
+═══════════════════════════════════════════════════════ */
+
 var VERSION_STORAGE_KEY = "tt_schedule_versions_v1";
 var MAX_VERSIONS = 10;
+
+/* ═══════════════════════════════════════════════════════
+   Section: STORAGE READ/WRITE
+═══════════════════════════════════════════════════════ */
 
 /**
  * Read all saved versions from localStorage.
@@ -55,6 +63,10 @@ function _saveVersionsToStorage(versions) {
     }
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: INTERNAL HELPERS
+═══════════════════════════════════════════════════════ */
 
 /**
  * Generate the next version ID (max existing + 1).
@@ -93,6 +105,10 @@ function _pruneVersions(versions) {
   }
   return versions;
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: CRUD OPERATIONS
+═══════════════════════════════════════════════════════ */
 
 /**
  * Save a new schedule version.
@@ -232,6 +248,10 @@ function getVersionById(id) {
   }
   return null;
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: VERSION RESTORE
+═══════════════════════════════════════════════════════ */
 
 /**
  * Load a version into the active application state.

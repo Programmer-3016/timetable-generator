@@ -5,7 +5,9 @@
  * @description Faculty selector and faculty timetable rendering.
  */
 
-// Section: FACULTY TIMETABLE PANEL
+/* ═══════════════════════════════════════════════════════
+   Section: FACULTY TIMETABLE PANEL
+═══════════════════════════════════════════════════════ */
 
 function buildFacultyPanel() {
   const panel = document.getElementById("facultyPanel");
@@ -25,7 +27,9 @@ function buildFacultyPanel() {
       if (t.length > prev.length) canonToDisplay.set(master, t);
     });
   } else {
-    // Section: FACULTY DATA AGGREGATION
+    /* ═══════════════════════════════════════════════════════
+       Section: FACULTY DATA AGGREGATION
+    ═══════════════════════════════════════════════════════ */
     // Pushes teacher pairs from a class into the canonToDisplay map
     const pushPairs = (pairs) => {
       (pairs || []).forEach((p) => {
@@ -82,7 +86,9 @@ function buildFacultyPanel() {
   renderLabUsage();
 }
 
-// Section: FACULTY TABLE RENDERING
+/* ═══════════════════════════════════════════════════════
+   Section: FACULTY TABLE RENDERING
+═══════════════════════════════════════════════════════ */
 
 /**
  * Renders a timetable grid for a single faculty member.
@@ -230,7 +236,9 @@ function renderFacultyTimetable(teacher) {
   html += "</tbody></table>";
   target.innerHTML = html;
 
-  // Section: CELL NAVIGATION
+  /* ═══════════════════════════════════════════════════════
+     Section: CELL NAVIGATION
+  ═══════════════════════════════════════════════════════ */
 
   // Scrolls to and briefly highlights a cell with a blue border
   const flashCell = (el) => {

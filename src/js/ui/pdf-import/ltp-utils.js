@@ -58,7 +58,9 @@ function pdfImportNormalizeLtpTriplet(raw) {
   return "";
 }
 
-// Section: LTP EXTRACTION
+/* ═══════════════════════════════════════════════════════
+   Section: LTP EXTRACTION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Extracts an LTP triplet from an array of table column strings.

@@ -9,7 +9,9 @@ const schedulerSelectionFallbackRng = createSeededRandom(
   (Date.now() ^ 0x7f4a7c15) >>> 0
 );
 
-// Section: SLOT SELECTION HELPERS
+/* ═══════════════════════════════════════════════════════
+   Section: SLOT SELECTION HELPERS
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Checks if a teacher is shared across multiple classes (common teacher).

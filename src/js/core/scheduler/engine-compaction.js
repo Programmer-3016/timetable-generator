@@ -1,6 +1,16 @@
 /* exported schedulerRebuildTracking, schedulerBoostMainOnLabDays, schedulerEnforceMainTargets, schedulerEnforceClassOneFillerTargets, schedulerValidateCompaction, schedulerEnforceFixedSlots */
 
 /**
+ * @module core/scheduler/engine-compaction.js
+ * @description Compaction and enforcement passes: tracking rebuild, main/filler
+ *   target enforcement, post-lunch compaction validation, and fixed slot locking.
+ */
+
+/* ═══════════════════════════════════════════════════════
+   Section: REBUILD TRACKING
+═══════════════════════════════════════════════════════ */
+
+/**
  * Rebuilds all tracking maps (teacher minutes, theory counts, filler counts, etc.)
  * from the current state of the schedules array. Called after major mutations.
  */
@@ -197,6 +207,10 @@ function schedulerRebuildTracking({ ctx }) {
   });
 }
 
+/* ═══════════════════════════════════════════════════════
+   Section: BOOST MAIN ON LAB DAYS
+═══════════════════════════════════════════════════════ */
+
 /**
  * On days that have labs but no theory lectures, places main subjects
  * to ensure they reach the target of 5 weekly lectures.
@@ -299,6 +313,10 @@ function schedulerBoostMainOnLabDays({ ctx, key }) {
     }
   });
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: ENFORCE MAIN TARGETS
+═══════════════════════════════════════════════════════ */
 
 /**
  * Iteratively enforces weekly targets for all main subjects in a class,
@@ -449,6 +467,10 @@ function schedulerEnforceMainTargets({ ctx, key }) {
   return changed;
 }
 
+/* ═══════════════════════════════════════════════════════
+   Section: ENFORCE CLASS-ONE FILLER TARGETS
+═══════════════════════════════════════════════════════ */
+
 /**
  * Enforces filler targets specifically for the first class (Class 1),
  * ensuring each filler subject reaches its credit-based weekly target.
@@ -597,6 +619,10 @@ function schedulerEnforceClassOneFillerTargets({ ctx }) {
   return changed;
 }
 
+/* ═══════════════════════════════════════════════════════
+   Section: VALIDATE COMPACTION
+═══════════════════════════════════════════════════════ */
+
 /**
  * Validates the final post-lunch compaction: checks for mid-gap issues,
  * split lab blocks, and remaining cross-class teacher clashes.
@@ -708,6 +734,10 @@ function schedulerValidateCompaction({ ctx }) {
     // Ignore console/reporting failures.
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: ENFORCE FIXED SLOTS
+═══════════════════════════════════════════════════════ */
 
 /**
  * Locks imported fixed slots into the schedule, overriding whatever was

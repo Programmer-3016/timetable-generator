@@ -5,9 +5,13 @@
  * @description File naming and save target utilities for all export modes.
  */
 
-// Section: EXPORT FUNCTIONS
+/* ═══════════════════════════════════════════════════════
+   Section: EXPORT FUNCTIONS
+═══════════════════════════════════════════════════════ */
 
-// Section: FILE UTILITIES
+/* ═══════════════════════════════════════════════════════
+   Section: FILE UTILITIES
+═══════════════════════════════════════════════════════ */
 
 /**
  * Sanitizes a filename by removing illegal characters and collapsing whitespace.
@@ -39,7 +43,9 @@ function ensureFilenameExtension(filename, extension) {
   return `${cleanName}.${cleanExt}`;
 }
 
-// Section: BLOB CONVERSION
+/* ═══════════════════════════════════════════════════════
+   Section: BLOB CONVERSION
+═══════════════════════════════════════════════════════ */
 
 /**
  * Converts an HTMLCanvasElement to a Blob via toBlob, wrapped in a Promise.

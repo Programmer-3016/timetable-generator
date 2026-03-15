@@ -5,7 +5,9 @@
  * @description Per-class subject info table rendering.
  */
 
-// Section: SUBJECT INFO TABLES
+/* ═══════════════════════════════════════════════════════
+   Section: SUBJECT INFO TABLES
+═══════════════════════════════════════════════════════ */
 
 /**
  * Renders per-class subject info tables with slot counts and credit details.

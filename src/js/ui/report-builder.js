@@ -5,9 +5,13 @@
  * @description Teacher aggregate report data preparation.
  */
 
-// Section: PER-TEACHER REPORT BUILDER
+/* ═══════════════════════════════════════════════════════
+   Section: PER-TEACHER REPORT BUILDER
+═══════════════════════════════════════════════════════ */
 
-// Section: TEACHER CANDIDATE RESOLUTION
+/* ═══════════════════════════════════════════════════════
+   Section: TEACHER CANDIDATE RESOLUTION
+═══════════════════════════════════════════════════════ */
 
 /**
  * Checks whether a teacher name is valid for inclusion in reports (filters out blanks and "Not Mentioned").
@@ -55,7 +59,9 @@ function reportTeacherCandidatesForCell(key, day, col, short, subj) {
   return [];
 }
 
-// Section: AGGREGATE STATS
+/* ═══════════════════════════════════════════════════════
+   Section: AGGREGATE STATS
+═══════════════════════════════════════════════════════ */
 
 /**
  * Rebuilds aggregate per-teacher statistics (theory, labs, minutes, first-period counts) from the current published schedule.
@@ -128,7 +134,9 @@ function rebuildAggregateStatsFromPublishedSchedule() {
   return next;
 }
 
-// Section: REPORT ORCHESTRATION
+/* ═══════════════════════════════════════════════════════
+   Section: REPORT ORCHESTRATION
+═══════════════════════════════════════════════════════ */
 
 /**
  * Orchestrates the full report pipeline: rebuilds subject info, aggregates teacher stats, folds canonical names, and renders the report table.

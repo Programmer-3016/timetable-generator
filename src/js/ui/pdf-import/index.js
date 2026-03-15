@@ -21,7 +21,9 @@ function callOptionalGenerationAnimation(methodName, ...args) {
   }
 }
 
-// Section: ERROR MODAL
+/* ═══════════════════════════════════════════════════════
+   Section: ERROR MODAL
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Displays a modal dialog with an error title and message for import failures.
@@ -120,7 +122,9 @@ function setImportProcessing(importBtn, busy, busyText = "Processing...") {
   callOptionalGenerationAnimation("hideGenerationAnimation");
 }
 
-// Section: VALIDATION HELPERS
+/* ═══════════════════════════════════════════════════════
+   Section: VALIDATION HELPERS
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Checks if a value is a plain object (not null or Array).
@@ -244,7 +248,9 @@ async function readJsonResponseSafely(response) {
   }
 }
 
-// Section: BACKEND IMPORT FLOW
+/* ═══════════════════════════════════════════════════════
+   Section: BACKEND IMPORT FLOW
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Runs the full backend PDF import flow: upload, validate, review, and apply.
@@ -357,7 +363,9 @@ async function runBackendImportFlow(file, importBtn) {
   }
 }
 
-// Section: LEGACY IMPORT FLOW
+/* ═══════════════════════════════════════════════════════
+   Section: LEGACY IMPORT FLOW
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Runs the legacy client-side PDF import flow: parse, review teachers, and apply.

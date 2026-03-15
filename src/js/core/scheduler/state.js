@@ -8,7 +8,9 @@
  * - Extracted from core/scheduler.js without behavior changes.
  */
 
-// Section: CLASS CONTAINER SETUP
+/* ═══════════════════════════════════════════════════════
+   Section: CLASS CONTAINER SETUP
+═══════════════════════════════════════════════════════ */
 
 function schedulerCreateTeacherTheoryCountByClass({ keys }) {
   const teacherTheoryCountByClass = {};
@@ -75,7 +77,9 @@ function schedulerCreateClassContainers({ keys, days, classesPerDay }) {
   };
 }
 
-// Section: SUBJECT MAP POPULATION
+/* ═══════════════════════════════════════════════════════
+   Section: SUBJECT MAP POPULATION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Populates per-class subject maps, teacher lookups, weekly quotas, and lecture lists.
@@ -167,7 +171,9 @@ function schedulerPopulateClassSubjectMapsAndQuotas({
   });
 }
 
-// Section: FILLER TARGETS
+/* ═══════════════════════════════════════════════════════
+   Section: FILLER TARGETS
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Builds per-class filler target and count maps from filler short sets.

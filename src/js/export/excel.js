@@ -3,7 +3,9 @@
  * @description Workbook export pipeline for multi-sheet Excel output.
  */
 
-// Section: EXCEL EXPORT
+/* ═══════════════════════════════════════════════════════
+   Section: EXCEL EXPORT
+═══════════════════════════════════════════════════════ */
 
 /**
  * Exports the full timetable as a multi-sheet Excel workbook including overview, per-class schedules, teacher report, and lab schedule.

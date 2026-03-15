@@ -5,9 +5,13 @@
  * @description Bulk JPG/PDF export for all class timetable blocks.
  */
 
-// Section: BULK EXPORT (ALL CLASSES)
+/* ═══════════════════════════════════════════════════════
+   Section: BULK EXPORT (ALL CLASSES)
+═══════════════════════════════════════════════════════ */
 
-// Section: COMBINED JPG EXPORT
+/* ═══════════════════════════════════════════════════════
+   Section: COMBINED JPG EXPORT
+═══════════════════════════════════════════════════════ */
 
 /**
  * Captures all visible class timetable blocks and composites them into a single JPG image for download.
@@ -135,7 +139,9 @@ async function exportAllTimetablesAsOneJPG() {
   });
 }
 
-// Section: PDF EXPORT
+/* ═══════════════════════════════════════════════════════
+   Section: PDF EXPORT
+═══════════════════════════════════════════════════════ */
 
 /**
  * Exports all class timetable blocks as a multi-page PDF document.
@@ -169,7 +175,9 @@ async function exportAllTimetablesAsPDF() {
   });
   if (saveTarget.cancelled) return;
 
-  // Section: JSPDF LOADER
+  /* ═══════════════════════════════════════════════════════
+     Section: JSPDF LOADER
+  ═══════════════════════════════════════════════════════ */
 
   /**
    * Lazily loads the jsPDF library from CDN if not already available.

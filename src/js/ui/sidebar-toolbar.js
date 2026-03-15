@@ -5,7 +5,9 @@
  * @description Sidebar collapse/expand controls and class filter toolbar.
  */
 
-// Section: SIDEBAR & TOOLBAR CONTROLS
+/* ═══════════════════════════════════════════════════════
+   Section: SIDEBAR & TOOLBAR CONTROLS
+═══════════════════════════════════════════════════════ */
 
 /** Updates the sidebar toggle button text and title based on current state. */
 function refreshSidebarToggleButton() {
@@ -24,7 +26,9 @@ function toggleSidebarLayout() {
   refreshSidebarToggleButton();
 }
 
-// Section: CLASS FILTER
+/* ═══════════════════════════════════════════════════════
+   Section: CLASS FILTER
+═══════════════════════════════════════════════════════ */
 
 let gClassFilterQuery = "";
 

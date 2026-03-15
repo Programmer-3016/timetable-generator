@@ -5,7 +5,9 @@
  * @description Capture formatting helpers for PNG/PDF exports.
  */
 
-// Section: PDF/JPG EXPORT HELPERS
+/* ═══════════════════════════════════════════════════════
+   Section: PDF/JPG EXPORT HELPERS
+═══════════════════════════════════════════════════════ */
 
 /**
  * Determines the PDF page format and target capture width based on table column count.

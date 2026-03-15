@@ -9,7 +9,9 @@
  * - This bridge keeps existing callers unchanged (`renderMultiClasses`).
  */
 
-// Section: SCHEDULER BRIDGE
+/* ═══════════════════════════════════════════════════════
+   Section: SCHEDULER BRIDGE
+═══════════════════════════════════════════════════════ */
 
 /** Delegates multi-class rendering to the scheduler engine. */
 function renderMultiClasses(params) {

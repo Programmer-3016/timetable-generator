@@ -5,7 +5,9 @@
  * @description Page/text extraction and class payload construction for PDF import.
  */
 
-// Section: CLASS SECTION DETECTION
+/* ═══════════════════════════════════════════════════════
+   Section: CLASS SECTION DETECTION
+═══════════════════════════════════════════════════════ */
 
 function pdfImportExtractSectionLetter(text) {
   const t = pdfImportNormalizeLine(text);
@@ -314,7 +316,9 @@ function pdfImportBuildClassSections(lines) {
   return fromHeaders;
 }
 
-// Section: SETTINGS DETECTION
+/* ═══════════════════════════════════════════════════════
+   Section: SETTINGS DETECTION
+═══════════════════════════════════════════════════════ */
 
 /** @returns {number|null} Number of distinct weekdays detected in the timetable lines. */
 function pdfImportDetectDays(lines) {
@@ -428,7 +432,9 @@ function pdfImportDetectTimingSettings(lines) {
   return out;
 }
 
-// Section: TEXT LAYER EXTRACTION
+/* ═══════════════════════════════════════════════════════
+   Section: TEXT LAYER EXTRACTION
+═══════════════════════════════════════════════════════ */
 
 /** @returns {string[]} Text lines from PDF page items, using column-gap detection for pipe delimiters. */
 function pdfImportExtractLinesFromPageItems(items) {
@@ -585,7 +591,9 @@ function pdfImportChooseBestPageLines(items) {
   return withColumns;
 }
 
-// Section: OCR EXTRACTION AND FALLBACK
+/* ═══════════════════════════════════════════════════════
+   Section: OCR EXTRACTION AND FALLBACK
+═══════════════════════════════════════════════════════ */
 
 /** @returns {string} Sanitized OCR line with artifacts and low-quality content removed. */
 function pdfImportSanitizeOcrLine(rawLine) {
@@ -944,7 +952,9 @@ async function pdfImportExtractPdfLines(file) {
   }
 }
 
-// Section: PAYLOAD BUILDING AND QUALITY ASSESSMENT
+/* ═══════════════════════════════════════════════════════
+   Section: PAYLOAD BUILDING AND QUALITY ASSESSMENT
+═══════════════════════════════════════════════════════ */
 
 /** @returns {Array<{label: string, subjects: string, mains: string, fillers: string, ltpByShort: Object}>} Structured class payloads from raw lines. */
 function pdfImportBuildClassPayloads(lines) {

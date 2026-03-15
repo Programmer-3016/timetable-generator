@@ -5,7 +5,9 @@
  * @description General normalization and parsing utilities for PDF import.
  */
 
-// Section: LINE PREPROCESSING
+/* ═══════════════════════════════════════════════════════
+   Section: LINE PREPROCESSING
+═══════════════════════════════════════════════════════ */
 
 function pdfImportNormalizeLine(text) {
   return pdfImportPreprocessLine(text, {
@@ -93,7 +95,9 @@ function pdfImportNormalizeRomanToken(rawToken, fallback = "") {
   return fallback;
 }
 
-// Section: TIME PARSING
+/* ═══════════════════════════════════════════════════════
+   Section: TIME PARSING
+═══════════════════════════════════════════════════════ */
 
 function pdfImportToHHMM(raw) {
   const m = String(raw || "")
@@ -150,7 +154,9 @@ function pdfImportExtractTimeRanges(line) {
   return out.filter((r) => r.start && r.end);
 }
 
-// Section: CLASS DETECTION
+/* ═══════════════════════════════════════════════════════
+   Section: CLASS DETECTION
+═══════════════════════════════════════════════════════ */
 
 /** @description Checks if text looks like a class/section header (e.g. "B.Tech II Sem Section A"). */
 function pdfImportLooksLikeClassHeader(text) {
@@ -217,7 +223,9 @@ function pdfImportNormalizeClassLabel(text) {
   return out.trim();
 }
 
-// Section: LINE FILTERING
+/* ═══════════════════════════════════════════════════════
+   Section: LINE FILTERING
+═══════════════════════════════════════════════════════ */
 
 /** @description Determines whether a line should be skipped (day headers, artifacts, time-only rows, etc.). */
 function pdfImportShouldSkipLine(line) {
@@ -285,7 +293,9 @@ function pdfImportShouldSkipLine(line) {
   return false;
 }
 
-// Section: SUBJECT CODE PARSING
+/* ═══════════════════════════════════════════════════════
+   Section: SUBJECT CODE PARSING
+═══════════════════════════════════════════════════════ */
 
 function pdfImportNormalizeShort(raw) {
   let out = String(raw || "")
@@ -475,7 +485,9 @@ function pdfImportParseSubjectLine(line) {
   };
 }
 
-// Section: TEACHER NAME DETECTION
+/* ═══════════════════════════════════════════════════════
+   Section: TEACHER NAME DETECTION
+═══════════════════════════════════════════════════════ */
 
 function pdfImportIsBlockedShort(shortText) {
   const short = pdfImportNormalizeShort(shortText);
@@ -740,7 +752,9 @@ function pdfImportDeriveShortFromSubject(subjectText) {
   return pdfImportBuildShortFromInitials(subject);
 }
 
-// Section: SUBJECT/TEACHER CLEANING
+/* ═══════════════════════════════════════════════════════
+   Section: SUBJECT/TEACHER CLEANING
+═══════════════════════════════════════════════════════ */
 
 /** @description Checks if subject text is noise (OCR artifacts, headers, day names, time ranges, etc.). */
 function pdfImportLooksLikeNoiseSubject(text) {
@@ -1027,7 +1041,9 @@ function pdfImportRepairSubjectPrefix(shortText, subjectText) {
   return subject;
 }
 
-// Section: LINE SPLITTING AND ENTRY FINALIZATION
+/* ═══════════════════════════════════════════════════════
+   Section: LINE SPLITTING AND ENTRY FINALIZATION
+═══════════════════════════════════════════════════════ */
 
 /** @description Splits a line into segments at each subject-code boundary (e.g. "CS101 ... EE201 ..."). */
 function pdfImportSplitLineBySubjectCode(line) {

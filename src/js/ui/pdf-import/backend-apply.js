@@ -5,7 +5,9 @@
  * @description Adapter to map backend JSON payload into existing frontend apply pipeline.
  */
 
-// Section: NORMALIZATION HELPERS
+/* ═══════════════════════════════════════════════════════
+   Section: NORMALIZATION HELPERS
+═══════════════════════════════════════════════════════ */
 
 function backendImportNormalizeStringList(list) {
   if (!Array.isArray(list)) return [];
@@ -176,7 +178,9 @@ function backendImportBuildSubjectsWithGaps(subjects, mains, fillers) {
   return chunks.join("\n\n");
 }
 
-// Section: DATA APPLICATION
+/* ═══════════════════════════════════════════════════════
+   Section: DATA APPLICATION
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Applies backend import data to the timetable form after optional teacher name review.

@@ -64,7 +64,9 @@ function schedulerMergeTeacherAggregateStats({
   });
 }
 
-// Section: STATE PUBLISHING
+/* ═══════════════════════════════════════════════════════
+   Section: STATE PUBLISHING
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Packages per-class schedule data into a published state object for downstream consumers.

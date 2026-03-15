@@ -8,7 +8,9 @@
  * - Extracted from core/scheduler.js without behavior changes.
  */
 
-// Section: TEACHER MAP BUILDING
+/* ═══════════════════════════════════════════════════════
+   Section: TEACHER MAP BUILDING
+═══════════════════════════════════════════════════════ */
 
 function schedulerBuildTeacherFoldMapFromData({
   data,
@@ -50,7 +52,9 @@ function schedulerBuildGlobalTeacherForShort({ data }) {
   return teacherForShortGlobal;
 }
 
-// Section: LAB CAPACITY
+/* ═══════════════════════════════════════════════════════
+   Section: LAB CAPACITY
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Reads lab capacity from the DOM; falls back to a default if unavailable.
@@ -67,7 +71,9 @@ function schedulerReadLabCapacityFromDom({ defaultCapacity = 3 } = {}) {
   }
 }
 
-// Section: FILLER CAPACITY
+/* ═══════════════════════════════════════════════════════
+   Section: FILLER CAPACITY
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Computes total and per-subject filler capacity for a class.

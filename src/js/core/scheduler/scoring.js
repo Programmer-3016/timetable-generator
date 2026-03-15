@@ -6,7 +6,9 @@
  *   subject clustering, teacher load balance, and constraint satisfaction.
  */
 
-// Section: SCHEDULE SCORING
+/* ═══════════════════════════════════════════════════════
+   Section: SCHEDULE SCORING
+═══════════════════════════════════════════════════════ */
 
 function schedulerScoreCandidateObjective(scheduleState, validationResult = null) {
   const state =

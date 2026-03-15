@@ -22,7 +22,9 @@ function schedulerEnsureTeacherPrePostBucket({
   return teacherPrePostByClass[classKey][teacher];
 }
 
-// Section: FILLER CAPACITY QUERIES
+/* ═══════════════════════════════════════════════════════
+   Section: FILLER CAPACITY QUERIES
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Returns the total number of filler slots assigned for a class.

@@ -7,8 +7,12 @@
 
 (function () {
   "use strict";
-  // Section: SKELETON LOADING SHIM
-  // ─── Build skeleton HTML ────────────────────────────────────────────────────
+  /* ═══════════════════════════════════════════════════════
+     Section: SKELETON LOADING SHIM
+  ═══════════════════════════════════════════════════════ */
+  /* ───────────────────────────────────────────────────
+     Subsection: BUILD SKELETON HTML
+  ─────────────────────────────────────────────────── */
 
   /**
    * Returns an HTML string for a shimmer skeleton that mimics the real
@@ -51,7 +55,9 @@
     );
   }
 
-  // ─── Show / hide helpers ────────────────────────────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: SHOW / HIDE HELPERS
+  ─────────────────────────────────────────────────── */
 
   var SKELETON_CLASS = "tt-skeleton-active";
 
@@ -90,7 +96,9 @@
       }
     }
 
-    // ── Faculty panel skeleton ──────────────────────────────────────────────
+    /* ───────────────────────────────────────────────────
+       Subsection: FACULTY PANEL SKELETON
+    ─────────────────────────────────────────────────── */
     var facultyTT = document.getElementById("facultyTT");
     if (facultyTT) {
       facultyTT.innerHTML = buildSkeletonHTML(cols, rows);
@@ -98,7 +106,9 @@
       injected.push("facultyTT");
     }
 
-    // ── Lab panel skeleton (one skeleton per lab room) ─────────────────────
+    /* ───────────────────────────────────────────────────
+       Subsection: LAB PANEL SKELETON
+    ─────────────────────────────────────────────────── */
     var labPanel = document.getElementById("labPanel");
     var labCountEl = document.getElementById("labCount");
     var labRooms = Math.max(1, parseInt((labCountEl || {}).value || "3", 10));
@@ -159,7 +169,9 @@
     });
   }
 
-  // ─── Wrap generateTimetable ──────────────────────────────────────────────────
+  /* ───────────────────────────────────────────────────
+     Subsection: WRAP GENERATETIMETABLE
+  ─────────────────────────────────────────────────── */
 
   /**
    * Wait until generateTimetable is defined (it's in generate.js which loads

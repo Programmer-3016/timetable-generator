@@ -1,3 +1,12 @@
+/**
+ * @file src/js/core/scheduler/passes-advanced.js
+ * @module core/scheduler/passes-advanced
+ * @description Advanced fill/balance pass helpers extracted from scheduler core.
+ *
+ * Note:
+ * - Logic is copied from src/js/core/scheduler.js without behavior changes.
+ */
+
 /* eslint-disable no-unused-vars */
 /* exported
    schedulerPassFillRemaining,
@@ -17,15 +26,9 @@
    schedulerPassCompactDayGaps
 */
 
-/**
- * @module core/scheduler/passes-advanced.js
- * @description Advanced fill/balance pass helpers extracted from scheduler core.
- *
- * Note:
- * - Logic is copied from src/js/core/scheduler.js without behavior changes.
- */
-
-// Section: AGGRESSIVE FILL PASS
+/* ═══════════════════════════════════════════════════════
+   Section: AGGRESSIVE FILL PASS
+═══════════════════════════════════════════════════════ */
 
 function schedulerPassFillRemaining({ ctx, key }) {
   const {
@@ -261,7 +264,9 @@ function schedulerPassAggressiveFill({ ctx, key }) {
 
 }
 
-// Section: POST-LUNCH FILLER SWEEP
+/* ═══════════════════════════════════════════════════════
+   Section: POST-LUNCH FILLER SWEEP
+═══════════════════════════════════════════════════════ */
 
 /** Sweeps post-lunch trailing slots and fills them with filler subjects, ranked by target deficit. */
 function schedulerPassPostLunchFillerSweep({ ctx, key }) {
@@ -368,7 +373,9 @@ function schedulerPassPostLunchFillerSweep({ ctx, key }) {
 
 }
 
-// Section: GAP SEAL PASS
+/* ═══════════════════════════════════════════════════════
+   Section: GAP SEAL PASS
+═══════════════════════════════════════════════════════ */
 
 /** Seals remaining schedule gaps by placing available lectures, relaxing constraints for the first post-lunch slot. */
 function schedulerPassGapSealFill({ ctx, key }) {
@@ -482,7 +489,9 @@ function schedulerPassGapSealFill({ ctx, key }) {
 
 }
 
-// Section: POST-LUNCH GAP FIX
+/* ═══════════════════════════════════════════════════════
+   Section: POST-LUNCH GAP FIX
+═══════════════════════════════════════════════════════ */
 
 /**
  * Final fix pass for post-lunch gaps: moves theory subjects from late slots
@@ -905,7 +914,9 @@ function schedulerPassFillPostLunchGaps({ ctx, key }) {
 
 }
 
-// Section: DAILY SUBJECT ENFORCEMENT
+/* ═══════════════════════════════════════════════════════
+   Section: DAILY SUBJECT ENFORCEMENT
+═══════════════════════════════════════════════════════ */
 
 /**
  * Ensures every subject with remaining lectures is placed at least once per day,
@@ -1242,7 +1253,9 @@ function schedulerPassEnsureAtLeastOneMainPerDay({ ctx, key }) {
 
 }
 
-// Section: SPARSE SCHEDULE RECOVERY
+/* ═══════════════════════════════════════════════════════
+   Section: SPARSE SCHEDULE RECOVERY
+═══════════════════════════════════════════════════════ */
 
 /**
  * Detects sparse schedules (<60% filled or any main below 4 occurrences)
@@ -1548,7 +1561,9 @@ function schedulerPassUltimateForceFill({ ctx, key }) {
 
 }
 
-// Section: MAIN PROMOTION & PRE-LUNCH FILL
+/* ═══════════════════════════════════════════════════════
+   Section: MAIN PROMOTION & PRE-LUNCH FILL
+═══════════════════════════════════════════════════════ */
 
 /**
  * Swaps main subjects from post-lunch into pre-lunch filler slots,
@@ -1771,7 +1786,9 @@ function schedulerPassFillEmptyPreLunch({ ctx }) {
 
 }
 
-// Section: COMPACTION PASSES
+/* ═══════════════════════════════════════════════════════
+   Section: COMPACTION PASSES
+═══════════════════════════════════════════════════════ */
 
 /**
  * Compacts post-lunch schedule by bubble-sorting mains/labs toward earlier

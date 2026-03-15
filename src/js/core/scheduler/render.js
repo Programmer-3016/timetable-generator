@@ -9,7 +9,9 @@
  * - Scheduling logic/constraints remain in core/scheduler.js.
  */
 
-// Section: DOM RENDERING
+/* ═══════════════════════════════════════════════════════
+   Section: DOM RENDERING
+═══════════════════════════════════════════════════════ */
 
 function schedulerRenderClassToDOM({
   key,

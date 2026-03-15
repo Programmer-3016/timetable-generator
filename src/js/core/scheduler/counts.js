@@ -24,7 +24,9 @@ function schedulerCountOccurrences({
   return count;
 }
 
-// Section: QUOTA LOOKUPS
+/* ═══════════════════════════════════════════════════════
+   Section: QUOTA LOOKUPS
+═══════════════════════════════════════════════════════ */
 
 /**
  * @description Returns the weekly target count for a subject short in a class.

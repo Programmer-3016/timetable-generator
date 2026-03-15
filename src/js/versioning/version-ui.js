@@ -5,8 +5,16 @@
 
 /* exported renderVersionPanel, onVersionAutoSave */
 
+/* ═══════════════════════════════════════════════════════
+   Section: MODULE STATE
+═══════════════════════════════════════════════════════ */
+
 var _selectedVersionId = null;
 var _isVersionSidebarCollapsed = false;
+
+/* ═══════════════════════════════════════════════════════
+   Section: TIMELINE PANEL RENDERING
+═══════════════════════════════════════════════════════ */
 
 function renderVersionPanel() {
   var panel = document.getElementById("versionPanel");
@@ -77,6 +85,10 @@ function _highlightSelectedTimelineCard() {
     items[i].classList.toggle('ver-timeline-item--active', itemId === _selectedVersionId);
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: DETAIL VIEW RENDERING
+═══════════════════════════════════════════════════════ */
 
 function _renderVersionDetails(v) {
   var details = document.getElementById('versionDetailsView');
@@ -149,6 +161,10 @@ function _renderVersionDetails(v) {
   details.innerHTML = html;
 }
 
+/* ═══════════════════════════════════════════════════════
+   Section: TIMELINE TONE HELPERS
+═══════════════════════════════════════════════════════ */
+
 function _timelineToneClass(v, idx) {
   if (idx === 0) return 'ver-tone-active';
   if (v.starred) return 'ver-tone-draft';
@@ -172,6 +188,10 @@ function _timelineToneIcon(v, idx) {
   if (v.starred) return 'edit_document';
   return 'archive';
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: USER INTERACTION HANDLERS
+═══════════════════════════════════════════════════════ */
 
 function _onLoadClick(id) {
   var ok = loadScheduleVersionById(id);
@@ -253,6 +273,10 @@ function _onDescSave(id) {
   }
 }
 
+/* ═══════════════════════════════════════════════════════
+   Section: AUTO-SAVE AND UTILITIES
+═══════════════════════════════════════════════════════ */
+
 function onVersionAutoSave() {
   var snapshot = (typeof window !== 'undefined') ? window.__ttLastScheduleState : null;
   var validation = (typeof window !== 'undefined') ? window.__ttLastValidation : null;
@@ -314,6 +338,10 @@ function _versionDescription(v) {
     : 'This version contains pending constraint issues and may require review before use.';
   return base + ' Snapshot saved on ' + _formatTimestamp(v.timestamp) + '.';
 }
+
+/* ═══════════════════════════════════════════════════════
+   Section: WINDOW EXPORTS
+═══════════════════════════════════════════════════════ */
 
 window._onVersionCardClick = _onVersionCardClick;
 window._onLoadClick = _onLoadClick;

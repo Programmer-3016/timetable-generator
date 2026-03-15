@@ -3,7 +3,9 @@
  * @description Global keyboard shortcuts. Purely additive — no existing handlers modified.
  */
 
-// Section: GLOBAL KEYBOARD SHORTCUTS
+/* ═══════════════════════════════════════════════════════
+   Section: GLOBAL KEYBOARD SHORTCUTS
+═══════════════════════════════════════════════════════ */
 
 document.addEventListener("keydown", function (e) {
   // Ctrl+G or Cmd+G → Generate

@@ -5,7 +5,9 @@
  * @description Lab usage and per-lab timetable rendering.
  */
 
-// Section: LAB USAGE & LAB TIMETABLE RENDERING
+/* ═══════════════════════════════════════════════════════
+   Section: LAB USAGE & LAB TIMETABLE RENDERING
+═══════════════════════════════════════════════════════ */
 
 function renderLabUsage() {
   const wrap = document.getElementById("labUsage");
