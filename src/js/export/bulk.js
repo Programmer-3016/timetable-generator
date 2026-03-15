@@ -240,7 +240,11 @@ async function exportAllTimetablesAsPDF() {
       });
       return;
     }
-    /** Converts CSS pixels to millimeters (approximate). */
+    /**
+     * Converts CSS pixels to millimeters (approximate).
+     * @param {number} px - Value in CSS pixels
+     * @returns {number} Equivalent value in millimeters
+     */
     const pxToMm = (px) => (px * 25.4) / 96; // approximate CSS px to mm
     const margin = 10; // mm
     const fmt = {

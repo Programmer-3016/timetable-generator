@@ -91,6 +91,12 @@ function triggerBlobDownload(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 30000); // 30s delay to ensure download completes
 }
 
+/**
+ * Creates a save target that triggers a browser download for the given filename.
+ * @param {string} suggestedFilename - Suggested name for the downloaded file
+ * @param {{mimeType?: string, description?: string}} [options={}] - Optional MIME type and description
+ * @returns {Promise<{cancelled: boolean, save: (blob: Blob) => Promise<void>}>} Save target object
+ */
 async function createFileSaveTarget(suggestedFilename, options = {}) {
   const safeName = sanitizeDownloadFilename(suggestedFilename);
   return {
