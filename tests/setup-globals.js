@@ -26,6 +26,15 @@ global.gCanonFoldMap = {};
 global.CLASS_KEYS = [];
 global.gFillerLabelsByClass = {};
 global.aggregateStats = {};
+global.daysOfWeek = [
+  "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
+];
+global.reportData = [];
+global.gTeacherForShort = {};
+global.gTeacherDisplayByCanon = {};
+global.subjectTeacherPairsByClass = {};
+global.gLabNumberAssigned = {};
+global.renderLabUsage = function () {};
 
 /* ═══════════════════════════════════════════════════════
    Section: HELPER STUBS
@@ -85,3 +94,39 @@ loadScript("src/js/core/scheduler/publish.js");
 loadScript("src/js/core/scheduler/render.js");
 loadScript("src/js/core/scheduler/engine.js");
 loadScript("src/js/core/generate.js");
+
+/* ═══════════════════════════════════════════════════════
+   Section: UI MODULE LOADING
+═══════════════════════════════════════════════════════ */
+
+// Stub DOM elements that UI modules expect during initialization
+if (!global.localStorage || typeof global.localStorage.getItem !== "function") {
+  global.localStorage = {
+    _store: {},
+    getItem(key) { return this._store[key] || null; },
+    setItem(key, val) { this._store[key] = String(val); },
+    removeItem(key) { delete this._store[key]; },
+    clear() { this._store = {}; },
+  };
+}
+
+// Load UI modules (order matters — some depend on others)
+// Wrapped in try-catch because some modules run code on load (IIFEs,
+// event listeners) that may fail if expected DOM elements are missing.
+function safeLoadScript(relPath) {
+  try {
+    loadScript(relPath);
+  } catch (_e) {
+    // Module skipped — DOM elements it expects are not present yet
+  }
+}
+
+safeLoadScript("src/js/ui/tabs.js");
+safeLoadScript("src/js/ui/sidebar-toolbar.js");
+safeLoadScript("src/js/ui/keyboard-shortcuts.js");
+safeLoadScript("src/js/ui/skeleton.js");
+safeLoadScript("src/js/ui/dragdrop.js");
+safeLoadScript("src/js/ui/faculty-panel.js");
+safeLoadScript("src/js/versioning/version-store.js");
+safeLoadScript("src/js/versioning/version-compare.js");
+safeLoadScript("src/js/versioning/version-ui.js");
