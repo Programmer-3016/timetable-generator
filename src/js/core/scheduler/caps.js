@@ -9,6 +9,11 @@
  * - Extracted from core/scheduler.js without behavior changes.
  */
 
+/**
+ * Ensures a pre/post lunch bucket exists for a teacher in a class.
+ * @param {Object} params - Teacher tracking map, class key, and teacher name.
+ * @returns {{ pre: number, post: number }} The teacher's pre/post bucket for the class.
+ */
 function schedulerEnsureTeacherPrePostBucket({
   teacherPrePostByClass,
   classKey,

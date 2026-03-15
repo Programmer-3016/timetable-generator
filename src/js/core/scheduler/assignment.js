@@ -9,6 +9,11 @@
  * - Extracted from core/scheduler.js without behavior changes.
  */
 
+/**
+ * Selects the best teacher for a given slot based on workload scoring.
+ * @param {Object} params - Slot context, teacher maps, and assignment checker.
+ * @returns {string|null} The chosen teacher name, or null if none qualifies.
+ */
 function schedulerPickTeacherForSlot({
   key,
   short,

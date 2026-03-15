@@ -31,6 +31,12 @@
    Section: AGGRESSIVE FILL PASS
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Fills remaining empty slots with unscheduled lectures.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ */
 function schedulerPassFillRemaining({ ctx, key }) {
   const {
     days,
@@ -107,7 +113,12 @@ function schedulerPassFillRemaining({ ctx, key }) {
 
 }
 
-/** Aggressively fills empty slots by trying remaining lectures first, then filler subjects ranked by deficit. */
+/**
+ * Aggressively fills empty slots by trying remaining lectures first, then filler subjects ranked by deficit.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ */
 function schedulerPassAggressiveFill({ ctx, key }) {
   const {
     days,
@@ -269,7 +280,13 @@ function schedulerPassAggressiveFill({ ctx, key }) {
    Section: POST-LUNCH FILLER SWEEP
 ═══════════════════════════════════════════════════════ */
 
-/** Sweeps post-lunch trailing slots and fills them with filler subjects, ranked by target deficit. */
+/**
+ * Sweeps post-lunch trailing slots and fills them with filler subjects, ranked by target deficit.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ * @returns {boolean} Whether any slot was filled.
+ */
 function schedulerPassPostLunchFillerSweep({ ctx, key }) {
   const {
     days,
@@ -378,7 +395,12 @@ function schedulerPassPostLunchFillerSweep({ ctx, key }) {
    Section: GAP SEAL PASS
 ═══════════════════════════════════════════════════════ */
 
-/** Seals remaining schedule gaps by placing available lectures, relaxing constraints for the first post-lunch slot. */
+/**
+ * Seals remaining schedule gaps by placing available lectures, relaxing constraints for the first post-lunch slot.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ */
 function schedulerPassGapSealFill({ ctx, key }) {
   const {
     days,
@@ -497,6 +519,9 @@ function schedulerPassGapSealFill({ ctx, key }) {
 /**
  * Final fix pass for post-lunch gaps: moves theory subjects from late slots
  * into the first post-lunch period, back-filling vacated slots with fillers.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
  */
 function schedulerPassFinalPostLunchGapFix({ ctx, key }) {
   const {
@@ -808,7 +833,13 @@ function schedulerPassFinalPostLunchGapFix({ ctx, key }) {
 
 }
 
-/** Fills remaining null post-lunch slots with filler subjects ranked by target deficit. */
+/**
+ * Fills remaining null post-lunch slots with filler subjects ranked by target deficit.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ * @returns {boolean} Whether any post-lunch gap was filled.
+ */
 function schedulerPassFillPostLunchGaps({ ctx, key }) {
   const {
     days,
@@ -922,6 +953,9 @@ function schedulerPassFillPostLunchGaps({ ctx, key }) {
 /**
  * Ensures every subject with remaining lectures is placed at least once per day,
  * displacing fillers if necessary to meet daily coverage.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
  */
 function schedulerPassEnsureSubjectDailyFive({ ctx, key }) {
   const {
@@ -1080,7 +1114,12 @@ function schedulerPassEnsureSubjectDailyFive({ ctx, key }) {
 
 }
 
-/** Guarantees every day has at least one main subject, placing into empty or filler-occupied slots. */
+/**
+ * Guarantees every day has at least one main subject, placing into empty or filler-occupied slots.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ */
 function schedulerPassEnsureAtLeastOneMainPerDay({ ctx, key }) {
   const {
     days,
@@ -1261,6 +1300,10 @@ function schedulerPassEnsureAtLeastOneMainPerDay({ ctx, key }) {
 /**
  * Detects sparse schedules (<60% filled or any main below 4 occurrences)
  * and force-promotes mains into empty, filler, or over-represented main slots.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ * @returns {boolean} Whether any slot was filled or swapped.
  */
 function schedulerPassFillSparseSchedule({ ctx, key }) {
   const {
@@ -1413,6 +1456,10 @@ function schedulerPassFillSparseSchedule({ ctx, key }) {
 /**
  * Last-resort force fill: when >20% of slots are empty, cycles through
  * mains and fillers to fill every remaining gap with relaxed constraints.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ * @returns {boolean} Whether any slot was force-filled.
  */
 function schedulerPassUltimateForceFill({ ctx, key }) {
   const {
@@ -1569,6 +1616,10 @@ function schedulerPassUltimateForceFill({ ctx, key }) {
 /**
  * Swaps main subjects from post-lunch into pre-lunch filler slots,
  * improving schedule balance by keeping academic subjects before lunch.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ * @returns {boolean} Whether any subject was promoted.
  */
 function schedulerPassPromoteMainsBeforeLunch({ ctx, key }) {
   const {
@@ -1672,7 +1723,12 @@ function schedulerPassPromoteMainsBeforeLunch({ ctx, key }) {
 
 }
 
-/** Fills remaining empty pre-lunch slots across all classes with under-target mains or fillers. */
+/**
+ * Fills remaining empty pre-lunch slots across all classes with under-target mains or fillers.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @returns {boolean} Whether any pre-lunch slot was filled.
+ */
 function schedulerPassFillEmptyPreLunch({ ctx }) {
   const {
     days,
@@ -1794,6 +1850,10 @@ function schedulerPassFillEmptyPreLunch({ ctx }) {
 /**
  * Compacts post-lunch schedule by bubble-sorting mains/labs toward earlier
  * post-lunch slots and pushing gaps/fillers toward the end of the day.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ * @returns {boolean} Whether any slot was compacted.
  */
 function schedulerPassCompactPostLunch({ ctx, key }) {
   const {
@@ -1988,7 +2048,13 @@ function schedulerPassCompactPostLunch({ ctx, key }) {
   return changed;
 }
 
-/** Compacts the pre-lunch portion of the schedule by bubbling mains/labs toward earlier slots. */
+/**
+ * Compacts the pre-lunch portion of the schedule by bubbling mains/labs toward earlier slots.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ * @returns {boolean} Whether any pre-lunch slot was compacted.
+ */
 function schedulerPassCompactPreLunch({ ctx, key }) {
   const {
     days,
@@ -2143,7 +2209,13 @@ function schedulerPassCompactPreLunch({ ctx, key }) {
   return changed;
 }
 
-/** Compacts the full-day schedule by shifting filled cells left to eliminate mid-day gaps, preserving lab block integrity. */
+/**
+ * Compacts the full-day schedule by shifting filled cells left to eliminate mid-day gaps, preserving lab block integrity.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ * @returns {boolean} Whether any gap was closed.
+ */
 function schedulerPassCompactDayGaps({ ctx, key }) {
   const {
     days,

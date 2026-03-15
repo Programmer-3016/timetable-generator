@@ -8,6 +8,19 @@
  */
 
 
+/**
+ * Core multi-class scheduling engine that builds complete timetables.
+ * @param {Object} params - Destructured configuration object.
+ * @param {Object} params.pairsByClass - Subject-teacher pairs grouped by class key.
+ * @param {number} params.days - Number of days in the schedule week.
+ * @param {number} params.defaultDuration - Default period duration in minutes.
+ * @param {string[]} params.enabledKeys - Class keys enabled for scheduling.
+ * @param {Object} params.fillerShortsByClass - Sets of filler short codes per class.
+ * @param {Object} params.fillerCreditsByClass - Credit-based filler targets per class.
+ * @param {Object} params.mainShortsByClass - Sets of main subject shorts per class.
+ * @param {Object} params.fixedSlotsByClass - Pre-assigned fixed slots per class.
+ * @param {*} [params.seed] - Optional RNG seed for deterministic scheduling.
+ */
 function schedulerRenderMultiClassesEngine({
   pairsByClass = {},
   days,
@@ -34,10 +47,18 @@ function schedulerRenderMultiClassesEngine({
      Section: CONFIGURATION & UTILITY HELPERS
   ═══════════════════════════════════════════════════════ */
 
-  /** Checks if a subject pair is a lab by testing its short/subject name. */
+  /**
+   * Checks if a subject pair is a lab by testing its short/subject name.
+   * @param {Object} pair - Subject-teacher pair object.
+   * @returns {boolean} True if the pair represents a lab.
+   */
   const isLab = (pair) =>
     /lab/i.test(pair.short) || /lab/i.test(pair.subject);
-  /** Checks whether the given value is a callable function. */
+  /**
+   * Checks whether the given value is a callable function.
+   * @param {*} fn - Value to test.
+   * @returns {boolean} True if fn is a function.
+   */
   const hasFn = (fn) => typeof fn === "function";
 
   /** Computes the class-period index at which lunch occurs (IIFE). */
@@ -108,7 +129,11 @@ function schedulerRenderMultiClassesEngine({
      Section: TEACHER RESOLUTION
   ═══════════════════════════════════════════════════════ */
 
-  /** Returns the canonical fold-map key for a teacher name, used for clash detection. */
+  /**
+   * Returns the canonical fold-map key for a teacher name, used for clash detection.
+   * @param {string} name - Raw teacher name.
+   * @returns {string} Canonical key or empty string if unresolvable.
+   */
   const teacherClashKey = (name) => {
     const t = String(name || "").trim();
     if (!t || /^not\s*mentioned$/i.test(t)) return "";
@@ -146,7 +171,12 @@ function schedulerRenderMultiClassesEngine({
     days,
     classesPerDay,
   });
-  /** Checks whether a subject short code belongs to the main (non-filler) set for a class. */
+  /**
+   * Checks whether a subject short code belongs to the main (non-filler) set for a class.
+   * @param {string} k - Class identifier.
+   * @param {string} sh - Subject short code.
+   * @returns {boolean} True if the short belongs to the main set.
+   */
   const isMainShort = (k, sh) =>
     !!(
       mainShortsByClass &&
@@ -263,34 +293,57 @@ function schedulerRenderMultiClassesEngine({
   keys.forEach((k) => {
     teacherPrePostByClass[k] = {};
   });
-  /** Ensures a pre/post-lunch tracking bucket exists for the given teacher in a class. */
+  /**
+   * Ensures a pre/post-lunch tracking bucket exists for the given teacher in a class.
+   * @param {string} k - Class identifier.
+   * @param {string} t - Teacher name.
+   * @returns {Object} The pre/post tracking bucket for the teacher.
+   */
   const ensureTP = (k, t) =>
     schedulerEnsureTeacherPrePostBucket({
       teacherPrePostByClass,
       classKey: k,
       teacher: t,
     });
-  /** Returns the total number of filler slots already assigned for a class. */
+  /**
+   * Returns the total number of filler slots already assigned for a class.
+   * @param {string} k - Class identifier.
+   * @returns {number} Total filler count for the class.
+   */
   const getFillerTotal = (k) =>
     schedulerGetFillerTotal({
       fillerCountsByClass,
       classKey: k,
     });
-  /** Returns the maximum weekly filler capacity for a class. */
+  /**
+   * Returns the maximum weekly filler capacity for a class.
+   * @param {string} k - Class identifier.
+   * @returns {number} Maximum weekly filler slots for the class.
+   */
   const getFillerCap = (k) =>
     schedulerGetFillerCap({
       fillerCapacityByClass,
       classKey: k,
       defaultCap: MAX_FILLERS_PER_WEEK,
     });
-  /** Returns the per-subject filler cap for a class. */
+  /**
+   * Returns the per-subject filler cap for a class.
+   * @param {string} k - Class identifier.
+   * @returns {number} Maximum filler slots per subject for the class.
+   */
   const getFillerSubjectCap = (k) =>
     schedulerGetFillerSubjectCap({
       fillerPerSubjectCapByClass,
       classKey: k,
       defaultCap: MAX_FILLERS_PER_SUBJECT_PER_WEEK,
     });
-  /** Gets the teacher already assigned to a specific day/col slot for a class. */
+  /**
+   * Gets the teacher already assigned to a specific day/col slot for a class.
+   * @param {string} key - Class identifier.
+   * @param {number} day - Day index.
+   * @param {number} col - Period column index.
+   * @returns {string|null} Assigned teacher name or null.
+   */
   const getAssignedTeacherValue = (key, day, col) =>
     schedulerGetAssignedTeacherValue({
       assignedTeacher,
@@ -298,7 +351,12 @@ function schedulerRenderMultiClassesEngine({
       day,
       col,
     });
-  /** Returns the list of eligible teachers for a given subject short in a class. */
+  /**
+   * Returns the list of eligible teachers for a given subject short in a class.
+   * @param {string} key - Class identifier.
+   * @param {string} short - Subject short code.
+   * @returns {string[]} List of eligible teacher names.
+   */
   const getShortTeacherList = (key, short) =>
     schedulerGetShortTeacherList({
       teacherListForShort,
@@ -307,14 +365,26 @@ function schedulerRenderMultiClassesEngine({
       key,
       short,
     });
-  /** Checks whether a subject short code represents a lab for a given class. */
+  /**
+   * Checks whether a subject short code represents a lab for a given class.
+   * @param {string} key - Class identifier.
+   * @param {string} short - Subject short code.
+   * @returns {boolean} True if the short is a lab subject.
+   */
   const isLabShortFor = (key, short) =>
     schedulerIsLabShortFor({
       subjectByShort,
       key,
       short,
     });
-  /** Returns all teachers associated with a cell (class/day/col), considering lab multi-teacher. */
+  /**
+   * Returns all teachers associated with a cell (class/day/col), considering lab multi-teacher.
+   * @param {string} key - Class identifier.
+   * @param {string} short - Subject short code.
+   * @param {number} day - Day index.
+   * @param {number} col - Period column index.
+   * @returns {string[]} Array of teacher names for the cell.
+   */
   const getTeachersForCell = (key, short, day, col) =>
     schedulerGetTeachersForCell({
       key,
@@ -327,7 +397,14 @@ function schedulerRenderMultiClassesEngine({
       teacherForShort,
       teacherForShortGlobal,
     });
-  /** Returns the primary teacher for a cell (first from the teachers list). */
+  /**
+   * Returns the primary teacher for a cell (first from the teachers list).
+   * @param {string} key - Class identifier.
+   * @param {string} short - Subject short code.
+   * @param {number} day - Day index.
+   * @param {number} col - Period column index.
+   * @returns {string|null} Primary teacher name or null.
+   */
   const getTeacherForCell = (key, short, day, col) =>
     schedulerGetTeacherForCell({
       getTeachersForCell,
@@ -336,10 +413,22 @@ function schedulerRenderMultiClassesEngine({
       day,
       col,
     });
-  /** Checks if two short codes refer to the same base subject. */
+  /**
+   * Checks if two short codes refer to the same base subject.
+   * @param {string} a - First subject short code.
+   * @param {string} b - Second subject short code.
+   * @returns {boolean} True if both refer to the same subject.
+   */
   const sameSubjectCode = (a, b) => schedulerSameSubjectCode(a, b);
   const postLunchCompactDebugByClass = {};
-  /** Checks if a slot is adjacent to a lab block of the same subject (prevents double-stacking). */
+  /**
+   * Checks if a slot is adjacent to a lab block of the same subject (prevents double-stacking).
+   * @param {string} key - Class identifier.
+   * @param {number} day - Day index.
+   * @param {number} col - Period column index.
+   * @param {string} short - Subject short code.
+   * @returns {boolean} True if adjacent to a same-subject lab block.
+   */
   const isAdjacentToSameSubjectLab = (key, day, col, short) =>
     schedulerIsAdjacentToSameSubjectLab({
       schedules,
@@ -356,7 +445,12 @@ function schedulerRenderMultiClassesEngine({
      Section: SLOT ASSIGNMENT & VALIDATION
   ═══════════════════════════════════════════════════════ */
 
-  /** Increments the post-lunch main-subject counter if the slot is after lunch. */
+  /**
+   * Increments the post-lunch main-subject counter if the slot is after lunch.
+   * @param {string} key - Class identifier.
+   * @param {string} short - Subject short code.
+   * @param {number} col - Period column index.
+   */
   function recordMainPostLunchIfNeeded(key, short, col) {
     if (col < lunchClassIndex) return;
     if (!isMainShort(key, short)) return;
@@ -367,6 +461,12 @@ function schedulerRenderMultiClassesEngine({
   /**
    * Selects the best available teacher for a subject at a specific day/slot,
    * respecting clash, minute-cap, and per-class theory limits.
+   * @param {string} key - Class identifier.
+   * @param {string} short - Subject short code.
+   * @param {number} day - Day index.
+   * @param {number} col - Period column index.
+   * @param {Object} [opts={}] - Assignment constraint options.
+   * @returns {string|null} Selected teacher name or null if none available.
    */
   function pickTeacherForSlot(key, short, day, col, opts = {}) {
     return schedulerPickTeacherForSlot({
@@ -388,6 +488,12 @@ function schedulerRenderMultiClassesEngine({
   /**
    * Returns whether a subject can be assigned to a specific slot, checking
    * teacher clashes, adjacency, filler caps, theory limits, and quota constraints.
+   * @param {string} key - Class identifier.
+   * @param {string} short - Subject short code.
+   * @param {number} day - Day index.
+   * @param {number} col - Period column index.
+   * @param {Object} [opts={}] - Assignment constraint options.
+   * @returns {boolean} True if the assignment is valid.
    */
   function canAssign(key, short, day, col, opts = {}) {
     return schedulerCanAssign({
@@ -429,6 +535,10 @@ function schedulerRenderMultiClassesEngine({
   /**
    * Places a 2-period lab block on the given day for a class, choosing the best
    * start slot while respecting lab capacity, teacher clashes, and pre/post balance.
+   * @param {string} key - Class identifier.
+   * @param {string} label - Lab subject short code.
+   * @param {number} day - Day index.
+   * @returns {boolean} True if the lab block was successfully placed.
    */
   function placeLabBlock(key, label, day) {
     return schedulerPlaceLabBlock({
@@ -479,7 +589,12 @@ function schedulerRenderMultiClassesEngine({
     teacherSet[key] = new Set((pairs || []).map((p) => p.teacher));
   });
 
-  /** Checks if a teacher is shared across multiple classes (common faculty). */
+  /**
+   * Checks if a teacher is shared across multiple classes (common faculty).
+   * @param {string} key - Class identifier.
+   * @param {string} teacher - Teacher name.
+   * @returns {boolean} True if the teacher teaches in other classes too.
+   */
   function isCommonFor(key, teacher) {
     if (typeof schedulerIsCommonFor === "function") {
       return schedulerIsCommonFor({
@@ -495,7 +610,14 @@ function schedulerRenderMultiClassesEngine({
     );
   }
 
-  /** Determines if a teacher should prefer a pre- or post-lunch slot for a given class. */
+  /**
+   * Determines if a teacher should prefer a pre- or post-lunch slot for a given class.
+   * @param {string} key - Class identifier.
+   * @param {number} day - Day index.
+   * @param {number} col - Period column index.
+   * @param {string} teacher - Teacher name.
+   * @returns {boolean} True if the teacher is preferred for this slot.
+   */
   function preferredForSlot(key, day, col, teacher) {
     if (typeof schedulerPreferredForSlot === "function") {
       return schedulerPreferredForSlot({
@@ -525,6 +647,8 @@ function schedulerRenderMultiClassesEngine({
   /**
    * Attempts to replace post-lunch filler slots with main lectures from teachers
    * who are below the per-class theory maximum.
+   * @param {string} key - Class identifier.
+   * @returns {boolean} True if any swaps were made.
    */
   function boostTeachersBySwappingFillers(key) {
     const fillerShorts =
@@ -613,6 +737,10 @@ function schedulerRenderMultiClassesEngine({
   /**
    * Scores and picks the best lecture index for a class/day/slot,
    * balancing pre/post-lunch teacher presence, quota, and main-subject priority.
+   * @param {string} key - Class identifier.
+   * @param {number} day - Day index.
+   * @param {number} col - Period column index.
+   * @returns {number} Index into the lecture list, or -1 if none found.
    */
   function pickLectureIndex(key, day, col) {
     if (typeof schedulerPickLectureIndex === "function") {
@@ -713,7 +841,10 @@ function schedulerRenderMultiClassesEngine({
      Section: MAIN SUBJECT SCHEDULING PASSES
   ═══════════════════════════════════════════════════════ */
 
-    /** Builds a shared context object for all advanced scheduling passes. */
+    /**
+     * Builds a shared context object for all advanced scheduling passes.
+     * @returns {Object} Context object containing all scheduling state and helpers.
+     */
     const getAdvancedPassCtx = () => ({
     days,
     classesPerDay,
@@ -768,21 +899,31 @@ function schedulerRenderMultiClassesEngine({
     importedFixedSlotsByClass,
     subjectByShort,
   });
-/** Attempts to place remaining unscheduled lectures into empty slots. */
+/**
+ * Attempts to place remaining unscheduled lectures into empty slots.
+ * @param {string} key - Class identifier.
+ */
 function fillRemaining(key) {
     if (!hasFn(schedulerPassFillRemaining)) return false;
     return schedulerPassFillRemaining({ ctx: getAdvancedPassCtx(), key });
   }
   for (const k of keys) fillRemaining(k);
 
-  /** Aggressively fills any remaining empty slots, relaxing constraints. */
+  /**
+   * Aggressively fills any remaining empty slots, relaxing constraints.
+   * @param {string} key - Class identifier.
+   */
   function aggressiveFill(key) {
     if (!hasFn(schedulerPassAggressiveFill)) return false;
     return schedulerPassAggressiveFill({ ctx: getAdvancedPassCtx(), key });
   }
   for (const k of keys) aggressiveFill(k);
 
-  /** Sweeps post-lunch slots to place filler subjects where gaps remain. */
+  /**
+   * Sweeps post-lunch slots to place filler subjects where gaps remain.
+   * @param {string} key - Class identifier.
+   * @returns {boolean} True if any fillers were placed.
+   */
   function postLunchFillerSweep(key) {
     if (!hasFn(schedulerPassPostLunchFillerSweep)) return false;
     return schedulerPassPostLunchFillerSweep({ ctx: getAdvancedPassCtx(), key });
@@ -792,6 +933,7 @@ function fillRemaining(key) {
   /**
    * Places lectures from teachers who are below the per-class theory max
    * into any remaining empty slots.
+   * @param {string} key - Class identifier.
    */
   function boostTeachers(key) {
     if (!hasFn(schedulerBoostTeachers)) return;
@@ -800,14 +942,20 @@ function fillRemaining(key) {
   for (const k of keys) boostTeachers(k);
   for (const k of keys) boostTeachersBySwappingFillers(k);
 
-  /** Fills mid-schedule gaps to produce a compact timetable with no holes. */
+  /**
+   * Fills mid-schedule gaps to produce a compact timetable with no holes.
+   * @param {string} key - Class identifier.
+   */
   function gapSealFill(key) {
     if (!hasFn(schedulerPassGapSealFill)) return false;
     return schedulerPassGapSealFill({ ctx: getAdvancedPassCtx(), key });
   }
   for (const k of keys) gapSealFill(k);
 
-  /** Final pass to fix empty first-post-lunch (P5) slots. */
+  /**
+   * Final pass to fix empty first-post-lunch (P5) slots.
+   * @param {string} key - Class identifier.
+   */
   function finalPostLunchGapFix(key) {
     if (!hasFn(schedulerPassFinalPostLunchGapFix)) return false;
     return schedulerPassFinalPostLunchGapFix({ ctx: getAdvancedPassCtx(), key });
@@ -816,25 +964,36 @@ function fillRemaining(key) {
   /**
    * Ensures every teacher with remaining lectures appears at least once each day,
    * swapping out fillers if necessary.
+   * @param {string} key - Class identifier.
    */
   function ensureDailyTeacherPresence(key) {
     if (!hasFn(schedulerEnsureDailyTeacherPresence)) return;
     schedulerEnsureDailyTeacherPresence({ ctx: getAdvancedPassCtx(), key });
   }
 
-  /** Fills any remaining empty post-lunch gaps with eligible lectures or fillers. */
+  /**
+   * Fills any remaining empty post-lunch gaps with eligible lectures or fillers.
+   * @param {string} key - Class identifier.
+   * @returns {boolean} True if any gaps were filled.
+   */
   function fillPostLunchGaps(key) {
     if (!hasFn(schedulerPassFillPostLunchGaps)) return false;
     return schedulerPassFillPostLunchGaps({ ctx: getAdvancedPassCtx(), key });
   }
 
-  /** Ensures each main subject reaches its weekly target of 5 lectures. */
+  /**
+   * Ensures each main subject reaches its weekly target of 5 lectures.
+   * @param {string} key - Class identifier.
+   */
   function ensureSubjectDailyFive(key) {
     if (!hasFn(schedulerPassEnsureSubjectDailyFive)) return false;
     return schedulerPassEnsureSubjectDailyFive({ ctx: getAdvancedPassCtx(), key });
   }
 
-  /** Guarantees at least one main-subject lecture is present every day. */
+  /**
+   * Guarantees at least one main-subject lecture is present every day.
+   * @param {string} key - Class identifier.
+   */
   function ensureAtLeastOneMainPerDay(key) {
     if (!hasFn(schedulerPassEnsureAtLeastOneMainPerDay)) return false;
     return schedulerPassEnsureAtLeastOneMainPerDay({ ctx: getAdvancedPassCtx(), key });
@@ -861,6 +1020,7 @@ function fillRemaining(key) {
     /**
      * Force-places main subjects until they hit their weekly quota,
      * displacing fillers and using relaxed constraints as needed.
+     * @param {string} key - Class identifier.
      */
     function forceMainToFive(key) {
       if (!hasFn(schedulerForceMainToFive)) return;
@@ -871,6 +1031,7 @@ function fillRemaining(key) {
     /**
      * Last-resort pass: relocates other main subjects to different days/slots
      * to free room for subjects that still haven't met their weekly target.
+     * @param {string} key - Class identifier.
      */
     function finalizeSubjectFiveByRelocatingOtherMain(key) {
       if (!hasFn(schedulerFinalizeSubjectFive)) return;
@@ -878,7 +1039,10 @@ function fillRemaining(key) {
     }
     for (const k of keys) finalizeSubjectFiveByRelocatingOtherMain(k);
 
-    /** Places a filler in the first post-lunch slot (P5) if it remains empty and filler budget allows. */
+    /**
+     * Places a filler in the first post-lunch slot (P5) if it remains empty and filler budget allows.
+     * @param {string} key - Class identifier.
+     */
     function emergencyP5FillerIfNeeded(key) {
       if (!hasFn(schedulerEmergencyP5Filler)) return;
       schedulerEmergencyP5Filler({ ctx: getAdvancedPassCtx(), key });
@@ -888,6 +1052,7 @@ function fillRemaining(key) {
     /**
      * Sweeps every empty slot in the schedule and fills it with the best-fit filler,
      * guaranteeing zero gaps in the final timetable.
+     * @param {string} key - Class identifier.
      */
     function absoluteNoGapSweep(key) {
       if (!hasFn(schedulerAbsoluteNoGapSweep)) return;
@@ -928,7 +1093,12 @@ function fillRemaining(key) {
 
   rebuildTrackingFromSchedule();
 
-  /** Counts how many times a subject short appears across all days/slots for a class. */
+  /**
+   * Counts how many times a subject short appears across all days/slots for a class.
+   * @param {string} key - Class identifier.
+   * @param {string} short - Subject short code.
+   * @returns {number} Total occurrences of the subject in the class schedule.
+   */
   function countOccurrences(key, short) {
     return schedulerCountOccurrences({
       schedules,
@@ -942,13 +1112,17 @@ function fillRemaining(key) {
   /**
    * On days that have labs but no theory lectures, places main subjects
    * to ensure they reach the target of 5 weekly lectures.
+   * @param {string} key - Class identifier.
    */
   function boostMainSubjectsOnLabDays(key) {
     if (!hasFn(schedulerBoostMainOnLabDays)) return;
     schedulerBoostMainOnLabDays({ ctx: getAdvancedPassCtx(), key });
   }
 
-  /** Emergency fallback: if a class schedule is completely empty, fills it with round-robin mains. */
+  /**
+   * Emergency fallback: if a class schedule is completely empty, fills it with round-robin mains.
+   * @param {string} key - Class identifier.
+   */
   function emergencyFillIfCompletelyEmpty(key) {
     if (!hasFn(schedulerEmergencyFillEmpty)) return;
     schedulerEmergencyFillEmpty({ ctx: getAdvancedPassCtx(), key });
@@ -956,21 +1130,34 @@ function fillRemaining(key) {
   for (const k of keys) boostMainSubjectsOnLabDays(k);
   for (const k of keys) emergencyFillIfCompletelyEmpty(k);
 
-  /** Fills sparse schedules that still have many empty slots after normal passes. */
+  /**
+   * Fills sparse schedules that still have many empty slots after normal passes.
+   * @param {string} key - Class identifier.
+   * @returns {boolean} True if any slots were filled.
+   */
   function fillSparseSchedule(key) {
     if (!hasFn(schedulerPassFillSparseSchedule)) return false;
     return schedulerPassFillSparseSchedule({ ctx: getAdvancedPassCtx(), key });
   }
   for (const k of keys) fillSparseSchedule(k);
 
-  /** Ultimate force-fill: plugs any remaining empty slots with maximum relaxation. */
+  /**
+   * Ultimate force-fill: plugs any remaining empty slots with maximum relaxation.
+   * @param {string} key - Class identifier.
+   * @returns {boolean} True if any slots were force-filled.
+   */
   function ultimateForceFill(key) {
     if (!hasFn(schedulerPassUltimateForceFill)) return false;
     return schedulerPassUltimateForceFill({ ctx: getAdvancedPassCtx(), key });
   }
   for (const k of keys) ultimateForceFill(k);
 
-  /** Returns the weekly quota target for a subject short (defaults to 5). */
+  /**
+   * Returns the weekly quota target for a subject short (defaults to 5).
+   * @param {string} key - Class identifier.
+   * @param {string} short - Subject short code.
+   * @returns {number} Weekly lecture target for the subject.
+   */
   function getTargetForShort(key, short) {
     return schedulerGetTargetForShort({
       weeklyQuota,
@@ -983,6 +1170,8 @@ function fillRemaining(key) {
   /**
    * Iteratively enforces weekly targets for all main subjects in a class,
    * replacing fillers or over-quota subjects as needed.
+   * @param {string} key - Class identifier.
+   * @returns {boolean} True if any changes were made.
    */
   function enforceMainTargetsForClass(key) {
     if (!hasFn(schedulerEnforceMainTargets)) return false;
@@ -998,7 +1187,11 @@ function fillRemaining(key) {
     rebuildTrackingFromSchedule();
   }
 
-  /** Swaps post-lunch main subjects into pre-lunch slots for better distribution. */
+  /**
+   * Swaps post-lunch main subjects into pre-lunch slots for better distribution.
+   * @param {string} key - Class identifier.
+   * @returns {boolean} True if any promotions were made.
+   */
   function promoteMainsBeforeLunch(key) {
     if (!hasFn(schedulerPassPromoteMainsBeforeLunch)) return false;
     return schedulerPassPromoteMainsBeforeLunch({ ctx: getAdvancedPassCtx(), key });
@@ -1012,6 +1205,7 @@ function fillRemaining(key) {
   /**
    * Detects and resolves cross-class teacher clashes where the same teacher
    * is scheduled in two classes at the same day/slot.
+   * @returns {boolean} True if any clashes were resolved.
    */
   const unresolvedClashes = [];
   function resolveFinalTeacherClashes() {
@@ -1053,7 +1247,10 @@ function fillRemaining(key) {
     if (!changed) break;
   }
 
-  /** Fills empty pre-lunch slots that were skipped by earlier passes. */
+  /**
+   * Fills empty pre-lunch slots that were skipped by earlier passes.
+   * @returns {boolean} True if any slots were filled.
+   */
   function fillEmptyPreLunch() {
     if (!hasFn(schedulerPassFillEmptyPreLunch)) return false;
     return schedulerPassFillEmptyPreLunch({ ctx: getAdvancedPassCtx() });
@@ -1063,7 +1260,10 @@ function fillRemaining(key) {
     rebuildTrackingFromSchedule();
   }
 
-  /** Removes excess main-subject occurrences that exceed their weekly quota target. */
+  /**
+   * Removes excess main-subject occurrences that exceed their weekly quota target.
+   * @returns {boolean} True if any excess occurrences were removed.
+   */
   function clampMainsToTarget() {
     return schedulerClampMainsToTarget({
       keys,
@@ -1086,17 +1286,29 @@ function fillRemaining(key) {
     rebuildTrackingFromSchedule();
   }
 
-  /** Compacts post-lunch slots by shifting subjects earlier to eliminate mid-gap holes. */
+  /**
+   * Compacts post-lunch slots by shifting subjects earlier to eliminate mid-gap holes.
+   * @param {string} key - Class identifier.
+   * @returns {boolean} True if any slots were compacted.
+   */
   function compactPostLunch(key) {
     if (!hasFn(schedulerPassCompactPostLunch)) return false;
     return schedulerPassCompactPostLunch({ ctx: getAdvancedPassCtx(), key });
   }
-  /** Compacts pre-lunch slots by shifting subjects to close interior gaps. */
+  /**
+   * Compacts pre-lunch slots by shifting subjects to close interior gaps.
+   * @param {string} key - Class identifier.
+   * @returns {boolean} True if any slots were compacted.
+   */
   function compactPreLunch(key) {
     if (!hasFn(schedulerPassCompactPreLunch)) return false;
     return schedulerPassCompactPreLunch({ ctx: getAdvancedPassCtx(), key });
   }
-  /** Combines pre- and post-lunch compaction to close all intra-day gaps. */
+  /**
+   * Combines pre- and post-lunch compaction to close all intra-day gaps.
+   * @param {string} key - Class identifier.
+   * @returns {boolean} True if any gaps were closed.
+   */
   function compactDayGaps(key) {
     if (!hasFn(schedulerPassCompactDayGaps)) return false;
     return schedulerPassCompactDayGaps({ ctx: getAdvancedPassCtx(), key });
@@ -1122,6 +1334,7 @@ function fillRemaining(key) {
   /**
    * Enforces filler targets specifically for the first class (Class 1),
    * ensuring each filler subject reaches its credit-based weekly target.
+   * @returns {boolean} True if any filler adjustments were made.
    */
   function enforceClassOneFillerTargets() {
     if (!hasFn(schedulerEnforceClassOneFillerTargets)) return false;
@@ -1139,6 +1352,7 @@ function fillRemaining(key) {
   /**
    * Locks imported fixed slots into the schedule, overriding whatever was
    * previously placed and assigning the specified teacher.
+   * @returns {boolean} True if any fixed slots were enforced.
    */
   function enforceImportedFixedSlots() {
     if (!hasFn(schedulerEnforceFixedSlots)) return false;
@@ -1203,7 +1417,10 @@ function fillRemaining(key) {
      Section: DOM RENDERING
   ═══════════════════════════════════════════════════════ */
 
-  /** Renders the finalized schedule for a class into the timetable DOM table. */
+  /**
+   * Renders the finalized schedule for a class into the timetable DOM table.
+   * @param {string} key - Class identifier.
+   */
   function renderClassToDOM(key) {
     schedulerRenderClassToDOM({
       key,

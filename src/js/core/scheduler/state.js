@@ -13,6 +13,12 @@
    Section: CLASS CONTAINER SETUP
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Initializes an empty teacher theory count map for each class.
+ * @param {Object} params
+ * @param {string[]} params.keys - Class identifiers.
+ * @returns {Object} Map of class key to empty teacher theory count object.
+ */
 function schedulerCreateTeacherTheoryCountByClass({ keys }) {
   const teacherTheoryCountByClass = {};
   keys.forEach((k) => {

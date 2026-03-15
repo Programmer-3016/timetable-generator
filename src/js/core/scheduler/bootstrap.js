@@ -13,6 +13,11 @@
    Section: TEACHER MAP BUILDING
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Builds a teacher fold map from class data for name deduplication.
+ * @param {Object} params - Contains data array and fold map builder function.
+ * @returns {Object} Teacher fold map for canonical name resolution.
+ */
 function schedulerBuildTeacherFoldMapFromData({
   data,
   buildTeacherFoldMapFromRawNames,

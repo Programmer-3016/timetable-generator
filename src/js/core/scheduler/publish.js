@@ -9,6 +9,10 @@
  * - Extracted from core/scheduler.js without scheduling-logic changes.
  */
 
+/**
+ * Merges per-teacher workload statistics into an aggregate stats object.
+ * @param {Object} params - Data, per-teacher counters, aggregate stats map, and name normalizer.
+ */
 function schedulerMergeTeacherAggregateStats({
   data,
   teacherTheoryCount,

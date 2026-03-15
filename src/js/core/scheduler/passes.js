@@ -13,6 +13,38 @@
    Section: LAB PLACEMENT
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Places a 2-period lab block for a class on a given day.
+ * @param {Object} opts - Destructured options object.
+ * @param {string} opts.key - Class identifier key.
+ * @param {string} opts.label - Subject label for the lab block.
+ * @param {number} opts.day - Day index to place the lab block on.
+ * @param {Object} opts.labPeriodsUsedPerDay - Lab periods used per day per class.
+ * @param {Function} opts.getShortTeacherList - Returns teachers for a given class and label.
+ * @param {Object} opts.teacherAssignedPerDayByClass - Teacher assignments per day per class.
+ * @param {Object} opts.teacherMinutes - Total minutes assigned to each teacher.
+ * @param {number} opts.minsPerPeriod - Duration of one period in minutes.
+ * @param {number} opts.TEACHER_MAX_HOURS - Maximum allowed teacher minutes.
+ * @param {number} opts.classesPerDay - Number of periods per day.
+ * @param {number} opts.lunchClassIndex - Period index of the lunch break.
+ * @param {Object} opts.labPrePostBlocksByClass - Pre/post lab block constraints per class.
+ * @param {Object} opts.labStartCountsByClass - Count of lab starts per slot per class.
+ * @param {Object} opts.labsAtSlot - Labs scheduled at each slot.
+ * @param {Object} opts.labsInUse - Set of labs currently in use at each slot.
+ * @param {number} opts.LAB_CAPACITY - Maximum concurrent labs per slot.
+ * @param {Object} opts.schedules - Schedule grid (class → day → period).
+ * @param {string[]} opts.keys - Array of all class keys.
+ * @param {Function} opts.getTeachersForCell - Returns teachers assigned to a schedule cell.
+ * @param {Function} opts.teacherClashKey - Returns canonical clash key for a teacher.
+ * @param {Object} opts.assignedTeacher - Assigned teachers per cell.
+ * @param {Object} opts.labNumberAssigned - Assigned lab numbers per cell.
+ * @param {number[]} opts.labsBlocksPerDayAcross - Lab block counts per day across all classes.
+ * @param {Object} opts.teacherLabBlocks - Lab block counts per teacher.
+ * @param {Object} opts.teacherLabMinutes - Lab minutes per teacher.
+ * @param {Object} opts.teacherFirstPeriodCount - First-period assignment counts per teacher.
+ * @param {Function} opts.ensureTP - Ensures teacher presence tracking is initialized.
+ * @returns {boolean} True if a lab block was successfully placed.
+ */
 function schedulerPlaceLabBlock({
   key,
   label,
@@ -196,6 +228,13 @@ function schedulerPlaceLabBlock({
 /**
  * Places initial lab blocks across all classes, distributing them evenly
  * across days by choosing days with the fewest existing lab blocks first.
+ * @param {Object} opts - Destructured options object.
+ * @param {Array} opts.data - Array of class data entries with key and pairs.
+ * @param {Function} opts.isLabPair - Predicate returning true if a pair is a lab pair.
+ * @param {number} opts.days - Number of days in the week.
+ * @param {string[]} opts.keys - Array of all class keys.
+ * @param {number[]} opts.labsBlocksPerDayAcross - Lab block counts per day across all classes.
+ * @param {Function} opts.placeLabBlock - Callback to place a single lab block.
  */
 function schedulerPlaceInitialLabsAcrossClasses({
   data,
@@ -244,6 +283,21 @@ function schedulerPlaceInitialLabsAcrossClasses({
 /**
  * Clamps each main subject's weekly count to its target, replacing excess
  * occurrences with fillers or under-target alternative mains.
+ * @param {Object} opts - Destructured options object.
+ * @param {string[]} opts.keys - Array of all class keys.
+ * @param {Object} opts.mainShortsByClass - Set of main subject shorts per class.
+ * @param {Object} opts.fillerShortsByClass - Set of filler subject shorts per class.
+ * @param {Object} opts.weeklyQuota - Weekly quota map per class.
+ * @param {number} opts.days - Number of days in the week.
+ * @param {number} opts.classesPerDay - Number of periods per day.
+ * @param {Object} opts.schedules - Schedule grid (class → day → period).
+ * @param {Object} opts.isLabShort - Map indicating whether a short is a lab subject per class.
+ * @param {Function} opts.getTargetForShort - Returns the target count for a subject short.
+ * @param {Function} opts.pickTeacherForSlot - Picks a suitable teacher for a given slot.
+ * @param {Object} opts.assignedTeacher - Assigned teachers per cell.
+ * @param {Function} opts.getTeachersForCell - Returns teachers assigned to a schedule cell.
+ * @param {Function} opts.teacherClashKey - Returns canonical clash key for a teacher.
+ * @returns {boolean} True if any schedule change was made.
  */
 function schedulerClampMainsToTarget({
   keys,
@@ -400,6 +454,25 @@ function schedulerClampMainsToTarget({
 /**
  * Resolves remaining teacher clashes across all classes by reassigning teachers,
  * swapping to under-target subjects, or falling back to fillers.
+ * @param {Object} opts - Destructured options object.
+ * @param {number} opts.days - Number of days in the week.
+ * @param {number} opts.classesPerDay - Number of periods per day.
+ * @param {string[]} opts.keys - Array of all class keys.
+ * @param {Object} opts.schedules - Schedule grid (class → day → period).
+ * @param {Function} opts.getTeachersForCell - Returns teachers assigned to a schedule cell.
+ * @param {Function} opts.teacherClashKey - Returns canonical clash key for a teacher.
+ * @param {Function} opts.pickTeacherForSlot - Picks a suitable teacher for a given slot.
+ * @param {Object} opts.assignedTeacher - Assigned teachers per cell.
+ * @param {Object} opts.lectureList - List of lecture entries per class.
+ * @param {Function} opts.getTargetForShort - Returns the target count for a subject short.
+ * @param {Function} opts.countOccurrences - Counts current occurrences of a subject in a class.
+ * @param {Function} opts.isMainShort - Returns true if a short is a main subject for a class.
+ * @param {Object} opts.fillerShortsByClass - Set of filler subject shorts per class.
+ * @param {Object} opts.fillerTargetsByClass - Target counts for filler subjects per class.
+ * @param {Object} opts.fillerCountsByClass - Current counts for filler subjects per class.
+ * @param {Object} opts.isLabShort - Map indicating whether a short is a lab subject per class.
+ * @param {Array} opts.unresolvedClashes - Array to collect unresolved clash records.
+ * @returns {boolean} True if any schedule change was made.
  */
 function schedulerResolveFinalTeacherClashes({
   days,

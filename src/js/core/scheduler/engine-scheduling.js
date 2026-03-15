@@ -14,6 +14,9 @@
 /**
  * Places lectures from teachers who are below the per-class theory max
  * into any remaining empty slots.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
  */
 function schedulerBoostTeachers({ ctx, key }) {
   const {
@@ -73,6 +76,9 @@ function schedulerBoostTeachers({ ctx, key }) {
 /**
  * Ensures every teacher with remaining lectures appears at least once each day,
  * swapping out fillers if necessary.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
  */
 function schedulerEnsureDailyTeacherPresence({ ctx, key }) {
   const {
@@ -208,6 +214,9 @@ function schedulerEnsureDailyTeacherPresence({ ctx, key }) {
 /**
  * Force-places main subjects until they hit their weekly quota,
  * displacing fillers and using relaxed constraints as needed.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
  */
 function schedulerForceMainToFive({ ctx, key }) {
   const {
@@ -429,6 +438,9 @@ function schedulerForceMainToFive({ ctx, key }) {
 /**
  * Last-resort pass: relocates other main subjects to different days/slots
  * to free room for subjects that still haven't met their weekly target.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
  */
 function schedulerFinalizeSubjectFive({ ctx, key }) {
   const {
@@ -710,7 +722,12 @@ function schedulerFinalizeSubjectFive({ ctx, key }) {
    Section: EMERGENCY P5 FILLER
 ═══════════════════════════════════════════════════════ */
 
-/** Places a filler in the first post-lunch slot (P5) if it remains empty and filler budget allows. */
+/**
+ * Places a filler in the first post-lunch slot (P5) if it remains empty and filler budget allows.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ */
 function schedulerEmergencyP5Filler({ ctx, key }) {
   const {
     fillerShortsByClass, lunchClassIndex, days, classesPerDay, schedules,
@@ -787,6 +804,9 @@ function schedulerEmergencyP5Filler({ ctx, key }) {
 /**
  * Sweeps every empty slot in the schedule and fills it with the best-fit filler,
  * guaranteeing zero gaps in the final timetable.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
  */
 function schedulerAbsoluteNoGapSweep({ ctx, key }) {
   const {
@@ -884,7 +904,12 @@ function schedulerAbsoluteNoGapSweep({ ctx, key }) {
    Section: EMERGENCY FILL EMPTY
 ═══════════════════════════════════════════════════════ */
 
-/** Emergency fallback: if a class schedule is completely empty, fills it with round-robin mains. */
+/**
+ * Emergency fallback: if a class schedule is completely empty, fills it with round-robin mains.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ */
 function schedulerEmergencyFillEmpty({ ctx, key }) {
   const {
     days, classesPerDay, schedules, mainShortsByClass, teacherForShort,

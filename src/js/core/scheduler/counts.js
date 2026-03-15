@@ -9,6 +9,11 @@
  * - Extracted from core/scheduler.js without behavior changes.
  */
 
+/**
+ * Counts how many times a subject short appears in a class schedule.
+ * @param {Object} params - Schedule grid, day/period dimensions, class key, and subject short.
+ * @returns {number} Number of occurrences of the short in the schedule.
+ */
 function schedulerCountOccurrences({
   schedules,
   days,

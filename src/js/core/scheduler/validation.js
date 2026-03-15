@@ -11,6 +11,11 @@
    Section: SCHEDULE VALIDATION
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Normalizes a value (Array, Set, or Object) into a plain array.
+ * @param {Array|Set|Object} value - The value to normalize.
+ * @returns {Array} Array representation of the value.
+ */
 function schedulerNormalizeList(value) {
   if (!value) return [];
   if (Array.isArray(value)) return value.slice();

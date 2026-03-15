@@ -14,6 +14,10 @@
    Section: DOM RENDERING
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Renders a class timetable into the DOM by filling period cells.
+ * @param {Object} params - Class key, schedule data, subject/teacher maps, and label lookups.
+ */
 function schedulerRenderClassToDOM({
   key,
   days,

@@ -9,6 +9,15 @@
  * - Extracted from core/scheduler.js without changing scheduling behavior.
  */
 
+/**
+ * Retrieves the assigned teacher value for a specific timetable cell.
+ * @param {Object} params
+ * @param {Object} params.assignedTeacher - Per-class assigned teacher grid.
+ * @param {string} params.key - Class identifier.
+ * @param {number} params.day - Day index.
+ * @param {number} params.col - Period column index.
+ * @returns {string|null|undefined} The assigned teacher value, or undefined if not set.
+ */
 function schedulerGetAssignedTeacherValue({ assignedTeacher, key, day, col }) {
   if (!assignedTeacher[key] || !assignedTeacher[key][day]) return undefined;
   return assignedTeacher[key][day][col];
@@ -28,7 +37,11 @@ function schedulerGetAssignedTeacherValue({ assignedTeacher, key, day, col }) {
  * @param {string} params.short - Subject short code.
  * @returns {string[]} Teacher names for the given short.
  */
-/** Returns true if the name is a real teacher (not blank or "Not Mentioned"). */
+/**
+ * Returns true if the name is a real teacher (not blank or "Not Mentioned").
+ * @param {string} name - Teacher name to validate.
+ * @returns {boolean} True if the name represents a real teacher.
+ */
 function schedulerIsRealTeacher(name) {
   const s = String(name || "").trim();
   return s !== "" && !/^not\s*mentioned$/i.test(s);

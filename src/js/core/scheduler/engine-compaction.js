@@ -14,6 +14,9 @@
 /**
  * Rebuilds all tracking maps (teacher minutes, theory counts, filler counts, etc.)
  * from the current state of the schedules array. Called after major mutations.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @returns {void}
  */
 function schedulerRebuildTracking({ ctx }) {
   const {
@@ -215,6 +218,10 @@ function schedulerRebuildTracking({ ctx }) {
 /**
  * On days that have labs but no theory lectures, places main subjects
  * to ensure they reach the target of 5 weekly lectures.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ * @returns {void}
  */
 function schedulerBoostMainOnLabDays({ ctx, key }) {
   const {
@@ -322,6 +329,10 @@ function schedulerBoostMainOnLabDays({ ctx, key }) {
 /**
  * Iteratively enforces weekly targets for all main subjects in a class,
  * replacing fillers or over-quota subjects as needed.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @param {string} params.key - Class identifier.
+ * @returns {boolean} Whether any schedule changes were made.
  */
 function schedulerEnforceMainTargets({ ctx, key }) {
   const {
@@ -475,6 +486,9 @@ function schedulerEnforceMainTargets({ ctx, key }) {
 /**
  * Enforces filler targets specifically for the first class (Class 1),
  * ensuring each filler subject reaches its credit-based weekly target.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @returns {boolean} Whether any schedule changes were made.
  */
 function schedulerEnforceClassOneFillerTargets({ ctx }) {
   const {
@@ -627,6 +641,9 @@ function schedulerEnforceClassOneFillerTargets({ ctx }) {
 /**
  * Validates the final post-lunch compaction: checks for mid-gap issues,
  * split lab blocks, and remaining cross-class teacher clashes.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @returns {void}
  */
 function schedulerValidateCompaction({ ctx }) {
   const {
@@ -743,6 +760,9 @@ function schedulerValidateCompaction({ ctx }) {
 /**
  * Locks imported fixed slots into the schedule, overriding whatever was
  * previously placed and assigning the specified teacher.
+ * @param {Object} params - Destructured parameters.
+ * @param {Object} params.ctx - Shared scheduling engine context.
+ * @returns {boolean} Whether any schedule changes were made.
  */
 function schedulerEnforceFixedSlots({ ctx }) {
   const {
