@@ -6,6 +6,10 @@
  * @description LTP extraction and normalization helpers for PDF import.
  */
 
+/**
+ * @param {*} raw - Raw LTP value (string, number, or null).
+ * @returns {string} Normalized "L-T-P" triplet string or empty string.
+ */
 function pdfImportNormalizeLtpTriplet(raw) {
   if (raw == null) return "";
   const text = pdfImportNormalizeLine(raw);

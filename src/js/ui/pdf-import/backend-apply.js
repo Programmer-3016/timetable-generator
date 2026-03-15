@@ -10,6 +10,10 @@
    Section: NORMALIZATION HELPERS
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * @param {Array} list - Array of items to normalize to trimmed strings.
+ * @returns {string[]} Non-empty trimmed strings.
+ */
 function backendImportNormalizeStringList(list) {
   if (!Array.isArray(list)) return [];
   return list

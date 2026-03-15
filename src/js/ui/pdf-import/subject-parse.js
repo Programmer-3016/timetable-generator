@@ -10,21 +10,40 @@
    Section: ENTRY PARSING HELPERS
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * @param {string[]} lines - Raw extracted PDF lines containing subject table data.
+ * @returns {Array<{short: string, subject: string, teacher: string, ltp: string}>} Parsed subject entries.
+ */
 function pdfImportParseSubjectTableLines(lines) {
   const entries = [];
   let pendingSubject = "";
   let pendingLtp = "";
-  const startsWithOcrArtifact = (text) => // Returns true if text begins with a known OCR artifact token
+  /**
+   * @param {string} text - Text to check for leading OCR artifact.
+   * @returns {boolean} True if text begins with a known OCR artifact token.
+   */
+  const startsWithOcrArtifact = (text) =>
     /^(?:dye|ode|ame|bye|p|q|n|an)\b/i.test(pdfImportNormalizeLine(text || ""));
 
-  const pushFinalEntry = (short, subject, teacher, ltp = "") => { // Finalizes and pushes a subject entry to the entries array
+  /**
+   * @param {string} short - Subject short code.
+   * @param {string} subject - Subject name.
+   * @param {string} teacher - Teacher name.
+   * @param {string} [ltp=""] - LTP triplet string.
+   * @returns {boolean} True if the entry was successfully finalized and pushed.
+   */
+  const pushFinalEntry = (short, subject, teacher, ltp = "") => {
     const finalEntry = pdfImportFinalizeEntry(short, subject, teacher, ltp);
     if (!finalEntry) return false;
     entries.push(finalEntry);
     return true;
   };
 
-  const tryParseDashEntries = (text) => { // Attempts to parse dash-separated merged entries from text
+  /**
+   * @param {string} text - Text containing dash-separated merged entries.
+   * @returns {boolean} True if at least one entry was parsed.
+   */
+  const tryParseDashEntries = (text) => {
     const chunks = pdfImportSplitMergedDashEntries(text);
     if (!chunks.length) return false;
     let hit = false;
@@ -39,7 +58,13 @@ function pdfImportParseSubjectTableLines(lines) {
     return hit;
   };
 
-  /** @description Builds a subject entry from core text with optional teacher and LTP. */
+  /**
+   * @description Builds a subject entry from core text with optional teacher and LTP.
+   * @param {string} coreInput - Core text containing subject/short data.
+   * @param {string} teacherInput - Teacher name text.
+   * @param {string} [forcedLtp=""] - Pre-extracted LTP triplet.
+   * @returns {boolean} True if an entry was built and pushed.
+   */
   const tryBuildEntryFromCore = (coreInput, teacherInput, forcedLtp = "") => {
     let core = pdfImportPreprocessLine(coreInput || "", {
       convertWideGaps: true,
@@ -59,7 +84,11 @@ function pdfImportParseSubjectTableLines(lines) {
       core = `${pendingPrefix} ${core}`.trim();
     }
 
-    const commit = (ok) => { // Clears pending state on successful parse and returns the result
+    /**
+     * @param {boolean} ok - Whether the parse was successful.
+     * @returns {boolean} The ok value, after clearing pending state on success.
+     */
+    const commit = (ok) => {
       if (ok && pendingPrefix) pendingSubject = "";
       if (ok) pendingLtp = "";
       return ok;

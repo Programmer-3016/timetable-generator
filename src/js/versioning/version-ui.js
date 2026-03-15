@@ -17,6 +17,10 @@ var _isVersionSidebarCollapsed = false;
    Section: TIMELINE PANEL RENDERING
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Render the versions timeline panel and detail view.
+ * @returns {void}
+ */
 function renderVersionPanel() {
   var panel = document.getElementById("versionPanel");
   var details = document.getElementById("versionDetailsView");
@@ -73,12 +77,21 @@ function renderVersionPanel() {
   _renderVersionDetails(selected);
 }
 
+/**
+ * Handle click on a version timeline card.
+ * @param {number} id - Version ID that was clicked
+ * @returns {void}
+ */
 function _onVersionCardClick(id) {
   _selectedVersionId = id;
   _highlightSelectedTimelineCard();
   _renderVersionDetails(getVersionById(id));
 }
 
+/**
+ * Highlight the currently selected timeline card in the DOM.
+ * @returns {void}
+ */
 function _highlightSelectedTimelineCard() {
   var items = document.querySelectorAll('.ver-timeline-item');
   for (var i = 0; i < items.length; i++) {
@@ -91,6 +104,11 @@ function _highlightSelectedTimelineCard() {
    Section: DETAIL VIEW RENDERING
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Render the detail view for a selected version.
+ * @param {Object|null} v - Version object to display
+ * @returns {void}
+ */
 function _renderVersionDetails(v) {
   var details = document.getElementById('versionDetailsView');
   if (!details) return;
@@ -166,24 +184,48 @@ function _renderVersionDetails(v) {
    Section: TIMELINE TONE HELPERS
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Get the CSS class for a timeline node's tone.
+ * @param {Object} v - Version object
+ * @param {number} idx - Index in the versions array
+ * @returns {string} CSS class name for the tone
+ */
 function _timelineToneClass(v, idx) {
   if (idx === 0) return 'ver-tone-active';
   if (v.starred) return 'ver-tone-draft';
   return 'ver-tone-archived';
 }
 
+/**
+ * Get the tone key string for a timeline item.
+ * @param {Object} v - Version object
+ * @param {number} idx - Index in the versions array
+ * @returns {string} Tone key ('active', 'draft', or 'archived')
+ */
 function _timelineToneKey(v, idx) {
   if (idx === 0) return 'active';
   if (v.starred) return 'draft';
   return 'archived';
 }
 
+/**
+ * Get the display label for a timeline item's tone.
+ * @param {Object} v - Version object
+ * @param {number} idx - Index in the versions array
+ * @returns {string} Human-readable tone label
+ */
 function _timelineToneLabel(v, idx) {
   if (idx === 0) return 'Active Version';
   if (v.starred) return 'Current Draft';
   return 'Archived';
 }
 
+/**
+ * Get the Material icon name for a timeline item's tone.
+ * @param {Object} v - Version object
+ * @param {number} idx - Index in the versions array
+ * @returns {string} Material Symbols icon name
+ */
 function _timelineToneIcon(v, idx) {
   if (idx === 0) return 'published_with_changes';
   if (v.starred) return 'edit_document';
@@ -194,6 +236,11 @@ function _timelineToneIcon(v, idx) {
    Section: USER INTERACTION HANDLERS
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Handle click on the Load Schedule button.
+ * @param {number} id - Version ID to load
+ * @returns {void}
+ */
 function _onLoadClick(id) {
   var ok = loadScheduleVersionById(id);
   if (ok && typeof renderVersionPanel === 'function') {
@@ -201,6 +248,11 @@ function _onLoadClick(id) {
   }
 }
 
+/**
+ * Handle click on the Rename button; prompts for a new label.
+ * @param {number} id - Version ID to rename
+ * @returns {void}
+ */
 function _onRenameClick(id) {
   var labelSpan = document.getElementById('verLabel' + id);
   var current = labelSpan ? labelSpan.textContent : '';
@@ -211,11 +263,21 @@ function _onRenameClick(id) {
   }
 }
 
+/**
+ * Handle click on the star/unstar toggle.
+ * @param {number} id - Version ID to toggle star
+ * @returns {void}
+ */
 function _onStarClick(id) {
   toggleStarVersion(id);
   renderVersionPanel();
 }
 
+/**
+ * Handle click on the Delete button; confirms before deleting.
+ * @param {number} id - Version ID to delete
+ * @returns {void}
+ */
 function _onDeleteClick(id) {
   if (!confirm('Delete this version?')) return;
   deleteScheduleVersion(id);
@@ -226,10 +288,19 @@ function _onDeleteClick(id) {
   }
 }
 
+/**
+ * Handle click on the Print button.
+ * @returns {void}
+ */
 function _onPrintClick() {
   window.print();
 }
 
+/**
+ * Handle click on the Download button; exports version as JSON.
+ * @param {number} id - Version ID to download
+ * @returns {void}
+ */
 function _onDownloadClick(id) {
   var version = getVersionById(id);
   if (!version) return;
@@ -245,6 +316,11 @@ function _onDownloadClick(id) {
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Handle click on the description text; opens inline editor.
+ * @param {number} id - Version ID whose description to edit
+ * @returns {void}
+ */
 function _onDescClick(id) {
   var el = document.getElementById('verDescText' + id);
   if (!el || el.querySelector('textarea')) return;
@@ -262,6 +338,11 @@ function _onDescClick(id) {
   if (textarea) { textarea.focus(); textarea.select(); }
 }
 
+/**
+ * Save the edited description from the inline textarea.
+ * @param {number} id - Version ID whose description to save
+ * @returns {void}
+ */
 function _onDescSave(id) {
   var textarea = /** @type {HTMLTextAreaElement} */ (document.getElementById('verDescEdit' + id));
   if (!textarea) return;
@@ -278,6 +359,10 @@ function _onDescSave(id) {
    Section: AUTO-SAVE AND UTILITIES
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Auto-save the current schedule state as a new version.
+ * @returns {void}
+ */
 function onVersionAutoSave() {
   var snapshot = (typeof window !== 'undefined') ? window.__ttLastScheduleState : null;
   var validation = (typeof window !== 'undefined') ? window.__ttLastValidation : null;
@@ -296,6 +381,11 @@ function onVersionAutoSave() {
   }
 }
 
+/**
+ * Format an ISO timestamp into a human-readable string.
+ * @param {string} isoStr - ISO 8601 date string
+ * @returns {string} Formatted date string (e.g. "Jan 01, 2025 · 02:30 PM")
+ */
 function _formatTimestamp(isoStr) {
   if (!isoStr) return '';
   try {
@@ -314,10 +404,20 @@ function _formatTimestamp(isoStr) {
   }
 }
 
+/**
+ * Escape HTML for safe insertion (delegates to _escHtml).
+ * @param {string} str - Raw string to escape
+ * @returns {string} HTML-escaped string
+ */
 function _escVerHtml(str) {
   return _escHtml(str);
 }
 
+/**
+ * Determine the stage label for a version based on its position and star status.
+ * @param {Object} v - Version object
+ * @returns {string} Stage label ('Active Version', 'Current Draft', or 'Archived')
+ */
 function _versionStageLabel(v) {
   var versions = loadScheduleVersions();
   for (var i = 0; i < versions.length; i++) {
@@ -330,6 +430,11 @@ function _versionStageLabel(v) {
   return v.starred ? 'Current Draft' : 'Archived';
 }
 
+/**
+ * Get the description text for a version, falling back to a generated summary.
+ * @param {Object} v - Version object
+ * @returns {string} Description text
+ */
 function _versionDescription(v) {
   if (typeof v.description === 'string' && v.description.trim()) {
     return v.description.trim();
@@ -355,6 +460,10 @@ window._onDownloadClick = _onDownloadClick;
 window._onDescClick = _onDescClick;
 window._onDescSave = _onDescSave;
 
+/**
+ * Toggle the version sidebar between collapsed and expanded states.
+ * @returns {void}
+ */
 function _toggleVersionSidebar() {
   var layout = document.querySelector('.ver-layout');
   var toggle = document.getElementById('verSidebarToggle');

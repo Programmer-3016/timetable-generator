@@ -10,6 +10,10 @@
    Section: CLASS SECTION DETECTION
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * @param {string} text - Raw text to scan for a section letter.
+ * @returns {string} Uppercase section letter or empty string.
+ */
 function pdfImportExtractSectionLetter(text) {
   const t = pdfImportNormalizeLine(text);
   if (!t) return "";
@@ -19,7 +23,10 @@ function pdfImportExtractSectionLetter(text) {
   return compact ? compact[1].toUpperCase() : "";
 }
 
-/** @returns {boolean} Whether the line resembles a subject-table header row. */
+/**
+ * @param {string} line - Raw text line.
+ * @returns {boolean} Whether the line resembles a subject-table header row.
+ */
 function pdfImportLooksLikeSubjectHeaderLine(line) {
   const text = pdfImportNormalizeLine(line);
   if (!text) return false;
@@ -47,7 +54,10 @@ function pdfImportLooksLikeSubjectHeaderLine(line) {
     /(subject|course|teacher|faculty|ltp|short)/i.test(text);
 }
 
-/** @returns {boolean} Whether the line resembles a class/section title (e.g. semester, year, section). */
+/**
+ * @param {string} line - Raw text line.
+ * @returns {boolean} Whether the line resembles a class/section title (e.g. semester, year, section).
+ */
 function pdfImportLooksLikeClassTitleLine(line) {
   const text = pdfImportNormalizeLine(line);
   if (!text) return false;
@@ -73,7 +83,10 @@ function pdfImportLooksLikeClassTitleLine(line) {
   return false;
 }
 
-/** @returns {Array<{label: string, lines: string[]}>} Class sections built by locating subject-header rows. */
+/**
+ * @param {string[]} lines - Raw extracted PDF lines.
+ * @returns {Array<{label: string, lines: string[]}>} Class sections built by locating subject-header rows.
+ */
 function pdfImportBuildClassSectionsFromSubjectHeaders(lines) {
   const headerIndices = [];
   for (let i = 0; i < lines.length; i++) {
@@ -162,7 +175,10 @@ function pdfImportBuildClassSectionsFromSubjectHeaders(lines) {
   return sections;
 }
 
-/** @returns {Array<{label: string, lines: string[]}>} Class sections built by locating class title lines. */
+/**
+ * @param {string[]} lines - Raw extracted PDF lines.
+ * @returns {Array<{label: string, lines: string[]}>} Class sections built by locating class title lines.
+ */
 function pdfImportBuildClassSectionsFromClassTitles(lines) {
   const titleIndices = [];
   for (let i = 0; i < lines.length; i++) {
@@ -224,7 +240,10 @@ function pdfImportBuildClassSectionsFromClassTitles(lines) {
   return sections;
 }
 
-/** @returns {number} Quality score for a parsed subject entry (higher = more reliable). */
+/**
+ * @param {Object} entry - Parsed subject entry with short, subject, teacher, and ltp fields.
+ * @returns {number} Quality score for a parsed subject entry (higher = more reliable).
+ */
 function pdfImportScoreEntryQuality(entry) {
   const short = pdfImportNormalizeShort(entry?.short || "");
   const subject = pdfImportNormalizeLine(entry?.subject || "");
@@ -252,7 +271,10 @@ function pdfImportScoreEntryQuality(entry) {
   return score;
 }
 
-/** @returns {Array} Best entry per short code, filtering out low-quality duplicates. */
+/**
+ * @param {Array} entries - Subject entries potentially containing duplicates.
+ * @returns {Array} Best entry per short code, filtering out low-quality duplicates.
+ */
 function pdfImportSelectBestEntriesByShort(entries) {
   const grouped = new Map();
   (entries || []).forEach((entry, idx) => {
@@ -284,7 +306,10 @@ function pdfImportSelectBestEntriesByShort(entries) {
   return selected;
 }
 
-/** @returns {number} Aggregate quality score across all class sections. */
+/**
+ * @param {Array<{label: string, lines: string[]}>} sections - Class sections to score.
+ * @returns {number} Aggregate quality score across all class sections.
+ */
 function pdfImportEstimateSectionsScore(sections) {
   let score = 0;
   for (const section of sections || []) {
@@ -295,7 +320,10 @@ function pdfImportEstimateSectionsScore(sections) {
   return score;
 }
 
-/** @returns {Array<{label: string, lines: string[]}>} Class sections using the best detection strategy (headers vs titles). */
+/**
+ * @param {string[]} lines - Raw extracted PDF lines.
+ * @returns {Array<{label: string, lines: string[]}>} Class sections using the best detection strategy (headers vs titles).
+ */
 function pdfImportBuildClassSections(lines) {
   const fromHeaders = pdfImportBuildClassSectionsFromSubjectHeaders(lines);
   const fromTitles = pdfImportBuildClassSectionsFromClassTitles(lines);
@@ -321,7 +349,10 @@ function pdfImportBuildClassSections(lines) {
    Section: SETTINGS DETECTION
 ═══════════════════════════════════════════════════════ */
 
-/** @returns {number|null} Number of distinct weekdays detected in the timetable lines. */
+/**
+ * @param {string[]} lines - Raw extracted PDF lines.
+ * @returns {number|null} Number of distinct weekdays detected in the timetable lines.
+ */
 function pdfImportDetectDays(lines) {
   const firstBlockDays = new Set();
   let inFirstDayBlock = false;
@@ -363,7 +394,10 @@ function pdfImportDetectDays(lines) {
   return found.size >= 3 ? found.size : null;
 }
 
-/** @returns {number|null} Highest LAB number found in the timetable lines. */
+/**
+ * @param {string[]} lines - Raw extracted PDF lines.
+ * @returns {number|null} Highest LAB number found in the timetable lines.
+ */
 function pdfImportDetectLabCount(lines) {
   let maxLab = 0;
   lines.forEach((line) => {
@@ -376,7 +410,10 @@ function pdfImportDetectLabCount(lines) {
   return maxLab > 0 ? maxLab : null;
 }
 
-/** @returns {Object} Detected timing settings (startTime, slots, duration, lunch info). */
+/**
+ * @param {string[]} lines - Raw extracted PDF lines.
+ * @returns {Object} Detected timing settings (startTime, slots, duration, lunch info).
+ */
 function pdfImportDetectTimingSettings(lines) {
   let headerLine = "";
   let bestScore = -1;
@@ -437,7 +474,10 @@ function pdfImportDetectTimingSettings(lines) {
    Section: TEXT LAYER EXTRACTION
 ═══════════════════════════════════════════════════════ */
 
-/** @returns {string[]} Text lines from PDF page items, using column-gap detection for pipe delimiters. */
+/**
+ * @param {Array} items - PDF text content items with str, transform, and width fields.
+ * @returns {string[]} Text lines from PDF page items, using column-gap detection for pipe delimiters.
+ */
 function pdfImportExtractLinesFromPageItems(items) {
   const buckets = [];
   const toleranceY = 2.2;
@@ -506,7 +546,10 @@ function pdfImportExtractLinesFromPageItems(items) {
   return lines;
 }
 
-/** @returns {string[]} Text lines from PDF page items using compact (no gap) joining. */
+/**
+ * @param {Array} items - PDF text content items with str and transform fields.
+ * @returns {string[]} Text lines from PDF page items using compact (no gap) joining.
+ */
 function pdfImportExtractLinesFromPageItemsCompact(items) {
   const buckets = [];
   const toleranceY = 2.2;
@@ -564,7 +607,10 @@ function pdfImportExtractLinesFromPageItemsCompact(items) {
     });
 }
 
-/** @returns {number} Heuristic quality score for a set of extracted text lines. */
+/**
+ * @param {string[]} lines - Extracted text lines to score.
+ * @returns {number} Heuristic quality score for a set of extracted text lines.
+ */
 function pdfImportScoreExtractedLines(lines) {
   let score = 0;
   for (const raw of lines || []) {
@@ -578,7 +624,10 @@ function pdfImportScoreExtractedLines(lines) {
   return score;
 }
 
-/** @returns {string[]} Best extraction result (column-aware vs compact) for a page's text items. */
+/**
+ * @param {Array} items - PDF text content items from a single page.
+ * @returns {string[]} Best extraction result (column-aware vs compact) for a page's text items.
+ */
 function pdfImportChooseBestPageLines(items) {
   const withColumns = pdfImportExtractLinesFromPageItems(items);
   const compact = pdfImportExtractLinesFromPageItemsCompact(items);
@@ -596,7 +645,10 @@ function pdfImportChooseBestPageLines(items) {
    Section: OCR EXTRACTION AND FALLBACK
 ═══════════════════════════════════════════════════════ */
 
-/** @returns {string} Sanitized OCR line with artifacts and low-quality content removed. */
+/**
+ * @param {string} rawLine - Raw OCR text line.
+ * @returns {string} Sanitized OCR line with artifacts and low-quality content removed.
+ */
 function pdfImportSanitizeOcrLine(rawLine) {
   let line = pdfImportPreprocessLine(rawLine, {
     convertWideGaps: true,
@@ -619,7 +671,10 @@ function pdfImportSanitizeOcrLine(rawLine) {
   return line;
 }
 
-/** @returns {string[]} Sanitized text lines extracted from a Tesseract OCR result object. */
+/**
+ * @param {Object} ocrResult - Tesseract OCR result with data.lines and data.text.
+ * @returns {string[]} Sanitized text lines extracted from a Tesseract OCR result object.
+ */
 function pdfImportExtractLinesFromOcrResult(ocrResult) {
   // lines extracted from structured OCR data
   const fromStructured = (ocrResult?.data?.lines || [])
@@ -634,7 +689,10 @@ function pdfImportExtractLinesFromOcrResult(ocrResult) {
     .filter(Boolean);
 }
 
-/** @returns {boolean} Whether OCR fallback should run due to weak text-layer extraction. */
+/**
+ * @param {string[]} lines - Text-layer extracted lines to evaluate.
+ * @returns {boolean} Whether OCR fallback should run due to weak text-layer extraction.
+ */
 function pdfImportShouldRunOcrFallback(lines) {
   // preprocessed non-empty lines for quality assessment
   const rawLines = (lines || [])
@@ -664,7 +722,12 @@ function pdfImportShouldRunOcrFallback(lines) {
   return false;
 }
 
-/** @returns {{canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, viewport: Object, rotation: number}} Rendered canvas for OCR. */
+/**
+ * @param {Object} page - PDF.js page object.
+ * @param {number} [rotationDelta=0] - Additional rotation in degrees.
+ * @param {number} [targetMaxDim=1800] - Target max canvas dimension.
+ * @returns {{canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, viewport: Object, rotation: number}} Rendered canvas for OCR.
+ */
 function pdfImportRenderPageCanvasForOcr(
   page,
   rotationDelta = 0,
@@ -697,7 +760,12 @@ function pdfImportRenderPageCanvasForOcr(
   };
 }
 
-/** @description Enhances canvas contrast (grayscale + threshold) for better OCR accuracy. */
+/**
+ * @description Enhances canvas contrast (grayscale + threshold) for better OCR accuracy.
+ * @param {HTMLCanvasElement} canvas - Canvas element to enhance.
+ * @param {CanvasRenderingContext2D} ctx - Canvas 2D rendering context.
+ * @returns {void}
+ */
 function pdfImportEnhanceCanvasForOcr(canvas, ctx) {
   const w = canvas.width;
   const h = canvas.height;
@@ -717,7 +785,10 @@ function pdfImportEnhanceCanvasForOcr(canvas, ctx) {
   ctx.putImageData(img, 0, 0);
 }
 
-/** @returns {boolean} Whether an OCR line is likely garbage (low vowel ratio, repeated chars). */
+/**
+ * @param {string} rawLine - Raw OCR text line.
+ * @returns {boolean} Whether an OCR line is likely garbage (low vowel ratio, repeated chars).
+ */
 function pdfImportIsLikelyOcrGarbageLine(rawLine) {
   const line = pdfImportNormalizeLine(rawLine);
   if (!line) return true;
@@ -741,7 +812,11 @@ function pdfImportIsLikelyOcrGarbageLine(rawLine) {
   return false;
 }
 
-/** @returns {number} Combined quality score for OCR-extracted lines (accounts for confidence, garbage, signals). */
+/**
+ * @param {string[]} lines - OCR-extracted text lines.
+ * @param {number} [confidence=0] - OCR confidence score.
+ * @returns {number} Combined quality score for OCR-extracted lines (accounts for confidence, garbage, signals).
+ */
 function pdfImportScoreOcrLinesQuality(lines, confidence = 0) {
   // normalized non-empty lines for quality scoring
   const normalized = (lines || []).map((line) => pdfImportNormalizeLine(line)).filter(Boolean);
@@ -770,7 +845,14 @@ function pdfImportScoreOcrLinesQuality(lines, confidence = 0) {
   return Math.max(0, score);
 }
 
-/** @returns {Promise<{lines: string[], confidence: number, qualityScore: number, rotation: number}>} OCR result for a single PDF page. */
+/**
+ * @param {Object} page - PDF.js page object.
+ * @param {number} pageNo - Current page number (1-based).
+ * @param {number} totalPages - Total number of pages in the PDF.
+ * @param {number} [rotationDelta=0] - Additional rotation in degrees.
+ * @param {number} [targetMaxDim=1800] - Target max canvas dimension.
+ * @returns {Promise<{lines: string[], confidence: number, qualityScore: number, rotation: number}>} OCR result for a single PDF page.
+ */
 async function pdfImportRecognizePageWithOcr(
   page,
   pageNo,
@@ -813,7 +895,10 @@ async function pdfImportRecognizePageWithOcr(
   };
 }
 
-/** @returns {Promise<{rotationDelta: number, confidence: number, qualityScore: number, combinedScore: number}>} Best OCR rotation detected by probing multiple angles. */
+/**
+ * @param {Object} pdf - PDF.js document object.
+ * @returns {Promise<{rotationDelta: number, confidence: number, qualityScore: number, combinedScore: number}>} Best OCR rotation detected by probing multiple angles.
+ */
 async function pdfImportDetectBestOcrRotation(pdf) {
   const probePage = await pdf.getPage(1);
   const deltas = [0, 90, 270, 180];
@@ -845,7 +930,10 @@ async function pdfImportDetectBestOcrRotation(pdf) {
   };
 }
 
-/** @returns {Promise<{lines: string[], bestRotation: Object, averagePageQuality: number}>} Lines extracted from all PDF pages via OCR. */
+/**
+ * @param {Object} pdf - PDF.js document object.
+ * @returns {Promise<{lines: string[], bestRotation: Object, averagePageQuality: number}>} Lines extracted from all PDF pages via OCR.
+ */
 async function pdfImportExtractPdfLinesFromOcr(pdf) {
   const bestRotation = await pdfImportDetectBestOcrRotation(pdf);
   if (
@@ -881,7 +969,10 @@ async function pdfImportExtractPdfLinesFromOcr(pdf) {
   };
 }
 
-/** @returns {Promise<string[]>} Lines extracted from all PDF pages via the built-in text layer. */
+/**
+ * @param {Object} pdf - PDF.js document object.
+ * @returns {Promise<string[]>} Lines extracted from all PDF pages via the built-in text layer.
+ */
 async function pdfImportExtractPdfLinesFromTextLayer(pdf) {
   const all = [];
   for (let pageNo = 1; pageNo <= pdf.numPages; pageNo++) {
@@ -896,7 +987,10 @@ async function pdfImportExtractPdfLinesFromTextLayer(pdf) {
   return all;
 }
 
-/** @returns {Promise<string[]>} Extracted text lines from a PDF file, using text layer with OCR fallback. */
+/**
+ * @param {File} file - The PDF file to extract text from.
+ * @returns {Promise<string[]>} Extracted text lines from a PDF file, using text layer with OCR fallback.
+ */
 async function pdfImportExtractPdfLines(file) {
   if (!window.pdfjsLib) throw new Error("PDF parser not available.");
   if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
@@ -957,7 +1051,10 @@ async function pdfImportExtractPdfLines(file) {
    Section: PAYLOAD BUILDING AND QUALITY ASSESSMENT
 ═══════════════════════════════════════════════════════ */
 
-/** @returns {Array<{label: string, subjects: string, mains: string, fillers: string, ltpByShort: Object}>} Structured class payloads from raw lines. */
+/**
+ * @param {string[]} lines - Raw extracted PDF lines.
+ * @returns {Array<{label: string, subjects: string, mains: string, fillers: string, ltpByShort: Object}>} Structured class payloads from raw lines.
+ */
 function pdfImportBuildClassPayloads(lines) {
   const sections = pdfImportBuildClassSections(lines);
   const rawClasses = [];
@@ -1028,7 +1125,11 @@ function pdfImportBuildClassPayloads(lines) {
   }));
 }
 
-/** @returns {{ok: boolean, issues: string[], warnings: string[], summary: string}} Quality assessment of the PDF import result. */
+/**
+ * @param {string[]} lines - Raw extracted PDF lines.
+ * @param {Array} classes - Parsed class payloads.
+ * @returns {{ok: boolean, issues: string[], warnings: string[], summary: string}} Quality assessment of the PDF import result.
+ */
 function pdfImportAssessImportQuality(lines, classes) {
   const issues = [];
   const warnings = [];

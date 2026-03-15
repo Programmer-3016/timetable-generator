@@ -10,6 +10,11 @@
    Section: IMPORT HELPERS
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * @param {string} id - DOM element ID of the input field.
+ * @param {string} value - Value to set on the input.
+ * @returns {boolean} True if the element was found and updated.
+ */
 function pdfImportSetInputValue(id, value) {
   const el = document.getElementById(id);
   if (!el) return false;

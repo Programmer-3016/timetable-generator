@@ -53,7 +53,8 @@ function loadScheduleVersions() {
 
 /**
  * Persist the versions array to localStorage.
- * @param {Array<Object>} versions
+ * @param {Array<Object>} versions - Array of version objects to persist
+ * @returns {void}
  */
 function _saveVersionsToStorage(versions) {
   try {

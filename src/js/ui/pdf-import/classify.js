@@ -6,6 +6,10 @@
  * @description Subject classification (mains/labs/fillers) and grouped text builders.
  */
 
+/**
+ * @param {Array} entries - Subject entries with short, ltp, and subject fields.
+ * @returns {Object} Map of short codes to { ltp, subjectKey }.
+ */
 function pdfImportBuildLtpMap(entries) {
   const map = {};
   (entries || []).forEach((entry) => {
@@ -224,6 +228,10 @@ function pdfImportBuildLtpMapFromHints(lines) {
 /* ───────────────────────────────────────────────────
    Subsection: Classification and Class-Level Payload Assembly
 ─────────────────────────────────────────────────── */
+/**
+ * @param {Object} entry - Subject entry with an ltp field.
+ * @returns {number|null} Total LTP load (L+T+P) or null if invalid.
+ */
 function pdfImportGetEntryLtpLoad(entry) {
   const ltp = pdfImportNormalizeLtpTriplet(entry?.ltp || "");
   if (!ltp) return null;

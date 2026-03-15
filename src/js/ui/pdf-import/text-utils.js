@@ -10,13 +10,23 @@
    Section: LINE PREPROCESSING
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * @param {*} text - Raw text to normalize.
+ * @returns {string} Normalized text with invisible chars stripped and whitespace collapsed.
+ */
 function pdfImportNormalizeLine(text) {
   return pdfImportPreprocessLine(text, {
     convertWideGaps: false,
   });
 }
 
-/** @description Preprocesses a PDF text line: strips invisible chars, normalizes dashes/quotes, and optionally converts wide gaps to pipe delimiters. */
+/**
+ * @description Preprocesses a PDF text line: strips invisible chars, normalizes dashes/quotes, and optionally converts wide gaps to pipe delimiters.
+ * @param {*} text - Raw text to preprocess.
+ * @param {Object} [options={}] - Preprocessing options.
+ * @param {boolean} [options.convertWideGaps] - Whether to convert wide gaps to pipe delimiters.
+ * @returns {string} Preprocessed text.
+ */
 function pdfImportPreprocessLine(text, options = {}) {
   const convertWideGaps = options.convertWideGaps !== false;
   let out = String(text || "");
@@ -49,7 +59,11 @@ function pdfImportPreprocessLine(text, options = {}) {
     .trim();
 }
 
-/** @description Checks whether a line is low-quality (too short, symbol-heavy, or mostly unpronounceable words). */
+/**
+ * @description Checks whether a line is low-quality (too short, symbol-heavy, or mostly unpronounceable words).
+ * @param {string} line - Text line to evaluate.
+ * @returns {boolean} True if the line is low-quality.
+ */
 function pdfImportIsLowQualityLine(line) {
   const t = pdfImportNormalizeLine(line);
   if (!t) return true;
@@ -76,12 +90,21 @@ function pdfImportIsLowQualityLine(line) {
   return false;
 }
 
-/** @description Escapes special regex characters in a string. */
+/**
+ * @description Escapes special regex characters in a string.
+ * @param {string} text - Raw text to escape.
+ * @returns {string} Regex-safe string.
+ */
 function pdfImportEscapeRegExp(text) {
   return String(text || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-/** @description Normalizes a roman numeral token (I–X), correcting common OCR misreads. */
+/**
+ * @description Normalizes a roman numeral token (I–X), correcting common OCR misreads.
+ * @param {string} rawToken - Raw roman numeral token.
+ * @param {string} [fallback=""] - Fallback value if token is invalid.
+ * @returns {string} Normalized roman numeral or fallback.
+ */
 function pdfImportNormalizeRomanToken(rawToken, fallback = "") {
   const token = String(rawToken || "")
     .toUpperCase()
@@ -100,6 +123,10 @@ function pdfImportNormalizeRomanToken(rawToken, fallback = "") {
    Section: TIME PARSING
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * @param {string} raw - Raw time string (e.g. "9:30", "2:15 PM").
+ * @returns {string} Normalized "HH:MM" 24-hour string or empty string.
+ */
 function pdfImportToHHMM(raw) {
   const m = String(raw || "")
     .trim()
@@ -117,7 +144,11 @@ function pdfImportToHHMM(raw) {
   return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
 }
 
-/** @description Converts an HH:MM time string to total minutes since midnight. */
+/**
+ * @description Converts an HH:MM time string to total minutes since midnight.
+ * @param {string} hhmm - Time string in HH:MM format.
+ * @returns {number|null} Total minutes or null if invalid.
+ */
 function pdfImportTimeToMinutes(hhmm) {
   const t = pdfImportToHHMM(hhmm);
   if (!t) return null;
@@ -125,7 +156,12 @@ function pdfImportTimeToMinutes(hhmm) {
   return hh * 60 + mm;
 }
 
-/** @description Calculates duration in minutes between two time strings, handling noon crossover. */
+/**
+ * @description Calculates duration in minutes between two time strings, handling noon crossover.
+ * @param {string} start - Start time in HH:MM format.
+ * @param {string} end - End time in HH:MM format.
+ * @returns {number|null} Duration in minutes or null if invalid.
+ */
 function pdfImportDurationMinutes(start, end) {
   const s = pdfImportTimeToMinutes(start);
   let e = pdfImportTimeToMinutes(end);
@@ -136,7 +172,11 @@ function pdfImportDurationMinutes(start, end) {
   return e - s;
 }
 
-/** @description Extracts all start–end time range pairs from a line of text. */
+/**
+ * @description Extracts all start–end time range pairs from a line of text.
+ * @param {string} line - Text line containing time ranges.
+ * @returns {Array<{start: string, end: string, lunchHint: boolean, idx: number}>} Extracted time ranges.
+ */
 function pdfImportExtractTimeRanges(line) {
   const out = [];
   const re = /\b(\d{1,2}:\d{2}(?:\s*[AaPp][Mm])?)\s*-\s*(\d{1,2}:\d{2}(?:\s*[AaPp][Mm])?)\b/g;
@@ -159,7 +199,11 @@ function pdfImportExtractTimeRanges(line) {
    Section: CLASS DETECTION
 ═══════════════════════════════════════════════════════ */
 
-/** @description Checks if text looks like a class/section header (e.g. "B.Tech II Sem Section A"). */
+/**
+ * @description Checks if text looks like a class/section header (e.g. "B.Tech II Sem Section A").
+ * @param {string} text - Text to check.
+ * @returns {boolean} True if the text resembles a class header.
+ */
 function pdfImportLooksLikeClassHeader(text) {
   const t = pdfImportNormalizeLine(text);
   return (
@@ -173,7 +217,11 @@ function pdfImportLooksLikeClassHeader(text) {
   );
 }
 
-/** @description Normalizes a class header into a canonical label (program, semester, year, section). */
+/**
+ * @description Normalizes a class header into a canonical label (program, semester, year, section).
+ * @param {string} text - Raw class header text.
+ * @returns {string} Canonical class label.
+ */
 function pdfImportNormalizeClassLabel(text) {
   let out = pdfImportNormalizeLine(text).replace(/\|/g, " ");
   out = out.replace(/\bTIME\s*TABLE.*$/gi, " ");
@@ -228,7 +276,11 @@ function pdfImportNormalizeClassLabel(text) {
    Section: LINE FILTERING
 ═══════════════════════════════════════════════════════ */
 
-/** @description Determines whether a line should be skipped (day headers, artifacts, time-only rows, etc.). */
+/**
+ * @description Determines whether a line should be skipped (day headers, artifacts, time-only rows, etc.).
+ * @param {string} line - Text line to evaluate.
+ * @returns {boolean} True if the line should be skipped.
+ */
 function pdfImportShouldSkipLine(line) {
   const t = pdfImportNormalizeLine(line);
   if (!t) return true;
@@ -298,6 +350,10 @@ function pdfImportShouldSkipLine(line) {
    Section: SUBJECT CODE PARSING
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * @param {string} raw - Raw short code text.
+ * @returns {string} Normalized uppercase short code.
+ */
 function pdfImportNormalizeShort(raw) {
   let out = String(raw || "")
     .toUpperCase()
@@ -310,7 +366,11 @@ function pdfImportNormalizeShort(raw) {
   return out;
 }
 
-/** @description Checks if a token looks like a subject code (uppercase alphanumeric, not a blocked keyword). */
+/**
+ * @description Checks if a token looks like a subject code (uppercase alphanumeric, not a blocked keyword).
+ * @param {string} tok - Token to test.
+ * @returns {boolean} True if the token is likely a code.
+ */
 function pdfImportIsLikelyCodeToken(tok) {
   const t = String(tok || "").toUpperCase();
   if (!t) return false;
@@ -331,7 +391,11 @@ function pdfImportIsLikelyCodeToken(tok) {
   return !blocked.has(t);
 }
 
-/** @description Splits a line into head (subject portion) and teacher name. */
+/**
+ * @description Splits a line into head (subject portion) and teacher name.
+ * @param {string} line - Text line to split.
+ * @returns {{head: string, teacher: string}} Head and teacher parts.
+ */
 function pdfImportExtractTeacherAndHead(line) {
   const source = pdfImportNormalizeLine(line).replace(/\|/g, " ");
   if (!source) return {
@@ -404,7 +468,11 @@ function pdfImportExtractTeacherAndHead(line) {
   };
 }
 
-/** @description Splits head text into a short code and subject name based on leading code tokens. */
+/**
+ * @description Splits head text into a short code and subject name based on leading code tokens.
+ * @param {string} headText - Text to parse for code and subject.
+ * @returns {{short: string, subject: string}|null} Parsed short and subject or null.
+ */
 function pdfImportSplitCodeAndSubject(headText) {
   const rawTokens = String(headText || "")
     .split(/\s+/)
@@ -449,7 +517,11 @@ function pdfImportSplitCodeAndSubject(headText) {
   };
 }
 
-/** @description Parses a subject line into short code, subject name, and teacher. */
+/**
+ * @description Parses a subject line into short code, subject name, and teacher.
+ * @param {string} line - Raw subject line.
+ * @returns {{short: string, subject: string, teacher: string}|null} Parsed entry or null.
+ */
 function pdfImportParseSubjectLine(line) {
   const cleaned = pdfImportPreprocessLine(line, {
     convertWideGaps: true,
@@ -490,6 +562,10 @@ function pdfImportParseSubjectLine(line) {
    Section: TEACHER NAME DETECTION
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * @param {string} shortText - Short code to check.
+ * @returns {boolean} True if the short code is blocked.
+ */
 function pdfImportIsBlockedShort(shortText) {
   const short = pdfImportNormalizeShort(shortText);
   if (!short) return true;
@@ -499,7 +575,11 @@ function pdfImportIsBlockedShort(shortText) {
   return false;
 }
 
-/** @description Validates that a short code meets strict formatting rules (length, casing, no artifacts). */
+/**
+ * @description Validates that a short code meets strict formatting rules (length, casing, no artifacts).
+ * @param {string} shortText - Short code to validate.
+ * @returns {boolean} True if the short code is strictly valid.
+ */
 function pdfImportIsStrictShort(shortText) {
   const short = pdfImportNormalizeShort(shortText);
   if (!short || pdfImportIsBlockedShort(short)) return false;
@@ -537,7 +617,11 @@ function pdfImportIsStrictShort(shortText) {
   return true;
 }
 
-/** @description Heuristically checks whether text looks like a person's name (2–4 capitalized words). */
+/**
+ * @description Heuristically checks whether text looks like a person's name (2–4 capitalized words).
+ * @param {string} text - Text to check.
+ * @returns {boolean} True if the text looks like a person's name.
+ */
 function pdfImportLooksLikePersonNameChunk(text) {
   const cleaned = pdfImportNormalizeLine(text)
     .replace(
@@ -627,7 +711,11 @@ function pdfImportLooksLikePersonNameChunk(text) {
   return true;
 }
 
-/** @description Checks if text looks like a comma/slash-separated list of teacher names. */
+/**
+ * @description Checks if text looks like a comma/slash-separated list of teacher names.
+ * @param {string} text - Text to check.
+ * @returns {boolean} True if the text looks like a teacher name list.
+ */
 function pdfImportLooksLikeTeacherNameList(text) {
   const t = pdfImportNormalizeLine(text);
   if (!t) return false;
@@ -657,7 +745,11 @@ function pdfImportLooksLikeTeacherNameList(text) {
   return parts.every((part) => pdfImportLooksLikePersonNameChunk(part));
 }
 
-/** @description Builds a short code from the initials of subject words (excluding stop words). */
+/**
+ * @description Builds a short code from the initials of subject words (excluding stop words).
+ * @param {string} subjectText - Subject name text.
+ * @returns {string} Initials-based short code or empty string.
+ */
 function pdfImportBuildShortFromInitials(subjectText) {
   const words = pdfImportNormalizeLine(subjectText)
     .split(/[\s/&,+-]+/)
@@ -695,7 +787,11 @@ function pdfImportBuildShortFromInitials(subjectText) {
   return pdfImportIsStrictShort(short) ? short : "";
 }
 
-/** @description Derives a short code from subject text using tail tokens, keyword mapping, or initials. */
+/**
+ * @description Derives a short code from subject text using tail tokens, keyword mapping, or initials.
+ * @param {string} subjectText - Subject name text.
+ * @returns {string} Derived short code or empty string.
+ */
 function pdfImportDeriveShortFromSubject(subjectText) {
   const subject = pdfImportCleanSubject(subjectText);
   if (!subject || !pdfImportIsStrictSubject(subject)) return "";
@@ -758,7 +854,11 @@ function pdfImportDeriveShortFromSubject(subjectText) {
    Section: SUBJECT/TEACHER CLEANING
 ═══════════════════════════════════════════════════════ */
 
-/** @description Checks if subject text is noise (OCR artifacts, headers, day names, time ranges, etc.). */
+/**
+ * @description Checks if subject text is noise (OCR artifacts, headers, day names, time ranges, etc.).
+ * @param {string} text - Subject text to evaluate.
+ * @returns {boolean} True if the text is noise.
+ */
 function pdfImportLooksLikeNoiseSubject(text) {
   const t = pdfImportNormalizeLine(text);
   if (!t) return true;
@@ -799,7 +899,11 @@ function pdfImportLooksLikeNoiseSubject(text) {
   return false;
 }
 
-/** @description Validates that teacher text is plausible (not a header, day name, or noise). */
+/**
+ * @description Validates that teacher text is plausible (not a header, day name, or noise).
+ * @param {string} teacherText - Teacher text to validate.
+ * @returns {boolean} True if the teacher text is plausible.
+ */
 function pdfImportIsStrictTeacher(teacherText) {
   const t = pdfImportNormalizeLine(teacherText);
   if (!t) return false;
@@ -819,7 +923,11 @@ function pdfImportIsStrictTeacher(teacherText) {
   return true;
 }
 
-/** @description Validates that subject text is well-formed (not noise, not a teacher list, reasonable length). */
+/**
+ * @description Validates that subject text is well-formed (not noise, not a teacher list, reasonable length).
+ * @param {string} subjectText - Subject text to validate.
+ * @returns {boolean} True if the subject text is well-formed.
+ */
 function pdfImportIsStrictSubject(subjectText) {
   const subject = pdfImportNormalizeLine(subjectText);
   if (!subject) return false;
@@ -855,7 +963,11 @@ function pdfImportIsStrictSubject(subjectText) {
   return true;
 }
 
-/** @description Cleans a subject string: removes LTP/credit noise, OCR artifacts, and trailing residue. */
+/**
+ * @description Cleans a subject string: removes LTP/credit noise, OCR artifacts, and trailing residue.
+ * @param {string} subjectText - Raw subject text to clean.
+ * @returns {string} Cleaned subject string.
+ */
 function pdfImportCleanSubject(subjectText) {
   let out = pdfImportNormalizeLine(subjectText);
   if (!out) return "";
@@ -913,7 +1025,12 @@ function pdfImportCleanSubject(subjectText) {
   return pdfImportNormalizeLine(out);
 }
 
-/** @description Removes short-code echoes and credit noise from subject text relative to its short code. */
+/**
+ * @description Removes short-code echoes and credit noise from subject text relative to its short code.
+ * @param {string} shortInput - Short code for context.
+ * @param {string} subjectInput - Raw subject text.
+ * @returns {string} Cleaned subject text.
+ */
 function pdfImportNormalizeSubjectForShort(shortInput, subjectInput) {
   const short = pdfImportNormalizeShort(shortInput || "");
   const shortBase = short.replace(/\s+LAB\b/i, "").trim();
@@ -968,7 +1085,11 @@ function pdfImportNormalizeSubjectForShort(shortInput, subjectInput) {
   return pdfImportNormalizeLine(subject);
 }
 
-/** @description Cleans teacher text: extracts honorific-prefixed names, strips room/lab annotations. */
+/**
+ * @description Cleans teacher text: extracts honorific-prefixed names, strips room/lab annotations.
+ * @param {string} teacherText - Raw teacher text.
+ * @returns {string} Cleaned teacher name or "Not Mentioned".
+ */
 function pdfImportCleanTeacher(teacherText) {
   let t = pdfImportNormalizeLine(teacherText);
   if (!t) return "Not Mentioned";
@@ -1013,7 +1134,12 @@ function pdfImportCleanTeacher(teacherText) {
   return t.replace(/[;|]+$/g, "").trim();
 }
 
-/** @description Repairs OCR-truncated subject prefixes (e.g. "ython" → "Python") using short code hints. */
+/**
+ * @description Repairs OCR-truncated subject prefixes (e.g. "ython" → "Python") using short code hints.
+ * @param {string} shortText - Short code for prefix inference.
+ * @param {string} subjectText - Raw subject text.
+ * @returns {string} Repaired subject text.
+ */
 function pdfImportRepairSubjectPrefix(shortText, subjectText) {
   const short = pdfImportNormalizeShort(shortText);
   let subject = pdfImportCleanSubject(subjectText);
@@ -1048,7 +1174,11 @@ function pdfImportRepairSubjectPrefix(shortText, subjectText) {
    Section: LINE SPLITTING AND ENTRY FINALIZATION
 ═══════════════════════════════════════════════════════ */
 
-/** @description Splits a line into segments at each subject-code boundary (e.g. "CS101 ... EE201 ..."). */
+/**
+ * @description Splits a line into segments at each subject-code boundary (e.g. "CS101 ... EE201 ...").
+ * @param {string} line - Text line to split.
+ * @returns {string[]} Segments split at code boundaries.
+ */
 function pdfImportSplitLineBySubjectCode(line) {
   const text = pdfImportNormalizeLine(line);
   if (!text) return [];
@@ -1072,7 +1202,11 @@ function pdfImportSplitLineBySubjectCode(line) {
   return parts.length ? parts : [text];
 }
 
-/** @description Splits a line into tabular columns using wide gaps, pipes, or collapsed-column patterns. */
+/**
+ * @description Splits a line into tabular columns using wide gaps, pipes, or collapsed-column patterns.
+ * @param {string} line - Text line to split into columns.
+ * @returns {string[]} Extracted column values.
+ */
 function pdfImportSplitTabularColumns(line) {
   const raw = String(line || "");
   if (!raw) return [];
@@ -1109,7 +1243,11 @@ function pdfImportSplitTabularColumns(line) {
   return normalized ? [normalized] : [];
 }
 
-/** @description Splits merged dash-separated entries (e.g. "CS - Subject1 EE - Subject2") into chunks. */
+/**
+ * @description Splits merged dash-separated entries (e.g. "CS - Subject1 EE - Subject2") into chunks.
+ * @param {string} text - Text containing merged entries.
+ * @returns {string[]} Individual entry chunks.
+ */
 function pdfImportSplitMergedDashEntries(text) {
   const line = pdfImportNormalizeLine(text);
   if (!line) return [];
@@ -1140,7 +1278,14 @@ function pdfImportSplitMergedDashEntries(text) {
   return chunks;
 }
 
-/** @description Finalizes a timetable entry by cleaning, validating, and normalizing short/subject/teacher/LTP. */
+/**
+ * @description Finalizes a timetable entry by cleaning, validating, and normalizing short/subject/teacher/LTP.
+ * @param {string} shortInput - Raw short code.
+ * @param {string} subjectInput - Raw subject text.
+ * @param {string} teacherInput - Raw teacher text.
+ * @param {string} ltpInput - Raw LTP triplet.
+ * @returns {{short: string, subject: string, teacher: string, ltp: string}|null} Finalized entry or null.
+ */
 function pdfImportFinalizeEntry(shortInput, subjectInput, teacherInput, ltpInput) {
   let short = pdfImportNormalizeShort(shortInput || "");
   let subject = pdfImportRepairSubjectPrefix(short, subjectInput || "");
@@ -1173,7 +1318,11 @@ function pdfImportFinalizeEntry(shortInput, subjectInput, teacherInput, ltpInput
   };
 }
 
-/** @description Extracts a short code from the tail of text (e.g. "Data Structures DS" → {short, subject}). */
+/**
+ * @description Extracts a short code from the tail of text (e.g. "Data Structures DS" → {short, subject}).
+ * @param {string} coreText - Text to extract from.
+ * @returns {{short: string, subject: string}|null} Extracted short and subject or null.
+ */
 function pdfImportExtractShortFromTail(coreText) {
   const t = pdfImportNormalizeLine(coreText);
   if (!t) return null;

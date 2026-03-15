@@ -87,6 +87,7 @@ function diffScheduleVersions(v1, v2) {
 /**
  * Render the compare view into the versions panel.
  * @param {Object} diff - Result from diffScheduleVersions
+ * @returns {void}
  */
 function renderCompareView(diff) {
   if (!diff) return;
@@ -167,6 +168,7 @@ function renderCompareView(diff) {
 
 /**
  * Close/hide the compare view.
+ * @returns {void}
  */
 function closeCompareView() {
   var container = document.getElementById("versionCompareView");
@@ -176,7 +178,11 @@ function closeCompareView() {
   }
 }
 
-/** Escape HTML for safe insertion. */
+/**
+ * Escape HTML for safe insertion.
+ * @param {string} str - Raw string to escape
+ * @returns {string} HTML-escaped string
+ */
 function _escHtml(str) {
   var div = document.createElement("div");
   div.appendChild(document.createTextNode(str || ""));

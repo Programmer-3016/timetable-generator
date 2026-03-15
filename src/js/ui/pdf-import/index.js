@@ -15,6 +15,11 @@ const IMPORT_ERROR_MODAL_ID = "backendImportErrorOverlay";
 
 let backendApplyLoadPromise = null;
 
+/**
+ * @param {string} methodName - Name of the window method to call.
+ * @param {...*} args - Arguments to pass to the method.
+ * @returns {void}
+ */
 function callOptionalGenerationAnimation(methodName, ...args) {
   const fn = typeof window !== "undefined" ? /** @type {Function|undefined} */ (/** @type {unknown} */ (window[methodName])) : undefined;
   if (typeof fn === "function") {

@@ -6,6 +6,10 @@
  * @description Post-import teacher-name ambiguity review (same vs different teacher).
  */
 
+/**
+ * @param {string} line - Subject line in "short - subject - teacher" format.
+ * @returns {string} Extracted teacher name or empty string.
+ */
 function pdfImportParseTeacherFromSubjectLine(line) {
   const parts = String(line || "")
     .split(/\s+-\s+/)
