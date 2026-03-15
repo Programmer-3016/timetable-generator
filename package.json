@@ -7,7 +7,8 @@
     "build": "node scripts/build.js",
     "test": "jest --verbose",
     "lint": "eslint src/js/ --ext .js",
-    "format": "prettier --write src/js/ src/css/"
+    "format": "prettier --write src/js/ src/css/",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "esbuild": "^0.27.4",
@@ -15,6 +16,7 @@
     "fast-check": "^4.6.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "prettier": "^3.2.0"
+    "prettier": "^3.2.0",
+    "typescript": "^5.9.3"
   }
 }
