@@ -284,7 +284,7 @@ docker compose up --build
 | JSDoc @param/@returns      | 1,063   |
 | Type-checked files         | 49/49   |
 | Section markers            | 352     |
-| Jest tests                 | 481     |
+| Jest tests                 | 657     |
 
 ---
 
@@ -293,6 +293,7 @@ docker compose up --build
 Planned improvements (not in any specific order):
 
 - [x] Increase test coverage across scheduling engine
+- [x] UI component tests (tabs, dragdrop, keyboard, versioning, skeleton)
 - [x] CI/CD pipeline with automated testing
 - [ ] Add dark mode toggle
 - [ ] Mobile-responsive layout improvements
