@@ -267,6 +267,7 @@ docker compose up --build
 | Export      | html2canvas · SheetJS (xlsx)                   |
 | Testing     | Jest (JS) · Pytest (Python)                    |
 | Linting     | ESLint · Prettier                              |
+| Type Safety | TypeScript (JSDoc + @ts-check, no compilation) |
 
 ---
 
@@ -277,11 +278,12 @@ docker compose up --build
 | JavaScript files           | 49      |
 | CSS files                  | 7       |
 | Python files               | 14      |
-| Total JS lines             | ~18,900 |
-| Total CSS lines            | ~4,600  |
+| Total JS lines             | ~20,600 |
+| Total CSS lines            | ~4,700  |
 | Total Python lines         | ~2,800  |
-| JSDoc-documented functions | 330+    |
-| Section markers            | 165     |
+| JSDoc @param/@returns      | 1,063   |
+| Type-checked files         | 49/49   |
+| Section markers            | 352     |
 | Jest tests                 | 481     |
 
 ---
@@ -296,6 +298,7 @@ Planned improvements (not in any specific order):
 - [ ] Mobile-responsive layout improvements
 - [ ] User authentication & cloud save
 - [x] Undo/redo for drag-and-drop operations
+- [x] JSDoc + @ts-check type safety across all 49 files
 - [ ] Better error messages & user guidance
 - [ ] Performance optimization for large timetables (50+ classes)
 - [ ] API rate limiting & input sanitization
