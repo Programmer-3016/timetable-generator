@@ -31,6 +31,15 @@ from .settings import (
 )
 from .signals import detect_all_signals
 
+from .process_parser import (
+    _build_process_classes_from_pdf_tables,
+    _build_process_classes,
+    _extract_process_settings,
+    _extract_process_settings_from_pdf_tables,
+    _build_settings_diagnostics,
+    _should_retry_ocr_for_class_recovery,
+)
+
 app = FastAPI(title="Timetable PDF Classifier", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
@@ -42,14 +51,30 @@ app.add_middleware(
 logger = get_logger("import_classifier")
 
 
-from .process_parser import (
-    _build_process_classes_from_pdf_tables,
-    _build_process_classes,
-    _extract_process_settings,
-    _extract_process_settings_from_pdf_tables,
-    _build_settings_diagnostics,
-    _should_retry_ocr_for_class_recovery,
-)
+async def _validate_pdf_upload(file: UploadFile) -> bytes:
+    """Shared validation for PDF upload endpoints. Returns file bytes on success."""
+    filename = (file.filename or "").strip()
+    content_type = (file.content_type or "").lower()
+
+    if not filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
+    allowed_content_types = {
+        "application/pdf",
+        "application/x-pdf",
+        "application/octet-stream",
+        "binary/octet-stream",
+    }
+    if content_type and content_type not in allowed_content_types and "pdf" not in content_type:
+        raise HTTPException(status_code=400, detail="Invalid content-type for PDF upload.")
+
+    data = await file.read()
+    if not data:
+        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
+    if len(data) > MAX_FILE_SIZE_BYTES:
+        raise HTTPException(status_code=413, detail="PDF file is too large.")
+    if not data.lstrip().startswith(b"%PDF"):
+        raise HTTPException(status_code=422, detail="Invalid or corrupted PDF file.")
+    return data
 
 
 def _empty_signals() -> SignalBundle:
@@ -92,29 +117,7 @@ def health() -> dict[str, str]:
 @app.post("/api/import/process")
 async def process_pdf(file: UploadFile = File(...)) -> dict[str, Any]:
     try:
-        filename = (file.filename or "").strip()
-        content_type = (file.content_type or "").lower()
-
-        if not filename.lower().endswith(".pdf"):
-            raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
-        # Accept common browser/client upload types for PDFs.
-        allowed_content_types = {
-            "application/pdf",
-            "application/x-pdf",
-            "application/octet-stream",
-            "binary/octet-stream",
-        }
-        if content_type and content_type not in allowed_content_types and "pdf" not in content_type:
-            raise HTTPException(status_code=400, detail="Invalid content-type for PDF upload.")
-
-        data = await file.read()
-        if not data:
-            raise HTTPException(status_code=400, detail="Uploaded file is empty.")
-        if len(data) > MAX_FILE_SIZE_BYTES:
-            raise HTTPException(status_code=413, detail="PDF file is too large.")
-        if not data.lstrip().startswith(b"%PDF"):
-            raise HTTPException(status_code=422, detail="Invalid or corrupted PDF file.")
-
+        data = await _validate_pdf_upload(file)
 
         features = extract_pdf_features(data)
         lines_by_page = features.get("lines_by_page", [])
@@ -217,29 +220,9 @@ async def process_pdf(file: UploadFile = File(...)) -> dict[str, Any]:
 
 @app.post("/api/import/classify", response_model=ClassifyResponse)
 async def classify_pdf(file: UploadFile = File(...)) -> ClassifyResponse:
-    filename = (file.filename or "").strip()
-    content_type = (file.content_type or "").lower()
-    logger.info("classify request started: filename=%s content_type=%s", filename, content_type)
-
-    if not filename.lower().endswith(".pdf"):
-        raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
-    # Accept common browser/client upload types for PDFs.
-    allowed_content_types = {
-        "application/pdf",
-        "application/x-pdf",
-        "application/octet-stream",
-        "binary/octet-stream",
-    }
-    if content_type and content_type not in allowed_content_types and "pdf" not in content_type:
-        raise HTTPException(status_code=400, detail="Invalid content-type for PDF upload.")
-
-    data = await file.read()
-    if not data:
-        raise HTTPException(status_code=400, detail="Uploaded file is empty.")
-    if len(data) > MAX_FILE_SIZE_BYTES:
-        raise HTTPException(status_code=413, detail="PDF file is too large.")
-    if not data.lstrip().startswith(b"%PDF"):
-        raise HTTPException(status_code=422, detail="Invalid or corrupted PDF file.")
+    logger.info("classify request started: filename=%s content_type=%s",
+                (file.filename or "").strip(), (file.content_type or "").lower())
+    data = await _validate_pdf_upload(file)
 
     try:
         features = extract_pdf_features(data)
