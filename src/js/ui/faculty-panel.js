@@ -1,3 +1,4 @@
+// @ts-check
 /* exported buildFacultyPanel, renderFacultyTimetable */
 
 /**
@@ -11,7 +12,7 @@
 
 function buildFacultyPanel() {
   const panel = document.getElementById("facultyPanel");
-  const sel = document.getElementById("facultySelect");
+  const sel = /** @type {HTMLSelectElement} */ (document.getElementById("facultySelect"));
   if (!panel || !sel) return;
   const canonToDisplay = new Map();
   if (Array.isArray(reportData) && reportData.length) {
@@ -119,7 +120,7 @@ function renderFacultyTimetable(teacher) {
     html += `<th>P${count++}<br><small>${p.start}-${p.end}</small></th>`;
   });
   html += "</tr></thead><tbody>";
-  const days = parseInt(document.getElementById("days").value) || 5;
+  const days = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("days")).value) || 5;
   // step: iterate each day/period to collect teacher assignments
   for (let d = 0; d < days; d++) {
     html += `<tr><td>${daysOfWeek[d]}</td>`;

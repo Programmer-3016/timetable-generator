@@ -1,3 +1,4 @@
+// @ts-check
 /* exported exportFacultyJPG, getClassBlockElement, exportLabJPG */
 
 /**
@@ -106,7 +107,7 @@ async function createFileSaveTarget(suggestedFilename, options = {}) {
  * @returns {Promise<void>}
  */
 async function exportFacultyJPG() {
-  const sel = document.getElementById("facultySelect");
+  const sel = /** @type {HTMLSelectElement | null} */ (document.getElementById("facultySelect"));
   const teacher = sel ? sel.value : "";
   if (!teacher) {
     showToast("Select a faculty first.", {
@@ -229,7 +230,7 @@ async function exportLabJPG() {
     const captures = [];
     for (const node of labNodes) {
       const canvas = await (async () =>
-        withTempWidth(node, pick.targetWidthPx, () =>
+        withTempWidth(/** @type {HTMLElement} */ (node), pick.targetWidthPx, () =>
           html2canvas(node, {
             scale: 3.0,
             useCORS: true,

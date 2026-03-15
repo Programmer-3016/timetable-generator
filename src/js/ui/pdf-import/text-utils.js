@@ -1,3 +1,4 @@
+// @ts-check
 /* exported pdfImportNormalizeLine, pdfImportPreprocessLine, pdfImportIsLowQualityLine, pdfImportEscapeRegExp, pdfImportNormalizeRomanToken, pdfImportToHHMM, pdfImportTimeToMinutes, pdfImportDurationMinutes, pdfImportExtractTimeRanges, pdfImportLooksLikeClassHeader, pdfImportNormalizeClassLabel, pdfImportShouldSkipLine, pdfImportNormalizeShort, pdfImportIsLikelyCodeToken, pdfImportExtractTeacherAndHead, pdfImportSplitCodeAndSubject, pdfImportParseSubjectLine, pdfImportIsBlockedShort, pdfImportIsStrictShort, pdfImportLooksLikePersonNameChunk, pdfImportLooksLikeTeacherNameList, pdfImportBuildShortFromInitials, pdfImportDeriveShortFromSubject, pdfImportLooksLikeNoiseSubject, pdfImportIsStrictTeacher, pdfImportIsStrictSubject, pdfImportCleanSubject, pdfImportNormalizeSubjectForShort, pdfImportCleanTeacher, pdfImportRepairSubjectPrefix, pdfImportSplitLineBySubjectCode, pdfImportSplitTabularColumns, pdfImportSplitMergedDashEntries, pdfImportFinalizeEntry, pdfImportExtractShortFromTail */
 
 /**
@@ -734,6 +735,7 @@ function pdfImportDeriveShortFromSubject(subjectText) {
   }
 
   // Handle subject-only rows where short code is absent in PDF cells.
+  /** @type {[RegExp, string][]} */
   const keywordMap = [
     [/\bseminar\b/i, "SEMINAR"],
     [/major\s+project/i, "PROJECT"],
@@ -1020,6 +1022,7 @@ function pdfImportRepairSubjectPrefix(shortText, subjectText) {
   const baseCode = (short.split(/\s+/).find((tok) => tok !== "LAB") || "").trim(); // primary code token (excluding LAB suffix)
   const baseLead = baseCode ? baseCode[0] : "";
 
+  /** @type {[RegExp, string][]} */
   const directFixes = [
     [/^ython\b/i, "P"],
     [/^echnical\b/i, "T"],

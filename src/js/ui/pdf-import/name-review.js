@@ -1,3 +1,4 @@
+// @ts-check
 /* exported pdfImportReviewTeacherNamesAfterImport */
 
 /**
@@ -424,10 +425,10 @@ function pdfImportReviewTeacherNamesAfterImport(classes) {
       const mergePairs = [];
       const separatePairs = [];
       const correctedByCanon = {};
-      const checks = Array.from(rowsHost.querySelectorAll(".tnr-checkbox"));
-      const correctionInputs = Array.from(
+      const checks = /** @type {HTMLInputElement[]} */ (Array.from(rowsHost.querySelectorAll(".tnr-checkbox")));
+      const correctionInputs = /** @type {HTMLInputElement[]} */ (Array.from(
         document.querySelectorAll("#teacherNameCorrectionWrap .tnr-correct-input")
-      );
+      ));
       checks.forEach((cb) => {
         const shortCanon = normalizeTeacherName(cb.dataset.shortCanon || "");
         const fullCanon = normalizeTeacherName(cb.dataset.fullCanon || "");

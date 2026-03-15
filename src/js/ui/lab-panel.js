@@ -1,3 +1,4 @@
+// @ts-check
 /* exported renderLabUsage, renderLabTimetables */
 
 /**
@@ -15,9 +16,9 @@ function renderLabUsage() {
   const classIndices = periodTimings
     .map((p, i) => (p.type === "class" ? i : -1))
     .filter((i) => i !== -1);
-  const days = parseInt(document.getElementById("days").value) || 5;
+  const days = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("days")).value) || 5;
   const labRoomsDisplay =
-    parseInt(document.getElementById("labCount")?.value, 10) || 3;
+    parseInt(/** @type {HTMLInputElement} */ (document.getElementById("labCount"))?.value, 10) || 3;
   if (!gLabsAtSlot || !gLabsAtSlot.length) {
     wrap.innerHTML = '<div style="color:#6b7280;">No data.</div>';
     return;
@@ -55,9 +56,9 @@ function renderLabTimetables() {
   const classIndices = periodTimings
     .map((p, i) => (p.type === "class" ? i : -1))
     .filter((i) => i !== -1);
-  const days = parseInt(document.getElementById("days").value) || 5;
+  const days = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("days")).value) || 5;
   const labRooms =
-    parseInt(document.getElementById("labCount")?.value, 10) || 3;
+    parseInt(/** @type {HTMLInputElement} */ (document.getElementById("labCount"))?.value, 10) || 3;
   if (!gSchedules) {
     panel.innerHTML = '<div style="color:#6b7280;">No lab data.</div>';
     wrapOuter.style.display = "none";

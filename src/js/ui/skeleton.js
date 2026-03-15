@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @module ui/skeleton.js
  * @description Skeleton loading shim — wraps generateTimetable() so that
@@ -70,12 +71,12 @@
   function showSkeletons() {
     var classCount = Math.min(
       (typeof CLASS_KEYS !== "undefined" ? CLASS_KEYS.length : 50),
-      Math.max(1, parseInt((document.getElementById("classCount") || {}).value || "1", 10))
+      Math.max(1, parseInt(/** @type {HTMLInputElement} */ (document.getElementById("classCount") || {}).value || "1", 10))
     );
 
     // Guess periods & days for a realistic skeleton size
-    var cols = Math.max(1, parseInt((document.getElementById("slots") || {}).value || "7", 10));
-    var rows = Math.max(1, parseInt((document.getElementById("days") || {}).value || "5", 10));
+    var cols = Math.max(1, parseInt(/** @type {HTMLInputElement} */ (document.getElementById("slots") || {}).value || "7", 10));
+    var rows = Math.max(1, parseInt(/** @type {HTMLInputElement} */ (document.getElementById("days") || {}).value || "5", 10));
     var skeletonHTML = buildSkeletonHTML(cols, rows);
 
     var injected = [];
@@ -111,7 +112,7 @@
     ─────────────────────────────────────────────────── */
     var labPanel = document.getElementById("labPanel");
     var labCountEl = document.getElementById("labCount");
-    var labRooms = Math.max(1, parseInt((labCountEl || {}).value || "3", 10));
+    var labRooms = Math.max(1, parseInt(/** @type {HTMLInputElement} */ (labCountEl || {}).value || "3", 10));
     if (labPanel) {
       var labHTML = "";
       for (var l = 0; l < labRooms; l++) {

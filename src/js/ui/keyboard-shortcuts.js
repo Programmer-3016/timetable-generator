@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @module ui/keyboard-shortcuts.js
  * @description Global keyboard shortcuts. Purely additive — no existing handlers modified.
@@ -44,7 +45,7 @@ document.addEventListener("keydown", function (e) {
 
   // Left/Right arrows → Pager navigation (only when Inputs tab is active and not typing in a field)
   if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-    const active = document.activeElement;
+    const active = /** @type {HTMLElement | null} */ (document.activeElement);
     const isTyping = active && (
       active.tagName === "INPUT" ||
       active.tagName === "TEXTAREA" ||
@@ -55,9 +56,9 @@ document.addEventListener("keydown", function (e) {
       const inputsTab = document.querySelector('.tab-btn[data-tab="inputs"]');
       const isInputsActive = inputsTab && inputsTab.classList.contains("tab-btn--active");
       if (isInputsActive) {
-        const btn = document.getElementById(
+        const btn = /** @type {HTMLButtonElement | null} */ (document.getElementById(
           e.key === "ArrowLeft" ? "inputsPrev" : "inputsNext"
-        );
+        ));
         if (btn && !btn.disabled) {
           e.preventDefault();
           btn.click();

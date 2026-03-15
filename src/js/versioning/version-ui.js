@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @module versioning/version-ui.js
  * @description Render the Versions tab panel in split timeline/details layout.
@@ -257,12 +258,12 @@ function _onDescClick(id) {
     + '<button type="button" class="ver-btn-secondary ver-desc-cancel" onclick="renderVersionPanel()">Cancel</button>'
     + '</div>';
 
-  var textarea = document.getElementById('verDescEdit' + id);
+  var textarea = /** @type {HTMLTextAreaElement} */ (document.getElementById('verDescEdit' + id));
   if (textarea) { textarea.focus(); textarea.select(); }
 }
 
 function _onDescSave(id) {
-  var textarea = document.getElementById('verDescEdit' + id);
+  var textarea = /** @type {HTMLTextAreaElement} */ (document.getElementById('verDescEdit' + id));
   if (!textarea) return;
   var newDesc = textarea.value.trim();
   updateVersionDescription(id, newDesc);
@@ -287,7 +288,7 @@ function onVersionAutoSave() {
     showToast('Version "' + saved.label + '" saved.', { type: 'success', duration: 2500 });
   }
 
-  var tabVersions = document.getElementById('tabVersions');
+  var tabVersions = /** @type {HTMLButtonElement} */ (document.getElementById('tabVersions'));
   if (tabVersions) tabVersions.disabled = false;
 
   if (typeof getActiveTab === 'function' && getActiveTab() === 'versions') {

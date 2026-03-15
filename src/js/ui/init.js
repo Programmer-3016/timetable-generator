@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @module ui/init.js
  * @description DOMContentLoaded wiring: input persistence, pager, quick fill, view toggle.
@@ -21,8 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const inputsPanel = document.getElementById("classInputsPanel");
   if (inputsPanel) {
     inputsPanel.addEventListener("input", (e) => {
-      if (e.target && e.target.tagName === "TEXTAREA") {
-        autoGrowTextarea(e.target);
+      const tgt = /** @type {HTMLElement} */ (e.target);
+      if (tgt && tgt.tagName === "TEXTAREA") {
+        autoGrowTextarea(/** @type {HTMLTextAreaElement} */ (tgt));
       }
     });
     // Auto-size pre-filled textareas on load
@@ -32,12 +34,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  const countSel = document.getElementById("classCount");
-  const pagerPrev = document.getElementById("inputsPrev");
-  const pagerNext = document.getElementById("inputsNext");
+  const countSel = /** @type {HTMLSelectElement|null} */ (document.getElementById("classCount"));
+  const pagerPrev = /** @type {HTMLButtonElement|null} */ (document.getElementById("inputsPrev"));
+  const pagerNext = /** @type {HTMLButtonElement|null} */ (document.getElementById("inputsNext"));
   const pagerLabel = document.getElementById("inputsPageLabel");
 
-  const inputsSearch = document.getElementById("inputsSearch");
+  const inputsSearch = /** @type {HTMLInputElement|null} */ (document.getElementById("inputsSearch"));
   const inputsSearchClear = document.getElementById("inputsSearchClear");
   const inputsSearchMeta = document.getElementById("inputsSearchMeta");
   const letters = CLASS_KEYS.slice();
@@ -123,25 +125,25 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   function collectState() {
     const settings = {
-      startTime: document.getElementById("startTime")?.value || "",
-      slots: document.getElementById("slots")?.value || "",
-      days: document.getElementById("days")?.value || "",
-      duration: document.getElementById("duration")?.value || "",
-      lunchPeriod: document.getElementById("lunchPeriod")?.value || "",
-      lunchDuration: document.getElementById("lunchDuration")?.value || "",
-      labCount: document.getElementById("labCount")?.value || "3",
+      startTime: /** @type {HTMLInputElement|null} */ (document.getElementById("startTime"))?.value || "",
+      slots: /** @type {HTMLInputElement|null} */ (document.getElementById("slots"))?.value || "",
+      days: /** @type {HTMLInputElement|null} */ (document.getElementById("days"))?.value || "",
+      duration: /** @type {HTMLInputElement|null} */ (document.getElementById("duration"))?.value || "",
+      lunchPeriod: /** @type {HTMLInputElement|null} */ (document.getElementById("lunchPeriod"))?.value || "",
+      lunchDuration: /** @type {HTMLInputElement|null} */ (document.getElementById("lunchDuration"))?.value || "",
+      labCount: /** @type {HTMLInputElement|null} */ (document.getElementById("labCount"))?.value || "3",
       classCount: countSel?.value || "1",
     };
     const classes = {};
     for (let i = 0; i < letters.length; i++) {
       const L = letters[i];
-      const labelEl = document.getElementById(`class${L}Label`);
+      const labelEl = /** @type {HTMLInputElement|null} */ (document.getElementById(`class${L}Label`));
       const pairsId = i === 0 ? "pairs" : `pairs${L}`;
       const fillerId = i === 0 ? "fillerShorts" : `fillerShorts${L}`;
       const mainId = i === 0 ? "mainShorts" : `mainShorts${L}`;
-      const pairsEl = document.getElementById(pairsId);
-      const fillerEl = document.getElementById(fillerId);
-      const mainEl = document.getElementById(mainId);
+      const pairsEl = /** @type {HTMLInputElement|null} */ (document.getElementById(pairsId));
+      const fillerEl = /** @type {HTMLInputElement|null} */ (document.getElementById(fillerId));
+      const mainEl = /** @type {HTMLInputElement|null} */ (document.getElementById(mainId));
       classes[L] = {
         label: labelEl?.value || "",
         pairs: pairsEl?.value || "",
@@ -171,37 +173,37 @@ document.addEventListener("DOMContentLoaded", () => {
       const desired = parseInt(String(s.classCount || "1"), 10) || 1;
       ensureInputRows(desired);
       if (document.getElementById("startTime") && s.startTime)
-        document.getElementById("startTime").value = s.startTime;
+        /** @type {HTMLInputElement} */ (document.getElementById("startTime")).value = s.startTime;
       if (document.getElementById("slots") && s.slots)
-        document.getElementById("slots").value = s.slots;
+        /** @type {HTMLInputElement} */ (document.getElementById("slots")).value = s.slots;
       if (document.getElementById("days") && s.days)
-        document.getElementById("days").value = s.days;
+        /** @type {HTMLInputElement} */ (document.getElementById("days")).value = s.days;
       if (document.getElementById("duration") && s.duration)
-        document.getElementById("duration").value = s.duration;
+        /** @type {HTMLInputElement} */ (document.getElementById("duration")).value = s.duration;
       if (document.getElementById("lunchPeriod") && s.lunchPeriod)
-        document.getElementById("lunchPeriod").value = s.lunchPeriod;
+        /** @type {HTMLInputElement} */ (document.getElementById("lunchPeriod")).value = s.lunchPeriod;
       if (document.getElementById("lunchDuration") && s.lunchDuration)
-        document.getElementById("lunchDuration").value = s.lunchDuration;
+        /** @type {HTMLInputElement} */ (document.getElementById("lunchDuration")).value = s.lunchDuration;
       if (document.getElementById("labCount") && s.labCount)
-        document.getElementById("labCount").value = s.labCount;
+        /** @type {HTMLInputElement} */ (document.getElementById("labCount")).value = s.labCount;
       if (countSel && s.classCount) countSel.value = String(s.classCount);
       const c = state.classes || {};
       for (let i = 0; i < letters.length; i++) {
         const L = letters[i];
         const cls = c[L] || {};
-        const labelEl = document.getElementById(`class${L}Label`);
+        const labelEl = /** @type {HTMLInputElement|null} */ (document.getElementById(`class${L}Label`));
         const pairsId = i === 0 ? "pairs" : `pairs${L}`;
         const fillerId = i === 0 ? "fillerShorts" : `fillerShorts${L}`;
         const mainId = i === 0 ? "mainShorts" : `mainShorts${L}`;
         if (labelEl && typeof cls.label === "string")
           labelEl.value = cls.label;
-        const pairsEl = document.getElementById(pairsId);
+        const pairsEl = /** @type {HTMLInputElement|null} */ (document.getElementById(pairsId));
         if (pairsEl && typeof cls.pairs === "string")
           pairsEl.value = cls.pairs;
-        const fillerEl = document.getElementById(fillerId);
+        const fillerEl = /** @type {HTMLInputElement|null} */ (document.getElementById(fillerId));
         if (fillerEl && typeof cls.fillers === "string")
           fillerEl.value = cls.fillers;
-        const mainEl = document.getElementById(mainId);
+        const mainEl = /** @type {HTMLInputElement|null} */ (document.getElementById(mainId));
         if (mainEl && typeof cls.mains === "string")
           mainEl.value = cls.mains;
       }
@@ -333,10 +335,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const pairsId = i === 0 ? "pairs" : `pairs${key}`;
     const fillerId = i === 0 ? "fillerShorts" : `fillerShorts${key}`;
     const mainId = i === 0 ? "mainShorts" : `mainShorts${key}`;
-    const labelText = document.getElementById(`class${key}Label`)?.value || "";
-    const pairsText = document.getElementById(pairsId)?.value || "";
-    const fillersText = document.getElementById(fillerId)?.value || "";
-    const mainsText = document.getElementById(mainId)?.value || "";
+    const labelText = /** @type {HTMLInputElement|null} */ (document.getElementById(`class${key}Label`))?.value || "";
+    const pairsText = /** @type {HTMLInputElement|null} */ (document.getElementById(pairsId))?.value || "";
+    const fillersText = /** @type {HTMLInputElement|null} */ (document.getElementById(fillerId))?.value || "";
+    const mainsText = /** @type {HTMLInputElement|null} */ (document.getElementById(mainId))?.value || "";
     const haystack = normalizeSearchText(
       [
         `class ${indexOneBased}`,
@@ -391,12 +393,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const pairsId = i === 1 ? "pairs" : `pairs${letter}`;
       const fillerId = i === 1 ? "fillerShorts" : `fillerShorts${letter}`;
       const mainId = i === 1 ? "mainShorts" : `mainShorts${letter}`;
-      const fields = [
+      const fields = /** @type {HTMLInputElement[]} */ ([
         document.getElementById(`class${letter}Label`),
         document.getElementById(pairsId),
         document.getElementById(fillerId),
         document.getElementById(mainId),
-      ].filter(Boolean);
+      ].filter(Boolean));
       clearRowSearchArtifacts(row);
       if (searchActive && visible) {
         let snippetCount = 0;
@@ -522,7 +524,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const overlay = document.getElementById("quickFillOverlay");
     const applyBtn = document.getElementById("qfApply");
     const cancelBtn = document.getElementById("qfCancel");
-    const classRangeInput = document.getElementById("qfClassRange");
+    const classRangeInput = /** @type {HTMLInputElement|null} */ (document.getElementById("qfClassRange"));
 
     /** Opens the Quick Fill modal overlay. */
     function openQF() {
@@ -578,7 +580,7 @@ document.addEventListener("DOMContentLoaded", () => {
       applyBtn.addEventListener("click", () => {
         // Raw subject data from the Quick Fill textarea
         const allRaw = (
-          document.getElementById("qfAll")?.value || ""
+          /** @type {HTMLInputElement|null} */ (document.getElementById("qfAll"))?.value || ""
         ).trim();
         if (!allRaw) {
           showToast("Quick Fill is empty. Paste subject data first.", {
@@ -588,7 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         let pairs = [];
         const tmpId = "__qf_tmp_pairs__";
-        let tmp = document.getElementById(tmpId);
+        let tmp = /** @type {HTMLTextAreaElement|null} */ (document.getElementById(tmpId));
         if (!tmp) {
           tmp = document.createElement("textarea");
           tmp.id = tmpId;
@@ -677,9 +679,9 @@ document.addEventListener("DOMContentLoaded", () => {
           const fillerId =
             idx === 1 ? "fillerShorts" : `fillerShorts${L}`;
           const mainId = idx === 1 ? "mainShorts" : `mainShorts${L}`;
-          const pEl = document.getElementById(pairsId);
-          const fEl = document.getElementById(fillerId);
-          const mEl = document.getElementById(mainId);
+          const pEl = /** @type {HTMLInputElement|null} */ (document.getElementById(pairsId));
+          const fEl = /** @type {HTMLInputElement|null} */ (document.getElementById(fillerId));
+          const mEl = /** @type {HTMLInputElement|null} */ (document.getElementById(mainId));
           if (mEl) mEl.value = mainsCSV;
           if (fEl) fEl.value = fillersCSV;
           if (pEl) pEl.value = allRaw;

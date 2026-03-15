@@ -1,3 +1,4 @@
+// @ts-check
 /* exported validateAndGenerate */
 
 /**
@@ -17,9 +18,9 @@
 function validateInputsBeforeGenerate() {
   const errors = [];
 
-  const slots = parseInt(document.getElementById("slots")?.value);
-  const days = parseInt(document.getElementById("days")?.value);
-  const duration = parseInt(document.getElementById("duration")?.value);
+  const slots = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("slots"))?.value);
+  const days = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("days"))?.value);
+  const duration = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("duration"))?.value);
 
   if (!Number.isFinite(slots) || slots < 1) {
     errors.push("Number of periods must be at least 1.");
@@ -32,7 +33,7 @@ function validateInputsBeforeGenerate() {
   }
 
   // Check that at least one class has subjects
-  const classCountEl = document.getElementById("classCount");
+  const classCountEl = /** @type {HTMLInputElement} */ (document.getElementById("classCount"));
   const classCount = Math.min(
     (typeof CLASS_KEYS !== "undefined" ? CLASS_KEYS.length : 26),
     Math.max(1, parseInt(classCountEl?.value || "1", 10))
@@ -44,7 +45,7 @@ function validateInputsBeforeGenerate() {
   for (let i = 0; i < classCount; i++) {
     const key = (typeof CLASS_KEYS !== "undefined" && CLASS_KEYS[i]) ? // class identifier for this iteration
       CLASS_KEYS[i] : String.fromCharCode(65 + i);
-    const textarea = document.getElementById(`pairs${key}`);
+    const textarea = /** @type {HTMLTextAreaElement} */ (document.getElementById(`pairs${key}`));
     if (!textarea) continue;
 
     const rawText = textarea.value.trim();

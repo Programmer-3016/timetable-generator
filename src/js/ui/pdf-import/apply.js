@@ -1,3 +1,4 @@
+// @ts-check
 /* exported pdfImportApplyParsedData, pdfImportProcessFile */
 
 /**
@@ -12,7 +13,7 @@
 function pdfImportSetInputValue(id, value) {
   const el = document.getElementById(id);
   if (!el) return false;
-  el.value = value;
+  /** @type {HTMLInputElement} */ (el).value = value;
   el.dispatchEvent(
     new Event("input", {
       bubbles: true

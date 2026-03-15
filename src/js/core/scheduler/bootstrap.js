@@ -1,3 +1,4 @@
+// @ts-check
 /* exported schedulerBuildTeacherFoldMapFromData, schedulerBuildGlobalTeacherForShort, schedulerReadLabCapacityFromDom, schedulerComputeFillerCapacityForClass */
 
 /**
@@ -64,7 +65,7 @@ function schedulerBuildGlobalTeacherForShort({ data }) {
  */
 function schedulerReadLabCapacityFromDom({ defaultCapacity = 3 } = {}) {
   try {
-    const v = parseInt(document.getElementById("labCount")?.value, 10);
+    const v = parseInt(/** @type {HTMLInputElement | null} */ (document.getElementById("labCount"))?.value, 10);
     return Number.isFinite(v) && v > 0 ? v : defaultCapacity;
   } catch (_e) {
     return defaultCapacity;

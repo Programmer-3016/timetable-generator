@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @module ui/pdf-import/index.js
  * @description UI binding for PDF import button/input workflow.
@@ -15,7 +16,7 @@ const IMPORT_ERROR_MODAL_ID = "backendImportErrorOverlay";
 let backendApplyLoadPromise = null;
 
 function callOptionalGenerationAnimation(methodName, ...args) {
-  const fn = typeof window !== "undefined" ? window[methodName] : undefined;
+  const fn = typeof window !== "undefined" ? /** @type {Function|undefined} */ (/** @type {unknown} */ (window[methodName])) : undefined;
   if (typeof fn === "function") {
     fn(...args);
   }
@@ -475,8 +476,8 @@ async function runLegacyImportFlow(file, importBtn) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const importBtn = document.getElementById("importPdfBtn");
-  const importInput = document.getElementById("importPdfInput");
+  const importBtn = /** @type {HTMLButtonElement} */ (document.getElementById("importPdfBtn"));
+  const importInput = /** @type {HTMLInputElement} */ (document.getElementById("importPdfInput"));
   if (!importBtn || !importInput) return;
 
   importBtn.addEventListener("click", () => {

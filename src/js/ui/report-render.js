@@ -1,3 +1,4 @@
+// @ts-check
 /* exported renderReport */
 
 /**
@@ -11,7 +12,7 @@
 
 /**
  * Computes clash dashboard metrics including teacher slot clashes, strict violations, and overloaded teacher counts.
- * @returns {{teacherSlotClashes: number, teachersInClash: number, clashCells: number, strictViolations: number, strictTeacherClashes: number, strictOtherViolations: number, overloadedTeachers: number}}
+ * @returns {{teacherSlotClashes: number, teachersInClash: number, clashCells: number, strictViolations: number, strictTeacherClashes: number, strictOtherViolations: number, overloadedTeachers: number, clashDetails: Array<{teacher: string, day: number, period: number, classes: string[]}>, clashTeacherList: string[], violationLines: string[], overloadedList: Array<{teacher: string, hours: string}>}}
  */
 function buildClashDashboardMetrics() {
   const metrics = {
@@ -466,7 +467,8 @@ function focusTeacherCell(teacher) {
   const targetKey = (gCanonFoldMap && gCanonFoldMap[c0]) || c0;
   const target = cells.find((c) => {
     // Raw teacher name from the cell's data attribute
-    const raw = (c.dataset && c.dataset.teacher) || "";
+    const el = /** @type {HTMLElement} */ (c);
+    const raw = (el.dataset && el.dataset.teacher) || "";
     const c1 = canonicalTeacherName(raw);
     // Canonical fold key for the cell's teacher, used for match comparison
     const key1 = (gCanonFoldMap && gCanonFoldMap[c1]) || c1;

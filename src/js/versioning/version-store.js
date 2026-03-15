@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @module versioning/version-store.js
  * @description CRUD operations for schedule versions in localStorage.
@@ -312,7 +313,7 @@ function loadScheduleVersionById(id) {
         var k = keys[i];
         var schedule = (snap.schedulesByClass || {})[k];
         if (!schedule) continue;
-        schedulerRenderClassToDOM(k, schedule, snap.days, snap.classesPerDay, snap.lunchClassIndex);
+        /** @type {Function} */ (schedulerRenderClassToDOM)(k, schedule, snap.days, snap.classesPerDay, snap.lunchClassIndex);
       }
     }
   } catch (e) {

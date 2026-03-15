@@ -1,3 +1,4 @@
+// @ts-check
 /* exported createSeededRandom, buildTeacherFoldMapFromRawNames, subjectTeacherPairsByClass, periodTimings, generated, daysOfWeek, reportData, reportSort, gWeeklyQuotaByClass, gSchedules, gTeacherForShort, gSubjectByShort, gImportedLtpByClass, gImportedFixedSlotsByClass, gTeacherDisplayByCanon, gEnabledKeys, gClassLabels, gLabsAtSlot, gFillerShortsByClass, gFillerLabelsByClass, aggregateStats, gCanonFoldMap */
 
 /**
@@ -341,6 +342,7 @@ function buildTeacherFoldMapFromCanonicalNames(canonicalNames = []) {
     )
   ).sort((a, b) => b.length - a.length || a.localeCompare(b));
   const masters = [];
+  /** @type {{ [name: string]: string }} */
   const map = {};
   names.forEach((name) => {
     let mergedInto = null;

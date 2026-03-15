@@ -1,3 +1,4 @@
+// @ts-check
 /* exported schedulerPickTeacherForSlot, schedulerCanAssign */
 
 /**
@@ -22,7 +23,7 @@ function schedulerPickTeacherForSlot({
   teacherAssignedPerDayByClass,
   teacherTheoryCountByClass,
 }) {
-  const { allowNoTeacher = false, ...assignOpts } = opts;
+  const { allowNoTeacher = false, ...assignOpts } = /** @type {any} */ (opts);
   const list =
     (teacherListForShort[key] && teacherListForShort[key][short]) || [];
   // step: build candidate teacher list from per-class or global maps
@@ -36,6 +37,7 @@ function schedulerPickTeacherForSlot({
   const candidates = baseCandidates.filter((t) => t !== undefined && t !== null);
   if (allowNoTeacher) candidates.push("");
   if (!candidates.length) return null;
+  /** @type {null | { teacher: string, score: Object }} */
   let best = null;
   candidates.forEach((t) => {
     if (!t && !allowNoTeacher) return;

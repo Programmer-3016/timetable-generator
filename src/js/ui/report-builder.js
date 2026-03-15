@@ -1,3 +1,4 @@
+// @ts-check
 /* exported buildAndRenderReport */
 
 /**
@@ -70,7 +71,7 @@ function reportTeacherCandidatesForCell(key, day, col, short, subj) {
 function rebuildAggregateStatsFromPublishedSchedule() {
   const next = {};
   const minsPerPeriod =
-    parseInt(document.getElementById("duration")?.value, 10) || 50;
+    parseInt(/** @type {HTMLInputElement | null} */ (document.getElementById("duration"))?.value, 10) || 50;
   const enabledKeys = Array.isArray(gEnabledKeys) ? gEnabledKeys : [];
 
   enabledKeys.forEach((key) => {

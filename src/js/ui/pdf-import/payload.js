@@ -1,3 +1,4 @@
+// @ts-check
 /* exported pdfImportDetectDays, pdfImportDetectLabCount, pdfImportDetectTimingSettings, pdfImportExtractPdfLines, pdfImportBuildClassPayloads, pdfImportAssessImportQuality */
 
 /**
@@ -792,7 +793,7 @@ async function pdfImportRecognizePageWithOcr(
   pdfImportEnhanceCanvasForOcr(canvas, ctx);
 
   if (typeof window.showGenerationAnimation === "function") {
-    window.showGenerationAnimation(
+    /** @type {Function} */ (window.showGenerationAnimation)(
       0,
       `Running OCR on page ${pageNo}/${totalPages} (rotation ${rotation}deg)...`
     );
@@ -921,7 +922,7 @@ async function pdfImportExtractPdfLines(file) {
   }
 
   if (typeof window.showGenerationAnimation === "function") {
-    window.showGenerationAnimation(
+    /** @type {Function} */ (window.showGenerationAnimation)(
       0,
       "Text layer missing/weak. Running OCR for scanned PDF..."
     );

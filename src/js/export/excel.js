@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @module export/excel.js
  * @description Workbook export pipeline for multi-sheet Excel output.
@@ -36,18 +37,18 @@ async function exportToExcel() {
   if (saveTarget.cancelled) return;
 
   const wb = XLSX.utils.book_new();
-  const days = parseInt(document.getElementById("days")?.value || "5", 10);
+  const days = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("days"))?.value || "5", 10);
   const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].slice(0, days);
 
   const overviewData = [
     ["Timetable Settings"],
-    ["Day Start Time", document.getElementById("startTime")?.value || ""],
-    ["Number of Periods", document.getElementById("slots")?.value || ""],
+    ["Day Start Time", /** @type {HTMLInputElement} */ (document.getElementById("startTime"))?.value || ""],
+    ["Number of Periods", /** @type {HTMLInputElement} */ (document.getElementById("slots"))?.value || ""],
     ["Number of Days", days],
-    ["Period Duration (min)", document.getElementById("duration")?.value || ""],
-    ["Lunch After Period", document.getElementById("lunchPeriod")?.value || ""],
-    ["Lunch Duration (min)", document.getElementById("lunchDuration")?.value || ""],
-    ["Lab Rooms", document.getElementById("labCount")?.value || ""],
+    ["Period Duration (min)", /** @type {HTMLInputElement} */ (document.getElementById("duration"))?.value || ""],
+    ["Lunch After Period", /** @type {HTMLInputElement} */ (document.getElementById("lunchPeriod"))?.value || ""],
+    ["Lunch Duration (min)", /** @type {HTMLInputElement} */ (document.getElementById("lunchDuration"))?.value || ""],
+    ["Lab Rooms", /** @type {HTMLInputElement} */ (document.getElementById("labCount"))?.value || ""],
     ["Classes Generated", gEnabledKeys.length],
     [],
     ["Generated on", new Date().toLocaleString()],
@@ -108,7 +109,7 @@ async function exportToExcel() {
     const quotaMap = gWeeklyQuotaByClass[key] || {};
     const slotCount = {};
     for (let d = 0; d < days; d++) {
-      const classesPerDay = parseInt(document.getElementById("slots")?.value || "7", 10);
+      const classesPerDay = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("slots"))?.value || "7", 10);
       for (let c = 0; c < classesPerDay; c++) {
         const sh = gSchedules[key]?.[d]?.[c];
         if (sh) slotCount[sh] = (slotCount[sh] || 0) + 1;

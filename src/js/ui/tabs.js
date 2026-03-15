@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @module ui/tabs.js
  * @description Tab bar navigation for switching between Inputs, Timetables,
@@ -74,7 +75,7 @@
        Subsection: VERSIONS TAB LAYOUT MODE
     ─────────────────────────────────────────────────── */
     var appEl = document.querySelector(".app");
-    var controlsEl = document.querySelector(".controls");
+    var controlsEl = /** @type {HTMLElement} */ (document.querySelector(".controls"));
     var tabBarEl = document.getElementById("mainTabBar");
     var verSlot = document.getElementById("verTabBarSlot");
     var ttArea = document.querySelector(".timetable-area");
@@ -124,9 +125,9 @@
    * Enable Faculty and Labs tabs (called after timetable is generated).
    */
   function enablePostGenerateTabs() {
-    var tabFaculty = document.getElementById("tabFaculty");
-    var tabLabs = document.getElementById("tabLabs");
-    var tabVersions = document.getElementById("tabVersions");
+    var tabFaculty = /** @type {HTMLButtonElement} */ (document.getElementById("tabFaculty"));
+    var tabLabs = /** @type {HTMLButtonElement} */ (document.getElementById("tabLabs"));
+    var tabVersions = /** @type {HTMLButtonElement} */ (document.getElementById("tabVersions"));
     if (tabFaculty) tabFaculty.disabled = false;
     if (tabLabs) tabLabs.disabled = false;
     if (tabVersions) tabVersions.disabled = false;
@@ -150,9 +151,10 @@
   function initTabs() {
     var btns = document.querySelectorAll(".tab-nav .tab-btn");
     btns.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var tab = btn.getAttribute("data-tab");
-        if (tab && !btn.disabled) {
+      var /** @type {HTMLButtonElement} */ tabBtn = /** @type {HTMLButtonElement} */ (btn);
+      tabBtn.addEventListener("click", function () {
+        var tab = tabBtn.getAttribute("data-tab");
+        if (tab && !tabBtn.disabled) {
           switchTab(tab);
         }
       });

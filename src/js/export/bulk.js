@@ -1,3 +1,4 @@
+// @ts-check
 /* exported exportAllTimetablesAsOneJPG, exportAllTimetablesAsPDF */
 
 /**
@@ -52,7 +53,7 @@ async function exportAllTimetablesAsOneJPG() {
     for (const k of keys) {
       const el = getClassBlockElement(k);
       if (!el) continue;
-      const subjInfo = el.querySelector(`[id^=subjectInfo${k}Block]`);
+      const subjInfo = /** @type {HTMLElement|null} */ (el.querySelector(`[id^=subjectInfo${k}Block]`));
       let prevDisplay = null;
       if (
         subjInfo &&
@@ -205,7 +206,7 @@ async function exportAllTimetablesAsPDF() {
     for (const k of keys) {
       const el = getClassBlockElement(k);
       if (!el) continue;
-      const subjInfo = el.querySelector(`[id^=subjectInfo${k}Block]`);
+      const subjInfo = /** @type {HTMLElement|null} */ (el.querySelector(`[id^=subjectInfo${k}Block]`));
       let prevDisplay = null;
       if (
         subjInfo &&
@@ -246,7 +247,7 @@ async function exportAllTimetablesAsPDF() {
       w: 297,
       h: 420
     }; // A3 portrait
-    const pdf = new jsPDFCtor({
+    const pdf = new (/** @type {any} */ (jsPDFCtor))({
       orientation: "p",
       unit: "mm",
       format: "a3",

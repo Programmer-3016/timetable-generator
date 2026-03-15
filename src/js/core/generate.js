@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * @module core/generate.js
  * @description Main generation flow: read inputs, build shell tables, invoke scheduler.
@@ -35,23 +36,23 @@ function resolveGenerationSeed(baseSeed, attemptIndex = 0) {
  */
 function generateTimetable(options = {}) {
   const runImmediate = !!options.__runImmediate;
-  const slots = parseInt(document.getElementById("slots").value);
-  const days = parseInt(document.getElementById("days").value);
-  const startTime = document.getElementById("startTime").value;
+  const slots = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("slots")).value);
+  const days = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("days")).value);
+  const startTime = /** @type {HTMLInputElement} */ (document.getElementById("startTime")).value;
   const defaultDuration = parseInt(
-    document.getElementById("duration").value
+    /** @type {HTMLInputElement} */ (document.getElementById("duration")).value
   );
   const lunchPeriod = parseInt(
-    document.getElementById("lunchPeriod").value
+    /** @type {HTMLInputElement} */ (document.getElementById("lunchPeriod")).value
   );
   const lunchDuration = parseInt(
-    document.getElementById("lunchDuration").value
+    /** @type {HTMLInputElement} */ (document.getElementById("lunchDuration")).value
   );
   const classCount = Math.min(
     CLASS_KEYS.length,
     Math.max(
       1,
-      parseInt(document.getElementById("classCount")?.value || "1", 10)
+      parseInt(/** @type {HTMLInputElement} */ (document.getElementById("classCount"))?.value || "1", 10)
     )
   );
 
@@ -126,7 +127,7 @@ function generateTimetable(options = {}) {
 
   /** Parses a filler-shorts input field into a set of shorts, labels, and credits. */
   function parseFillerWithLabels(id) {
-    const raw = (document.getElementById(id)?.value || "").trim(); // raw comma-separated filler input
+    const raw = (/** @type {HTMLInputElement} */ (document.getElementById(id))?.value || "").trim(); // raw comma-separated filler input
     const result = {
       set: new Set(),
       labels: {},
@@ -201,7 +202,7 @@ function generateTimetable(options = {}) {
 
   /** Parses a comma-separated input field into a Set of uppercase short codes. */
   function parseShortsSet(id) {
-    const raw = (document.getElementById(id)?.value || "").trim(); // raw comma-separated input value
+    const raw = (/** @type {HTMLInputElement} */ (document.getElementById(id))?.value || "").trim(); // raw comma-separated input value
     const set = new Set();
     if (!raw) return set;
     raw.split(/\s*,\s*/).forEach((entry) => {
@@ -221,25 +222,25 @@ function generateTimetable(options = {}) {
   // Auto-replicate: if Class 1 has subjects but other classes are empty,
   // copy Class 1's subject/filler/main data to the empty classes.
   if (classCount > 1) {
-    const srcPairsEl = document.getElementById("pairs");
+    const srcPairsEl = /** @type {HTMLInputElement|null} */ (document.getElementById("pairs"));
     const srcPairsData = (srcPairsEl?.value || "").trim(); // Class 1 subject-pair text for auto-replication
-    const srcFillersEl = document.getElementById("fillerShorts");
-    const srcMainsEl = document.getElementById("mainShorts");
+    const srcFillersEl = /** @type {HTMLInputElement|null} */ (document.getElementById("fillerShorts"));
+    const srcMainsEl = /** @type {HTMLInputElement|null} */ (document.getElementById("mainShorts"));
     if (srcPairsData) {
       let copiedCount = 0;
       for (let i = 1; i < classCount; i++) {
         const k = CLASS_KEYS[i];
-        const pEl = document.getElementById(`pairs${k}`);
+        const pEl = /** @type {HTMLInputElement|null} */ (document.getElementById(`pairs${k}`));
         if (pEl && !pEl.value.trim()) {
           pEl.value = srcPairsData;
           pEl.dispatchEvent(new Event("input", { bubbles: true }));
           copiedCount++;
-          const fEl = document.getElementById(`fillerShorts${k}`);
+          const fEl = /** @type {HTMLInputElement|null} */ (document.getElementById(`fillerShorts${k}`));
           if (fEl && !fEl.value.trim() && srcFillersEl?.value?.trim()) {
             fEl.value = srcFillersEl.value.trim();
             fEl.dispatchEvent(new Event("input", { bubbles: true }));
           }
-          const mEl = document.getElementById(`mainShorts${k}`);
+          const mEl = /** @type {HTMLInputElement|null} */ (document.getElementById(`mainShorts${k}`));
           if (mEl && !mEl.value.trim() && srcMainsEl?.value?.trim()) {
             mEl.value = srcMainsEl.value.trim();
             mEl.dispatchEvent(new Event("input", { bubbles: true }));
@@ -258,7 +259,7 @@ function generateTimetable(options = {}) {
   const skippedClasses = [];
   for (let i = 0; i < classCount; i++) {
     const key = CLASS_KEYS[i];
-    const labelEl = document.getElementById(`class${key}Label`);
+    const labelEl = /** @type {HTMLInputElement|null} */ (document.getElementById(`class${key}Label`));
     const label = (labelEl?.value || `Class ${i + 1}`).trim(); // user-specified class display name
     gClassLabels[key] = label;
     const titleSpan = document.getElementById(`class${key}Title`);
@@ -415,7 +416,7 @@ function generateTimetable(options = {}) {
   aggregateStats = {};
   const strictMode = options.strictMode !== false;
   const maxAttempts = strictMode ?
-    Math.max(1, Math.min(10, parseInt(options.maxAttempts, 10) || 10)) :
+    Math.max(1, Math.min(10, parseInt(String(options.maxAttempts), 10) || 10)) :
     1;
   const autoSeed = ( // fallback seed derived from current time and grid dimensions
     Date.now() ^

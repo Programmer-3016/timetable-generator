@@ -1,3 +1,4 @@
+// @ts-check
 /* exported parsePairs */
 
 /**
@@ -12,7 +13,7 @@
 function parsePairs(textareaId = "pairs") {
   const el = document.getElementById(textareaId);
   if (!el) return [];
-  const raw = el.value.trim();
+  const raw = /** @type {HTMLTextAreaElement} */ (el).value.trim();
   if (!raw) return [];
 
   /* ═══════════════════════════════════════════════════════

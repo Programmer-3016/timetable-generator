@@ -1,3 +1,4 @@
+// @ts-check
 /* exported renderSubjectInfo */
 
 /**
@@ -67,7 +68,7 @@ function renderSubjectInfo() {
     // Fallback when schedule state is unavailable.
     const map = {};
     const cells = document.querySelectorAll(`${tableSel} .subject-cell`);
-    cells.forEach((c) => {
+    cells.forEach((/** @type {HTMLElement} */ c) => {
       const s =
         (c.dataset && c.dataset.short) || (c.textContent || "").trim();
       if (!s) return;

@@ -1,3 +1,4 @@
+// @ts-check
 /* exported toggleSidebarLayout, buildToolbar */
 
 /**
@@ -56,18 +57,19 @@ function applyClassNameFilter(query = "") {
 
   // Select direct children of timetableWrap (.class-grid-cell wrappers)
   Array.from(wrap.children).forEach((child) => {
-    const key = extractClassKeyFromBlock(child.id);
+    const /** @type {HTMLElement} */ el = /** @type {HTMLElement} */ (child);
+    const key = extractClassKeyFromBlock(el.id);
     if (!key || !enabledSet.has(key)) {
       // Don't hide unknown children (reportPanel, etc.)
-      if (child.id && /^class[A-Z]{1,2}Block$/.test(child.id)) {
-        child.style.display = "none";
+      if (el.id && /^class[A-Z]{1,2}Block$/.test(el.id)) {
+        el.style.display = "none";
       }
       return;
     }
     const label = (gClassLabels && gClassLabels[key]) || "";
     const searchText = `${label} ${key}`.toLowerCase();
     const matches = !needle || searchText.includes(needle);
-    child.style.display = matches ? "" : "none";
+    el.style.display = matches ? "" : "none";
     if (matches) visibleCount++;
   });
 
@@ -88,17 +90,17 @@ function applyClassNameFilter(query = "") {
  * Builds the class filter controls.
  */
 function buildToolbar() {
-  const classFilterInput = document.getElementById("classFilterInput");
+  const classFilterInput = /** @type {HTMLInputElement} */ (document.getElementById("classFilterInput"));
   if (classFilterInput) {
     classFilterInput.value = gClassFilterQuery;
     classFilterInput.addEventListener("input", (e) => {
-      applyClassNameFilter(e.target.value);
+      applyClassNameFilter(/** @type {HTMLInputElement} */ (e.target).value);
     });
   }
   const clearClassFilterBtn = document.getElementById("clearClassFilterBtn");
   if (clearClassFilterBtn) {
     clearClassFilterBtn.addEventListener("click", () => {
-      const input = document.getElementById("classFilterInput");
+      const input = /** @type {HTMLInputElement} */ (document.getElementById("classFilterInput"));
       if (input) input.value = "";
       applyClassNameFilter("");
     });

@@ -1,3 +1,4 @@
+// @ts-check
 /* exported enableDragAndDrop */
 
 /**
@@ -34,7 +35,7 @@ function refreshViewsAfterScheduleShift() {
     }
     try {
       if (typeof buildFacultyPanel === "function") {
-        const facultySelect = document.getElementById("facultySelect");
+        const facultySelect = /** @type {HTMLSelectElement|null} */ (document.getElementById("facultySelect"));
         const selectedFaculty = facultySelect ? facultySelect.value : "";
         buildFacultyPanel();
         if (
@@ -150,7 +151,7 @@ function getSlotTeacherList(key, day, col) {
   const cell = document.querySelector(
     `.subject-cell[data-key="${key}"][data-day="${day}"][data-col="${col}"]`
   );
-  if (cell) return getCellTeacherList(cell);
+  if (cell) return getCellTeacherList(/** @type {HTMLElement} */ (cell));
 
   const subjectTeachers = getSubjectTeachersForCell(key, short);
   if (isLabCellByShort(key, short) && subjectTeachers.length) {
@@ -260,8 +261,8 @@ function pushSwapHistory(entry) {
  * Enables/disables the undo and redo buttons based on stack state.
  */
 function updateDragSwapControls() {
-  const undoBtn = document.getElementById("swapUndoBtn");
-  const redoBtn = document.getElementById("swapRedoBtn");
+  const undoBtn = /** @type {HTMLButtonElement|null} */ (document.getElementById("swapUndoBtn"));
+  const redoBtn = /** @type {HTMLButtonElement|null} */ (document.getElementById("swapRedoBtn"));
   if (undoBtn) undoBtn.disabled = gSwapUndoStack.length === 0;
   if (redoBtn) redoBtn.disabled = gSwapRedoStack.length === 0;
 }
@@ -329,10 +330,12 @@ window.redoTimetableSwap = redoTimetableSwap;
  * Binds drag-and-drop swap handlers to all subject cells.
  */
 function enableDragAndDrop() {
+  /** @type {HTMLElement|null} */
   let dragSource = null;
   resetDragSwapHistory();
 
-  document.querySelectorAll(".subject-cell").forEach((cell) => {
+  document.querySelectorAll(".subject-cell").forEach((rawCell) => {
+    const cell = /** @type {HTMLElement} */ (rawCell);
     if (!cell.dataset.short) return;
     if (cell.dataset.dndBound === "1") return;
     cell.dataset.dndBound = "1";
@@ -341,8 +344,9 @@ function enableDragAndDrop() {
     cell.addEventListener("dragstart", (e) => {
       dragSource = cell;
       cell.classList.add("dragging");
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/plain", cell.dataset.short);
+      const de = /** @type {DragEvent} */ (e);
+      de.dataTransfer.effectAllowed = "move";
+      de.dataTransfer.setData("text/plain", cell.dataset.short);
     });
 
     cell.addEventListener("dragend", () => {
@@ -362,7 +366,7 @@ function enableDragAndDrop() {
         return;
       }
       e.preventDefault();
-      e.dataTransfer.dropEffect = "move";
+      /** @type {DragEvent} */ (e).dataTransfer.dropEffect = "move";
       cell.classList.add("drag-over");
     });
 
