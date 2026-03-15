@@ -118,6 +118,7 @@ function validateInputsBeforeGenerate() {
 /**
  * Wraps generateTimetable with input validation + error boundary.
  * The original generateTimetable() function is NOT modified.
+ * @returns {void}
  */
 function validateAndGenerate() {
   // Step 1: Validate inputs

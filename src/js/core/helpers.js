@@ -10,6 +10,11 @@
    Section: HELPER FUNCTIONS
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Normalizes a teacher name by stripping titles and collapsing whitespace.
+ * @param {string} t - The raw teacher name.
+ * @returns {string} Lowercase, title-stripped, whitespace-collapsed name.
+ */
 function normalizeTeacherName(t) {
   if (!t) return "";
   let s = ("" + t).trim(); // working string — title-stripped, whitespace-collapsed
@@ -25,7 +30,11 @@ function normalizeTeacherName(t) {
   return key;
 }
 
-/** Creates a deterministic PRNG from a numeric seed. */
+/**
+ * Creates a deterministic PRNG from a numeric seed.
+ * @param {number} seed - The seed value for the random number generator.
+ * @returns {function(): number} A function that returns pseudo-random numbers in [0, 1).
+ */
 function createSeededRandom(seed) {
   let state = Number.isFinite(seed) ?
     (seed >>> 0) :
@@ -37,7 +46,12 @@ function createSeededRandom(seed) {
   };
 }
 
-/** Returns a canonical, order-independent key for a pair of teacher names. */
+/**
+ * Returns a canonical, order-independent key for a pair of teacher names.
+ * @param {string} a - First teacher name.
+ * @param {string} b - Second teacher name.
+ * @returns {string} A "nameA||nameB" key with names in sorted order, or empty string.
+ */
 function teacherPairKey(a, b) {
   const x = String(a || "").trim();
   const y = String(b || "").trim();
@@ -45,7 +59,11 @@ function teacherPairKey(a, b) {
   return x < y ? `${x}||${y}` : `${y}||${x}`;
 }
 
-/** Generates up to n unique alphabetic class keys (A, B, …, AA, AB, …). */
+/**
+ * Generates up to n unique alphabetic class keys (A, B, …, AA, AB, …).
+ * @param {number} n - Maximum number of keys to generate.
+ * @returns {string[]} Array of alphabetic class keys.
+ */
 function generateClassKeys(n) {
   const keys = [];
   const A = "A".charCodeAt(0);
@@ -125,6 +143,12 @@ let gCanonFoldMap = {};
    Section: TEACHER ALIAS HELPERS
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Checks if two strings differ by exactly one adjacent character transposition.
+ * @param {string} a - First string.
+ * @param {string} b - Second string.
+ * @returns {boolean} True if the strings differ by a single adjacent swap.
+ */
 function isSingleAdjacentTransposition(a, b) {
   const x = String(a || "");
   const y = String(b || "");
@@ -149,7 +173,11 @@ function isSingleAdjacentTransposition(a, b) {
   return true;
 }
 
-/** Follows the alias chain to resolve a teacher name to its canonical form. */
+/**
+ * Follows the alias chain to resolve a teacher name to its canonical form.
+ * @param {string} baseName - The starting teacher name.
+ * @returns {string} The resolved canonical name.
+ */
 function resolveTeacherAliasCanonical(baseName) {
   let out = String(baseName || "").trim();
   if (!out) return "";
@@ -164,13 +192,21 @@ function resolveTeacherAliasCanonical(baseName) {
   return out;
 }
 
-/** Checks whether two teachers have been explicitly marked as separate (not aliases). */
+/**
+ * Checks whether two teachers have been explicitly marked as separate (not aliases).
+ * @param {string} a - First teacher name.
+ * @param {string} b - Second teacher name.
+ * @returns {boolean} True if the pair is forced separate.
+ */
 function isTeacherPairForcedSeparate(a, b) {
   const key = teacherPairKey(a, b);
   return !!(key && gTeacherForcedSeparatePairs[key]);
 }
 
-/** Persists the current alias and forced-separate maps to localStorage. */
+/**
+ * Persists the current alias and forced-separate maps to localStorage.
+ * @returns {void}
+ */
 function saveTeacherAliasDecisionsToStorage() {
   try {
     localStorage.setItem(TEACHER_ALIAS_STORE_KEY, JSON.stringify(gTeacherAliasMap));
@@ -183,7 +219,10 @@ function saveTeacherAliasDecisionsToStorage() {
   }
 }
 
-/** Restores alias and forced-separate maps from localStorage into globals. */
+/**
+ * Restores alias and forced-separate maps from localStorage into globals.
+ * @returns {void}
+ */
 function loadTeacherAliasDecisionsFromStorage() {
   try {
     const aliasRaw = localStorage.getItem(TEACHER_ALIAS_STORE_KEY);
@@ -273,13 +312,22 @@ function setTeacherAliasDecisions({ mergePairs = [], separatePairs = [] } = {}) 
   return changed;
 }
 
-/** Normalizes and resolves a teacher name through the alias chain. */
+/**
+ * Normalizes and resolves a teacher name through the alias chain.
+ * @param {string} name - The raw teacher name.
+ * @returns {string} The canonical resolved name.
+ */
 function canonicalTeacherName(name) {
   const base = normalizeTeacherName(name);
   return resolveTeacherAliasCanonical(base);
 }
 
-/** Returns true if the edit distance between strings a and b is at most 1. */
+/**
+ * Returns true if the edit distance between strings a and b is at most 1.
+ * @param {string} a - First string.
+ * @param {string} b - Second string.
+ * @returns {boolean} True if the strings differ by at most one edit.
+ */
 function editDistanceAtMostOne(a, b) {
   if (a === b) return true;
   const la = a.length;
@@ -307,7 +355,12 @@ function editDistanceAtMostOne(a, b) {
   return diffs <= 1;
 }
 
-/** Determines if two canonical teacher names are similar enough to fold/merge. */
+/**
+ * Determines if two canonical teacher names are similar enough to fold/merge.
+ * @param {string} a - First canonical teacher name.
+ * @param {string} b - Second canonical teacher name.
+ * @returns {boolean} True if the names should be folded together.
+ */
 function shouldFoldTeacherCanonicalNames(a, b) {
   if (!a || !b) return false;
   if (isTeacherPairForcedSeparate(a, b)) return false;
@@ -386,7 +439,11 @@ function buildTeacherFoldMapFromCanonicalNames(canonicalNames = []) {
   return map;
 }
 
-/** Builds a teacher fold map from raw (un-normalized) teacher names. */
+/**
+ * Builds a teacher fold map from raw (un-normalized) teacher names.
+ * @param {string[]} rawNames - Array of raw teacher name strings.
+ * @returns {Object<string, string>} Mapping from canonical name to fold-group master.
+ */
 function buildTeacherFoldMapFromRawNames(rawNames = []) {
   const canonical = (rawNames || []) // resolved canonical names used for folding
     .map((name) => canonicalTeacherName(name))
@@ -403,6 +460,10 @@ window.isTeacherPairForcedSeparate = isTeacherPairForcedSeparate;
    Section: UI FEEDBACK HELPERS
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Ensures the toast notification host element exists in the DOM.
+ * @returns {HTMLElement} The toast host container element.
+ */
 function ensureToastHost() {
   let host = document.getElementById("toastHost");
   if (host) return host;

@@ -10,6 +10,11 @@
    Section: SUBJECT/TEACHER PAIR PARSER
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Parses subject-teacher lines from a textarea into structured pair objects.
+ * @param {string} [textareaId="pairs"] - The DOM element ID of the textarea.
+ * @returns {Array<{short: string, originalShort: string, subject: string, teacher: string, teachers: string[], credits: ?number}>} Parsed subject-teacher pairs.
+ */
 function parsePairs(textareaId = "pairs") {
   const el = document.getElementById(textareaId);
   if (!el) return [];
@@ -20,7 +25,11 @@ function parsePairs(textareaId = "pairs") {
      Section: SUBJECT NAME NORMALIZATION
   ═══════════════════════════════════════════════════════ */
 
-  /** Normalizes a subject short code to a canonical uppercase form. */
+  /**
+   * Normalizes a subject short code to a canonical uppercase form.
+   * @param {string} s - The raw short code string.
+   * @returns {string} Normalized uppercase short code.
+   */
   const normalizeShort = (s) => {
     let t = (s || "").trim().toUpperCase(); // uppercased working copy
     if (!t) return "";
@@ -43,7 +52,11 @@ function parsePairs(textareaId = "pairs") {
     const first = t.split(/\s+/)[0] || t;
     return first;
   };
-  /** Returns true if the string looks like a subject short code. */
+  /**
+   * Returns true if the string looks like a subject short code.
+   * @param {string} s - The string to check.
+   * @returns {boolean} True if the string appears to be a short code.
+   */
   const looksShort = (s) => {
     const t = normalizeShort(s);
     if (!t) return false;
@@ -52,7 +65,11 @@ function parsePairs(textareaId = "pairs") {
     if (/\bLAB\b/.test(t) && t.length <= 20) return true;
     return false;
   };
-  /** Returns true if the string appears to be a full subject name (not a short code). */
+  /**
+   * Returns true if the string appears to be a full subject name (not a short code).
+   * @param {string} s - The string to check.
+   * @returns {boolean} True if the string looks like a full subject name.
+   */
   const isLikelyFull = (s) => {
     const t = (s || "").trim(); // trimmed input for analysis
     if (!t) return false;
@@ -79,7 +96,11 @@ function parsePairs(textareaId = "pairs") {
      Section: SUBJECT/TEACHER DETECTION
   ═══════════════════════════════════════════════════════ */
 
-  /** Checks if a text fragment looks like a person’s name (2–4 capitalized words, no subject keywords). */
+  /**
+   * Checks if a text fragment looks like a person’s name (2–4 capitalized words, no subject keywords).
+   * @param {string} text - The text to analyze.
+   * @returns {boolean} True if the text resembles a person’s name.
+   */
   const looksLikePersonNameChunk = (text) => {
     const cleaned = String(text || "")
       .replace(
@@ -159,7 +180,11 @@ function parsePairs(textareaId = "pairs") {
     }
     return true;
   };
-  /** Returns true if the text looks like a list of teacher names (slash/comma separated). */
+  /**
+   * Returns true if the text looks like a list of teacher names (slash/comma separated).
+   * @param {string} text - The text to check.
+   * @returns {boolean} True if the text appears to be a teacher name list.
+   */
   const looksLikeTeacherNameList = (text) => {
     const t = String(text || "").trim();
     if (!t) return false;
@@ -184,7 +209,11 @@ function parsePairs(textareaId = "pairs") {
     if (parts.length < 2) return false;
     return parts.every((part) => looksLikePersonNameChunk(part));
   };
-  /** Returns true if the text looks like a subject keyword rather than a real teacher name. */
+  /**
+   * Returns true if the text looks like a subject keyword rather than a real teacher name.
+   * @param {string} text - The text to check.
+   * @returns {boolean} True if the text is likely subject noise, not a teacher name.
+   */
   const isLikelyTeacherNoiseValue = (text) => {
     const raw = String(text || "").trim();
     if (!raw) return false;
@@ -305,7 +334,11 @@ function parsePairs(textareaId = "pairs") {
          Section: CREDIT SCANNING
       ═══════════════════════════════════════════════════════ */
 
-      /** Extracts a credit value from a string, returning the cleaned text and credits. */
+      /**
+       * Extracts a credit value from a string, returning the cleaned text and credits.
+       * @param {string} s - The string to scan for credit values.
+       * @returns {{ text: string, credits: ?number }} Cleaned text and extracted credits.
+       */
       const scanForCredits = (s) => {
         if (!s) return {
           text: s,

@@ -10,6 +10,11 @@
    Section: TIMETABLE GENERATION MASTER FUNCTION
 ═══════════════════════════════════════════════════════ */
 
+/**
+ * Formats a Date object as "HH:MM".
+ * @param {Date} d - The date to format.
+ * @returns {string} Time string in "HH:MM" format.
+ */
 function formatTime(d) {
   return (
     String(d.getHours()).padStart(2, "0") +
@@ -22,7 +27,12 @@ function formatTime(d) {
    Section: SEED MANAGEMENT
 ═══════════════════════════════════════════════════════ */
 
-/** Derives a deterministic seed for a given generation attempt. */
+/**
+ * Derives a deterministic seed for a given generation attempt.
+ * @param {number} baseSeed - The base seed value.
+ * @param {number} [attemptIndex=0] - The attempt index offset.
+ * @returns {number} An unsigned 32-bit seed.
+ */
 function resolveGenerationSeed(baseSeed, attemptIndex = 0) {
   const base = Number.isFinite(baseSeed) ?
     (baseSeed >>> 0) :
@@ -33,6 +43,7 @@ function resolveGenerationSeed(baseSeed, attemptIndex = 0) {
 /**
  * Main entry point: reads all UI inputs, builds shell tables, and invokes the scheduler.
  * @param {{ __runImmediate?: boolean, strictMode?: boolean, maxAttempts?: number, seed?: number }} options
+ * @returns {void}
  */
 function generateTimetable(options = {}) {
   const runImmediate = !!options.__runImmediate;
@@ -125,7 +136,11 @@ function generateTimetable(options = {}) {
      Section: FILLER PARSING
   ═══════════════════════════════════════════════════════ */
 
-  /** Parses a filler-shorts input field into a set of shorts, labels, and credits. */
+  /**
+   * Parses a filler-shorts input field into a set of shorts, labels, and credits.
+   * @param {string} id - The DOM element ID of the filler input field.
+   * @returns {{ set: Set<string>, labels: Object<string, string>, credits: Object<string, number> }} Parsed filler data.
+   */
   function parseFillerWithLabels(id) {
     const raw = (/** @type {HTMLInputElement} */ (document.getElementById(id))?.value || "").trim(); // raw comma-separated filler input
     const result = {
@@ -144,7 +159,11 @@ function generateTimetable(options = {}) {
       result.set.add(key);
       let label = (parts[1] || "").trim(); // display label extracted from input
       let credits = null;
-      /** Scans a text fragment for a credit value using common patterns. */
+      /**
+       * Scans a text fragment for a credit value using common patterns.
+       * @param {string} text - The text to scan for credit values.
+       * @returns {?number} The parsed credit value or null.
+       */
       const scanCredits = (text) => {
         if (!text) return null;
         const patterns = [
@@ -200,7 +219,11 @@ function generateTimetable(options = {}) {
      Section: SUBJECT PAIR PARSING
   ═══════════════════════════════════════════════════════ */
 
-  /** Parses a comma-separated input field into a Set of uppercase short codes. */
+  /**
+   * Parses a comma-separated input field into a Set of uppercase short codes.
+   * @param {string} id - The DOM element ID of the input field.
+   * @returns {Set<string>} Set of uppercase short codes.
+   */
   function parseShortsSet(id) {
     const raw = (/** @type {HTMLInputElement} */ (document.getElementById(id))?.value || "").trim(); // raw comma-separated input value
     const set = new Set();

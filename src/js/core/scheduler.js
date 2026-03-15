@@ -14,7 +14,11 @@
    Section: SCHEDULER BRIDGE
 ═══════════════════════════════════════════════════════ */
 
-/** Delegates multi-class rendering to the scheduler engine. */
+/**
+ * Delegates multi-class rendering to the scheduler engine.
+ * @param {Object} params - Scheduling parameters including pairs, fillers, days, and seed.
+ * @returns {*} The result from the scheduler engine.
+ */
 function renderMultiClasses(params) {
   return schedulerRenderMultiClassesEngine(params);
 }
