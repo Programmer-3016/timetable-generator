@@ -1,5 +1,5 @@
 // @ts-check
-/* exported createSeededRandom, buildTeacherFoldMapFromRawNames, subjectTeacherPairsByClass, periodTimings, generated, daysOfWeek, reportData, reportSort, gWeeklyQuotaByClass, gSchedules, gTeacherForShort, gSubjectByShort, gImportedLtpByClass, gImportedFixedSlotsByClass, gTeacherDisplayByCanon, gEnabledKeys, gClassLabels, gLabsAtSlot, gFillerShortsByClass, gFillerLabelsByClass, aggregateStats, gCanonFoldMap */
+/* exported _escHtml, createSeededRandom, buildTeacherFoldMapFromRawNames, subjectTeacherPairsByClass, periodTimings, generated, daysOfWeek, reportData, reportSort, gWeeklyQuotaByClass, gSchedules, gTeacherForShort, gSubjectByShort, gImportedLtpByClass, gImportedFixedSlotsByClass, gTeacherDisplayByCanon, gEnabledKeys, gClassLabels, gLabsAtSlot, gFillerShortsByClass, gFillerLabelsByClass, aggregateStats, gCanonFoldMap */
 
 /**
  * @module core/helpers.js
@@ -9,6 +9,17 @@
 /* ═══════════════════════════════════════════════════════
    Section: HELPER FUNCTIONS
 ═══════════════════════════════════════════════════════ */
+
+/**
+ * Normalizes a teacher name by stripping titles and collapsing whitespace.
+ * @param {string} str - The raw string to escape.
+ * @returns {string} Lowercase, title-stripped, whitespace-collapsed name.
+ */
+function _escHtml(str) {
+  const div = document.createElement("div");
+  div.appendChild(document.createTextNode(str || ""));
+  return div.innerHTML;
+}
 
 /**
  * Normalizes a teacher name by stripping titles and collapsing whitespace.
@@ -368,8 +379,18 @@ function shouldFoldTeacherCanonicalNames(a, b) {
   const bb = resolveTeacherAliasCanonical(b);
   if (isTeacherPairForcedSeparate(aa, bb)) return false;
   if (aa === bb) return true;
-  const ta = aa.split(/\s+/).filter(Boolean);
-  const tb = bb.split(/\s+/).filter(Boolean);
+  const aaSingle = aa.split(/\s+/).filter(Boolean);
+  const bbSingle = bb.split(/\s+/).filter(Boolean);
+  // Compact identifier-style teacher codes like "t1" / "t2" are not aliases.
+  if (
+    aaSingle.length === 1 &&
+    bbSingle.length === 1 &&
+    (/[0-9]/.test(aaSingle[0]) || /[0-9]/.test(bbSingle[0]))
+  ) {
+    return false;
+  }
+  const ta = aaSingle;
+  const tb = bbSingle;
   if (Math.abs(ta.length - tb.length) > 1) return false;
   if (aa.startsWith(bb + " ") || bb.startsWith(aa + " ")) return false;
   const minLen = Math.min(ta.length, tb.length);
@@ -527,4 +548,3 @@ function showToast(message, {
 }
 
 window.showToast = showToast;
-

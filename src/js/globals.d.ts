@@ -96,8 +96,14 @@ interface Window {
     attemptsUsed: number;
     baseSeed: number;
     lastSeed: number;
+    selectedSeed?: number | null;
     valid: boolean;
     forced: boolean;
+    accepted?: boolean;
+    restoredPreviousAccepted?: boolean;
+    displayingAcceptedSchedule?: boolean;
+    savedToVersions?: boolean;
+    bestMetrics?: Record<string, any> | null;
     violations: any[];
   };
 

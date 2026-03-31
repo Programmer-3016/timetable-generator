@@ -4,7 +4,23 @@
  * @description Main generation flow: read inputs, build shell tables, invoke scheduler.
  */
 
-/* exported formatTime, resolveGenerationSeed, generateTimetable */
+/* exported formatTime, resolveGenerationSeed, buildGenerationAttemptMetrics, isGenerationCandidateBetter, generateTimetable */
+
+/**
+ * @typedef {Object} GenerationValidationResult
+ * @property {boolean} valid
+ * @property {boolean} [healthy]
+ * @property {string[]} violations
+ * @property {number} [unresolvedClashCount]
+ * @property {number} [compactionIssueCount]
+ */
+
+/**
+ * @typedef {Object} GenerationAttemptSnapshot
+ * @property {number} seed
+ * @property {GenerationValidationResult} validation
+ * @property {ReturnType<typeof buildGenerationAttemptMetrics>} metrics
+ */
 
 /* ═══════════════════════════════════════════════════════
    Section: TIMETABLE GENERATION MASTER FUNCTION
@@ -41,6 +57,205 @@ function resolveGenerationSeed(baseSeed, attemptIndex = 0) {
 }
 
 /**
+ * Summarizes one generation attempt so retries can compare candidates consistently.
+ * Hard safety wins over cosmetic quality: unresolved clashes and strict violations
+ * are ranked ahead of the quality score.
+ * @param {Object} [params={}] - Published attempt diagnostics.
+ * @param {GenerationValidationResult|{ valid?: boolean, healthy?: boolean, violations?: string[], unresolvedClashCount?: number, compactionIssueCount?: number }|null} [params.validation=null] - Published health report.
+ * @param {Array<*>} [params.unresolvedClashes=[]] - Runtime unresolved clash records.
+ * @param {{ totalIssues?: number }|null} [params.compactionReport=null] - Runtime compaction diagnostics.
+ * @param {Object|null} [params.scheduleState=null] - Published schedule snapshot for objective scoring.
+ * @param {number|null} [params.objectiveScore=null] - Precomputed objective score, when available.
+ * @returns {{ healthy: boolean, unresolvedClashCount: number, compactionIssueCount: number, teacherClashViolationCount: number, otherViolationCount: number, totalViolationCount: number, objectiveScore: number, violations: string[] }}
+ */
+function buildGenerationAttemptMetrics({
+  validation = null,
+  unresolvedClashes = [],
+  compactionReport = null,
+  scheduleState = null,
+  objectiveScore = null,
+} = {}) {
+  const report =
+    validation && typeof validation === "object" ?
+    validation :
+    {
+      valid: false,
+      healthy: false,
+      violations: ["Missing schedule health report"],
+    };
+  const violations = Array.isArray(report.violations) ?
+    report.violations
+      .map((item) => String(item || "").trim())
+      .filter(Boolean) :
+    [];
+  const unresolvedClashCount = Number.isFinite(report.unresolvedClashCount) ?
+    Number(report.unresolvedClashCount) :
+    (Array.isArray(unresolvedClashes) ? unresolvedClashes.filter(Boolean).length : 0);
+  const compactionIssueCount = Number.isFinite(report.compactionIssueCount) ?
+    Number(report.compactionIssueCount) :
+    (compactionReport && Number.isFinite(compactionReport.totalIssues) ?
+      Number(compactionReport.totalIssues) :
+      0);
+
+  let teacherClashViolationCount = 0;
+  let unresolvedClashViolationCount = 0;
+  let compactionViolationCount = 0;
+  violations.forEach((message) => {
+    if (/unresolved teacher clashes remain/i.test(message)) {
+      unresolvedClashViolationCount++;
+      return;
+    }
+    if (/post-lunch compaction issues remain/i.test(message)) {
+      compactionViolationCount++;
+      return;
+    }
+    if (/teacher/i.test(message) && /(clash|double[- ]?book)/i.test(message)) {
+      teacherClashViolationCount++;
+    }
+  });
+
+  const otherViolationCount = Math.max(
+    0,
+    violations.length -
+      unresolvedClashViolationCount -
+      compactionViolationCount -
+      teacherClashViolationCount
+  );
+  let resolvedObjectiveScore = Number.isFinite(objectiveScore) ?
+    Number(objectiveScore) :
+    -100;
+  if (
+    !Number.isFinite(objectiveScore) &&
+    typeof schedulerScoreCandidateObjective === "function"
+  ) {
+    try {
+      resolvedObjectiveScore = schedulerScoreCandidateObjective(
+        scheduleState,
+        report
+      );
+    } catch (_e) {
+      resolvedObjectiveScore = -100;
+    }
+  }
+
+  return {
+    healthy: !!(report.healthy ?? report.valid),
+    unresolvedClashCount,
+    compactionIssueCount,
+    teacherClashViolationCount,
+    otherViolationCount,
+    totalViolationCount: violations.length,
+    objectiveScore: resolvedObjectiveScore,
+    violations,
+  };
+}
+
+/**
+ * Compares two generation attempts and returns true when the candidate is safer.
+ * Ordering priority:
+ * 1. healthy schedules
+ * 2. unresolved clash count
+ * 3. compaction issue count
+ * 4. teacher-clash violation count
+ * 5. other strict violations
+ * 6. total violations
+ * 7. objective score
+ * @param {{ healthy?: boolean, unresolvedClashCount?: number, compactionIssueCount?: number, teacherClashViolationCount?: number, otherViolationCount?: number, totalViolationCount?: number, objectiveScore?: number }|null} candidate - New attempt metrics.
+ * @param {{ healthy?: boolean, unresolvedClashCount?: number, compactionIssueCount?: number, teacherClashViolationCount?: number, otherViolationCount?: number, totalViolationCount?: number, objectiveScore?: number }|null} incumbent - Current best attempt metrics.
+ * @returns {boolean} True when candidate should replace incumbent.
+ */
+function isGenerationCandidateBetter(candidate, incumbent) {
+  if (!candidate) return false;
+  if (!incumbent) return true;
+
+  const compareAscending = (a, b) => {
+    const left = Number.isFinite(a) ? Number(a) : Number.POSITIVE_INFINITY;
+    const right = Number.isFinite(b) ? Number(b) : Number.POSITIVE_INFINITY;
+    if (left === right) return 0;
+    return left < right ? -1 : 1;
+  };
+  const compareDescending = (a, b) => {
+    const left = Number.isFinite(a) ? Number(a) : Number.NEGATIVE_INFINITY;
+    const right = Number.isFinite(b) ? Number(b) : Number.NEGATIVE_INFINITY;
+    if (left === right) return 0;
+    return left > right ? -1 : 1;
+  };
+
+  const comparisons = [
+    candidate.healthy === incumbent.healthy ?
+      0 :
+      (candidate.healthy ? -1 : 1),
+    compareAscending(candidate.unresolvedClashCount, incumbent.unresolvedClashCount),
+    compareAscending(candidate.compactionIssueCount, incumbent.compactionIssueCount),
+    compareAscending(
+      candidate.teacherClashViolationCount,
+      incumbent.teacherClashViolationCount
+    ),
+    compareAscending(candidate.otherViolationCount, incumbent.otherViolationCount),
+    compareAscending(candidate.totalViolationCount, incumbent.totalViolationCount),
+    compareDescending(candidate.objectiveScore, incumbent.objectiveScore),
+  ];
+
+  for (let i = 0; i < comparisons.length; i++) {
+    if (comparisons[i] < 0) return true;
+    if (comparisons[i] > 0) return false;
+  }
+  return false;
+}
+
+/**
+ * Builds a user-facing notice when strict validation still fails after retries.
+ * Highlights low-lab-capacity failures separately because they are a common
+ * feasibility issue rather than a hidden scheduler crash.
+ * @param {{ valid?: boolean, healthy?: boolean, violations?: string[] }|null} validation
+ * @param {number} labCapacity
+ * @returns {{ type: "lab-capacity" | "generic", message: string, violations: string[] }|null}
+ */
+function buildStrictGenerationFailureNotice(validation, labCapacity) {
+  const violations = Array.isArray(validation?.violations) ?
+    validation.violations
+      .map((item) => String(item || "").trim())
+      .filter(Boolean) :
+    [];
+  if (!violations.length) return null;
+
+  const labRoomViolations = violations.filter((line) =>
+    /lab room\s+\d+.*double[- ]?book/i.test(line)
+  );
+
+  if (labRoomViolations.length) {
+    const sample = labRoomViolations[0];
+    const capacityValue =
+      Number.isFinite(labCapacity) && labCapacity > 0 ?
+      Math.round(labCapacity) :
+      null;
+    const capacityText =
+      capacityValue === null ?
+      "the current lab-room capacity" :
+      `${capacityValue} lab room${capacityValue === 1 ? "" : "s"}`;
+    const overlapText =
+      `${labRoomViolations.length} lab-room overlap${labRoomViolations.length === 1 ? "" : "s"}`;
+    return {
+      type: "lab-capacity",
+      message:
+        `Could not generate a valid timetable with ${capacityText}. ` +
+        `${overlapText} still remain. Example: ${sample}. ` +
+        "Increase Number of Lab Rooms or reduce simultaneous lab sections. " +
+        "This run was not saved to Versions.",
+      violations: labRoomViolations,
+    };
+  }
+
+  return {
+    type: "generic",
+    message:
+      `Generated timetable is still invalid (${violations.length} strict violation${violations.length === 1 ? "" : "s"} remain). ` +
+      "This run was not saved to Versions. Review the current inputs and try Generate again.",
+    violations,
+  };
+}
+
+/**
  * Main entry point: reads all UI inputs, builds shell tables, and invokes the scheduler.
  * @param {{ __runImmediate?: boolean, strictMode?: boolean, maxAttempts?: number, seed?: number }} options
  * @returns {void}
@@ -58,6 +273,11 @@ function generateTimetable(options = {}) {
   );
   const lunchDuration = parseInt(
     /** @type {HTMLInputElement} */ (document.getElementById("lunchDuration")).value
+  );
+  const labCapacity = parseInt(
+    /** @type {HTMLInputElement | null} */ (document.getElementById("labCount"))
+      ?.value || "",
+    10
   );
   const classCount = Math.min(
     CLASS_KEYS.length,
@@ -88,40 +308,7 @@ function generateTimetable(options = {}) {
   try {
 
   const wrap = document.getElementById("timetableWrap");
-  if (wrap) {
-    for (let i = 0; i < classCount; i++) {
-      const key = CLASS_KEYS[i];
-      const blockId = `class${key}Block`;
-      if (!document.getElementById(blockId)) {
-        const div = document.createElement("div");
-        div.id = blockId;
-        div.className = "class-grid-cell";
-        div.style.display = "none";
-        const titleSpanId = `class${key}Title`;
-        const titleInfoSpanId = `class${key}TitleInfo`;
-        div.innerHTML = `
-          <!-- Timetable Card -->
-          <div class="class-block">
-            <h3 class="class-block-title">Timetable — <span id="${titleSpanId}">Class ${
-          i + 1
-        }</span></h3>
-            <div
-              id="timetable${key}"
-              class="placeholder-panel"
-            ><div class="empty-state"><svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M8 2v4" /><path d="M16 2v4" /><path d="M3 10h18" /><path d="M3 15h18" /><path d="M9 10v12" /><path d="M15 10v12" /></svg><p class="empty-state-title">No timetable yet</p><p class="empty-state-text">Fill in your class inputs and click <strong>Generate</strong> to create your timetable.</p></div></div>
-          </div>
-
-          <!-- Subject Info Card -->
-          <div id="subjectInfo${key}Block" class="class-block section-info" style="display:none;">
-            <h4 class="class-block-title">Subjects — <span id="${titleInfoSpanId}">Class ${
-          i + 1
-        }</span></h4>
-            <div id="subjectInfo${key}"></div>
-          </div>`;
-        wrap.appendChild(div);
-      }
-    }
-  }
+  ensureGenerationShellBlocks({ classCount, wrap });
 
   gClassLabels = {};
   subjectTeacherPairsByClass = {};
@@ -338,16 +525,8 @@ function generateTimetable(options = {}) {
         })
         .filter(Boolean);
       gEnabledKeys.push(key);
-      const block = document.getElementById(`class${key}Block`);
-      const sib = document.getElementById(`subjectInfo${key}Block`);
-      if (block) block.style.display = "";
-      if (sib) sib.style.display = "";
     } else {
       skippedClasses.push(i + 1);
-      const block = document.getElementById(`class${key}Block`);
-      const sib = document.getElementById(`subjectInfo${key}Block`);
-      if (block) block.style.display = "none";
-      if (sib) sib.style.display = "none";
     }
   }
   // step: report skipped classes and set compact layout mode
@@ -372,74 +551,41 @@ function generateTimetable(options = {}) {
     );
   }
   // step: apply compact CSS class based on number of enabled classes
-  if (wrap) {
-    wrap.className = wrap.className.replace(/\bcompact-\d\b/g, "").trim();
-    wrap.classList.remove("compact-many");
-    const enabledCount = gEnabledKeys.length;
-    if (enabledCount >= 6) wrap.classList.add("compact-many");
-    else if (enabledCount === 5) wrap.classList.add("compact-3");
-    else if (enabledCount === 4) wrap.classList.add("compact-3");
-    else if (enabledCount === 3) wrap.classList.add("compact-3");
-    else if (enabledCount === 2) wrap.classList.add("compact-2");
-  }
-
-  let [h, m] = startTime.split(":").map(Number);
-  let current = new Date();
-  current.setHours(h, m, 0, 0);
-  periodTimings = [];
-  for (let i = 0; i < slots; i++) {
-    const start = new Date(current.getTime());
-    const end = new Date(current.getTime() + defaultDuration * 60000);
-    periodTimings.push({
-      type: "class",
-      start: formatTime(start),
-      end: formatTime(end),
-    });
-    current = end;
-    if (i + 1 === lunchPeriod) {
-      const lstart = new Date(current.getTime());
-      const lend = new Date(current.getTime() + lunchDuration * 60000);
-      periodTimings.push({
-        type: "lunch",
-        start: formatTime(lstart),
-        end: formatTime(lend),
-      });
-      current = lend;
-    }
-  }
-
-  let tableHTML =
-    "<table style='animation:fadeSlideIn 0.6s ease-out'><thead><tr><th>Day / Period</th>";
-  let thCount = 1;
-  periodTimings.forEach((p) => {
-    if (p.type === "class")
-      tableHTML += `<th>P${thCount++}<br><small>${p.start}-${
-        p.end
-      }</small></th>`;
-    else
-      tableHTML += `<th>Lunch<br><small>${p.start}-${p.end}</small></th>`;
+  syncGenerationShellState({
+    classCount,
+    classLabels: gClassLabels,
+    enabledKeys: gEnabledKeys,
   });
-  tableHTML += "</tr></thead><tbody>";
-  for (let d = 0; d < days; d++) {
-    tableHTML += `<tr><td>${daysOfWeek[d]}</td>`;
-    periodTimings.forEach((p) => {
-      tableHTML +=
-        p.type === "lunch" ?
-        `<td class='break'>Lunch</td>` :
-        `<td contenteditable='true'></td>`;
-    });
-    tableHTML += "</tr>";
-  }
-  tableHTML += "</tbody></table>";
-  gEnabledKeys.forEach((k) => {
-    const tDiv = document.getElementById(`timetable${k}`);
-    if (tDiv) tDiv.innerHTML = tableHTML;
+  applyGenerationCompactLayout({
+    wrap,
+    enabledCount: gEnabledKeys.length,
+  });
+
+  periodTimings = buildGenerationPeriodTimings({
+    slots,
+    startTime,
+    defaultDuration,
+    lunchPeriod,
+    lunchDuration,
+    formatter: formatTime,
+  });
+  const tableHTML = buildGenerationTableShellHtml({
+    days,
+    periodTimings,
+  });
+  applyGenerationTableShell({
+    enabledKeys: gEnabledKeys,
+    tableHTML,
   });
 
   aggregateStats = {};
   const strictMode = options.strictMode !== false;
+  const defaultStrictAttempts = classCount >= 12 ? 16 : 10;
   const maxAttempts = strictMode ?
-    Math.max(1, Math.min(10, parseInt(String(options.maxAttempts), 10) || 10)) :
+    Math.max(
+      1,
+      Math.min(24, parseInt(String(options.maxAttempts), 10) || defaultStrictAttempts)
+    ) :
     1;
   const autoSeed = ( // fallback seed derived from current time and grid dimensions
     Date.now() ^
@@ -449,12 +595,59 @@ function generateTimetable(options = {}) {
   ) >>> 0;
   const baseSeed = Number.isFinite(options.seed) ? (options.seed >>> 0) : autoSeed;
   let scheduleRenderOk = false;
+  /** @type {GenerationValidationResult} */
   let strictValidation = {
     valid: true,
     violations: [],
   };
   let attemptsUsed = 0;
   let forced = false;
+  /** @type {GenerationAttemptSnapshot|null} */
+  let bestAttempt = null;
+  const previousAcceptedState = captureAcceptedPublishedState();
+  let restoredPreviousAccepted = false;
+
+  /**
+   * Captures the currently published attempt diagnostics so retries can compare them.
+   * @param {number} attemptSeed - Seed used by the just-completed attempt.
+   * @returns {GenerationAttemptSnapshot}
+   */
+  const buildAttemptSnapshot = (attemptSeed) => {
+    /** @type {GenerationValidationResult} */
+    const publishedValidation =
+      typeof window !== "undefined" &&
+      window.__ttLastValidation &&
+      typeof window.__ttLastValidation === "object" ?
+      /** @type {GenerationValidationResult} */ (window.__ttLastValidation) :
+      {
+        valid: false,
+        violations: ["Missing schedule validation result"],
+      };
+    const scheduleState =
+      (typeof window !== "undefined" && window.__ttLastScheduleState) || null;
+    const unresolvedClashes =
+      typeof window !== "undefined" && Array.isArray(window.__ttUnresolvedClashes) ?
+      window.__ttUnresolvedClashes.slice() :
+      [];
+    const compactionReport =
+      typeof window !== "undefined" &&
+      window.__ttPostLunchCompactReport &&
+      typeof window.__ttPostLunchCompactReport === "object" ?
+      {
+        ...window.__ttPostLunchCompactReport,
+      } :
+      null;
+    return {
+      seed: attemptSeed,
+      validation: publishedValidation,
+      metrics: buildGenerationAttemptMetrics({
+        validation: publishedValidation,
+        unresolvedClashes,
+        compactionReport,
+        scheduleState,
+      }),
+    };
+  };
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     attemptsUsed = attempt + 1;
@@ -468,6 +661,7 @@ function generateTimetable(options = {}) {
         fixedSlotsByClass,
         days,
         defaultDuration,
+        labCapacity,
         enabledKeys: gEnabledKeys.slice(),
         seed: attemptSeed,
       });
@@ -483,19 +677,83 @@ function generateTimetable(options = {}) {
         valid: true,
         violations: [],
       };
+      bestAttempt = {
+        seed: attemptSeed,
+        validation: strictValidation,
+        metrics: buildGenerationAttemptMetrics({
+          validation: strictValidation,
+          scheduleState:
+            (typeof window !== "undefined" && window.__ttLastScheduleState) || null,
+        }),
+      };
       forced = false;
       break;
     }
 
-    strictValidation = schedulerIsFullyValid(
-      (typeof window !== "undefined" && window.__ttLastScheduleState) ||
-      null
-    );
-    if (strictValidation.valid) {
+    const attemptSnapshot = buildAttemptSnapshot(attemptSeed);
+    strictValidation = attemptSnapshot.validation;
+    if (isGenerationCandidateBetter(attemptSnapshot.metrics, bestAttempt?.metrics)) {
+      bestAttempt = attemptSnapshot;
+    }
+    if (attemptSnapshot.metrics.healthy) {
       forced = false;
       break;
     }
     forced = attemptsUsed >= maxAttempts;
+  }
+
+  const publishedSeed =
+    typeof window !== "undefined" && Number.isFinite(window.__ttLastSeed) ?
+    (window.__ttLastSeed >>> 0) :
+    null;
+  if (
+    scheduleRenderOk &&
+    strictMode &&
+    bestAttempt &&
+    Number.isFinite(bestAttempt.seed) &&
+    publishedSeed !== (bestAttempt.seed >>> 0)
+  ) {
+    try {
+      renderMultiClasses({
+        pairsByClass: subjectTeacherPairsByClass,
+        fillerShortsByClass,
+        fillerCreditsByClass,
+        mainShortsByClass,
+        fixedSlotsByClass,
+        days,
+        defaultDuration,
+        labCapacity,
+        enabledKeys: gEnabledKeys.slice(),
+        seed: bestAttempt.seed,
+      });
+      strictValidation =
+        typeof window !== "undefined" &&
+        window.__ttLastValidation &&
+        typeof window.__ttLastValidation === "object" ?
+        /** @type {GenerationValidationResult} */ (window.__ttLastValidation) :
+        bestAttempt.validation;
+    } catch (e) {
+      console.error("best-attempt replay failed:", e);
+      strictValidation = bestAttempt.validation;
+    }
+  } else if (bestAttempt) {
+    strictValidation = bestAttempt.validation;
+  }
+
+  const scheduleAccepted =
+    !strictMode || !!(strictValidation?.healthy ?? strictValidation?.valid);
+  const strictFailureNotice =
+    strictMode && !scheduleAccepted ?
+    buildStrictGenerationFailureNotice(strictValidation, labCapacity) :
+    null;
+  if (scheduleRenderOk && !scheduleAccepted) {
+    restoredPreviousAccepted = restoreAcceptedPublishedState({
+      acceptedState: previousAcceptedState,
+      periodTimings,
+    });
+    if (!restoredPreviousAccepted) {
+      clearPublishedPanels();
+    }
   }
 
   try {
@@ -505,8 +763,16 @@ function generateTimetable(options = {}) {
       attemptsUsed,
       baseSeed,
       lastSeed: window.__ttLastSeed,
+      selectedSeed: bestAttempt ? bestAttempt.seed : window.__ttLastSeed,
       valid: !!strictValidation.valid,
       forced: !!forced,
+      accepted: !!scheduleAccepted,
+      restoredPreviousAccepted: !!restoredPreviousAccepted,
+      displayingAcceptedSchedule: !!(scheduleAccepted || restoredPreviousAccepted),
+      savedToVersions: !!(scheduleRenderOk && scheduleAccepted),
+      bestMetrics: bestAttempt ? {
+        ...bestAttempt.metrics,
+      } : null,
       violations: Array.isArray(strictValidation.violations) ?
         strictValidation.violations.slice() :
         [],
@@ -515,27 +781,15 @@ function generateTimetable(options = {}) {
     // Strict-generation metadata is optional debug state.
   }
 
-  if (scheduleRenderOk) {
-    try {
-      buildAndRenderReport();
-    } catch (e) {
-      console.error("buildAndRenderReport error:", e);
-    }
-    try {
-      buildFacultyPanel();
-    } catch (e) {
-      console.error("buildFacultyPanel error:", e);
-    }
-    try {
-      renderLabTimetables();
-    } catch (e) {
-      console.error("renderLabTimetables error:", e);
-    }
+  if (scheduleRenderOk && scheduleAccepted) {
+    rebuildPublishedPanels();
     // Auto-save schedule version
-    try {
-      if (typeof onVersionAutoSave === "function") onVersionAutoSave();
-    } catch (e) {
-      console.error("Version auto-save error:", e);
+    if (scheduleAccepted) {
+      try {
+        if (typeof onVersionAutoSave === "function") onVersionAutoSave();
+      } catch (e) {
+        console.error("Version auto-save error:", e);
+      }
     }
   }
   try {
@@ -554,7 +808,7 @@ function generateTimetable(options = {}) {
   }
   buildToolbar();
   enableDragAndDrop();
-  generated = true;
+  generated = !!(scheduleAccepted || restoredPreviousAccepted);
 
   if (!scheduleRenderOk) {
     showToast(
@@ -564,9 +818,16 @@ function generateTimetable(options = {}) {
         duration: 4200
       }
     );
+  } else if (strictFailureNotice) {
+    const failureMessage = restoredPreviousAccepted ?
+      `${strictFailureNotice.message} Previous valid timetable was kept on screen.` :
+      strictFailureNotice.message;
+    showToast(failureMessage, {
+      type: strictFailureNotice.type === "lab-capacity" ? "warn" : "error",
+      duration: 6200,
+    });
   }
   } finally {
     window.__ttGenerationRunning = false;
   }
 }
-

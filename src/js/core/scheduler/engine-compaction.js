@@ -121,7 +121,7 @@ function schedulerRebuildTracking({ ctx }) {
           existingTeacherRaw === undefined ? null : existingTeacherRaw;
         // step: resolve teacher — validate against allowed list or fall back
         let teacher = existingTeacher;
-        if (isFillerCell && existingTeacher === "") {
+        if (existingTeacher === "") {
           teacher = "";
         } else if (!isTeacherAllowedForShort(k, short, teacher)) {
           teacher = fallbackTeacherForShort(k, short);

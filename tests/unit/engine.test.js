@@ -95,6 +95,42 @@ describe("schedulerRenderMultiClassesEngine", () => {
     expect(toastCalls.some((m) => /no class/i.test(m))).toBe(true);
   });
 
+  test("passes explicit labCapacity to the lab-capacity reader", () => {
+    setupPeriodTimings(4, 2);
+    const originalReadLabCapacity = global.schedulerReadLabCapacityFromDom;
+    const calls = [];
+    global.schedulerReadLabCapacityFromDom = (params = {}) => {
+      calls.push(params);
+      return originalReadLabCapacity(params);
+    };
+
+    try {
+      schedulerRenderMultiClassesEngine({
+        pairsByClass: {
+          A: [
+            { short: "MATH", subject: "Math", teacher: "T1", credits: 2 },
+          ],
+        },
+        days: 3,
+        defaultDuration: 50,
+        enabledKeys: ["A"],
+        fillerShortsByClass: { A: new Set(["PT"]) },
+        fillerCreditsByClass: { A: { PT: 1 } },
+        mainShortsByClass: { A: new Set(["MATH"]) },
+        labCapacity: 5,
+        seed: 9,
+      });
+    } finally {
+      global.schedulerReadLabCapacityFromDom = originalReadLabCapacity;
+    }
+
+    expect(calls.length).toBeGreaterThan(0);
+    expect(calls[0]).toMatchObject({
+      defaultCapacity: 3,
+      explicitCapacity: 5,
+    });
+  });
+
   test("generates schedule for a single class with basic subjects", () => {
     setupPeriodTimings(6, 3);
 

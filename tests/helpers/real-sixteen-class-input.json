@@ -1,0 +1,111 @@
+{
+  "settings": {
+    "startTime": "09:05",
+    "slots": "8",
+    "days": "5",
+    "duration": "50",
+    "lunchPeriod": "4",
+    "lunchDuration": "50",
+    "labCount": "5",
+    "classCount": "16"
+  },
+  "classes": {
+    "A": {
+      "label": "MCA II Sem , I Year (AKTU) Section - A",
+      "pairs": "JAVA - Object Oriented Programming with JAVA - Mr. Rajesh Gupta\nOS - Operating System - Ms. Sonali Rohilla\nDAA - Design and Analysis of Algorithms - Prof.(Dr.) Ragini Karwayun\nWT - Web Technology - Ms. Harshita Bhardwaj\nDT - Design & Thinking - Mr. Saurabh Saxena\n\nJAVA LAB - Object Oriented Programming with JAVA Lab - Mr. Rajesh Gupta\nDSA LAB - Data Structure and Analysis of Algorithms Lab - Mr. Yash Varshney\nWT LAB - Web Technology Lab - Ms. Harshita Bhardwaj\nCT LAB - C CODETANTRA LAB - Ms. Sonali Rohilla\n\nAWS - AWS Cloud Practitioner - Mr. Abhishek Srivastav(DS LAB 3 C BLOCK)\nAR - Aptitude & Reasoning II - Not Mentioned",
+      "fillers": "AWS, AR",
+      "mains": "JAVA, OS, DAA, WT, DT"
+    },
+    "B": {
+      "label": "BCA IV Sem , II Year (AKTU) Section - A",
+      "pairs": "JAVA - JAva Programming - Mr. Saurabh Saxena\nDBMS - Database Management System - Mr. Rajesh Gupta\nOS - Operating System - Ms. Jyotsna Tyagi\nTC - Technical COmmmunication - Ms. Harpreet\nITCS - Indian Tradition, Culture And Society - Mr. Sanjeev Varshney\nSY - Sports and Yoga* - Not Mentioned\n\nJAVA LAB - Java Programming Lab - Mr. Saurabh Saxena\nDBMS LAB - DBMS Lab - Mr. Rajesh Gupta\n\nAR - APTITUDE & REASONING - Mr. Abhishek Chouhan\nSS - Soft Skill - Not Mentioned",
+      "fillers": "AR, SS",
+      "mains": "JAVA, DBMS, OS, TC, ITCS, SY"
+    },
+    "C": {
+      "label": "BCA II Sem , I Year (AKTU) Section - A",
+      "pairs": "PP - Python Programming - Ms. Megha Jain\nDM - Discrete Math - Mr. Divyanshu Sharma\nDS - Data Structure using C - Ms. Sonali Rohilla\nDE - Digital Electronics - Mr. Vishal Gupta\nCS - Cyber Security - Mr. Yash Varshney\n\nPP LAB - Python Programming Lab - Ms. Megha Jain, Mr. Hari Singh Rajput\nDS LAB - Data Structure using C Lab - Ms. Sonali Rohilla, Ms. Megha Jain\nDE LAB - Digital Electronics Lab - Mr. Vishal Gupta, Mr. Rahul Rawat\n\nAR - Aptitude & Reasoning II - Not Mentioned\nSS - SoftSkill - Not Mentioned",
+      "fillers": "AR, SS",
+      "mains": "PP, DM, DS, DE, CS"
+    },
+    "D": {
+      "label": "MCA IV Sem , II Year (AKTU) Section - A",
+      "pairs": "DA - DATA ANALYTICS - COMMON LECTURE WITH BTECH IT(room no c 115)\nBL - BLOCK ARCHITECTURE & DESIGN - COMMON LECTURE WITH BTECH IT(room no c 115)\nML - MACHINE LEARNING - Mr. Hari Singh Rajput\nSEA - STARTUP AND ENTERPRENEURIAL ACTIVITY ASSESSMENT - Mr. Shyam Sunder Chawla\nPROJECT - PROJECT - Not Mentioned\nSS - SOFT SKILL - Not Mentioned\nAR - APTITUDE & REASONING - Not Mentioned",
+      "fillers": "",
+      "mains": "DA, BL, ML, SEA, PROJECT, SS, AR"
+    },
+    "E": {
+      "label": "BCA II Sem , I Year (AKTU) Section - B",
+      "pairs": "PP - Python Programming - Mr. Hari Singh Rajput\nDM - Discrete Math - Mr. Divyanshu Sharma\nDS - Data Structure using C - Ms. Megha Jain\nDE - Digital Electronics - Mr. Vishal Gupta\nCS - Cyber Security - Mr. Munna Kr. Jha\nSS - Softskill - Not Mentioned\n\nPPLAB - Python Programming Lab - Mr. Hari Singh Rajput, Ms. Megha Jain\nDSLAB - Data Structure using C Lab - Ms. Megha Jain, Ms. Sonali Rohilla\nDELAB - Digital Electronics Lab - Mr. Vishal Gupta, Mr. Rahul Rawat\n\nAR - Aptitude & Reasoning II - Not Mentioned",
+      "fillers": "AR",
+      "mains": "PP, DM, DS, DE, CS, SS"
+    },
+    "F": {
+      "label": "BCA II Sem , I Year Section - A",
+      "pairs": "MFCS - Mathematical Foundation for Computer Science II - Ms. Anshu - 3\nDS - Data Structures - Mr. Deepesh Sahu - 3\nOS - Operating System - Mr. Rahul Rawat - 3 \nOOPS - OOPs using JAVA - Mr. Irshaad Malik - 3\nWT - Web Technologies - Mr. Abhishek Tiwari - 3\nIC - Indian Constitution - Dr. Jyoti Nagar - 3\n\nDS LAB - Data Structures Lab - Mr. Deepesh Sahu, Ms. Savita Goswami\nOS LAB - Operating System Lab - Mr. Rahul Rawat, Ms. Saloni Singh\nOOPS LAB - OOPs using JAVA Lab - Mr. Irshaad Malik, Ms. Harshita Bhardwaj\nWT LAB - Web Technologies Lab - Mr. Abhishek Tiwari, Ms. Jaishree\nCCL LAB - Codetantra C Lab - Mr. Shyam Sunder Chawla",
+      "fillers": "",
+      "mains": "MFCS, DS, OS, OOPS, WT, IC"
+    },
+    "G": {
+      "label": "BCA II Sem , I Year Section - B",
+      "pairs": "MFCS - Mathematical Foundation for Computer Science II - Ms. Anshu - 3\nDS - Data Structures - Mr. Deepesh Sahu - 3\nOS - Operating System - Ms. Jyotsna Tyagi - 3\nOOPS - OOPs using JAVA - Mr. Irshaad Malik - 3\nWT - Web Technologies - Mr. Abhishek Tiwari - 3\nIC - Indian Constitution - Dr. Jyoti Nagar - 3\n\nDS LAB - Data Structures Lab - Mr. Deepesh Sahu, Ms. Savita Goswami\nOS LAB - Operating System Lab - Ms. Jyotsna Tyagi, Ms. Saloni Singh\nOOPS LAB - OOPs using JAVA Lab - Mr. Irshaad Malik, Ms. Harshita Bhardwaj\nWT LAB - Web Technologies Lab - Mr. Abhishek Tiwari, Ms. Jaishree\nCCL LAB - Codetantra C Lab - Mr. Shyam Sunder Chawla",
+      "fillers": "",
+      "mains": "MFCS, DS, OS, OOPS, WT, IC"
+    },
+    "H": {
+      "label": "BCA II Sem , I Year Section - C",
+      "pairs": "MFCS - Mathematical Foundation for Computer Science II - Ms. Anshu - 3\nDS - Data Structures - Ms. Savita Goswami - 3\nOS - Operating System - Ms. Saloni Singh - 3\nOOPS - OOPs using JAVA - Ms. Harshita Bhardwaj - 3\nWT - Web Technologies - Ms. Jaishree - 3\nIC - Indian Constitution - Dr. Jyoti Nagar - 3\n\nDS LAB - Data Structures Lab - Mr. Deepesh Sahu, Ms. Savita Goswami\nOS LAB - Operating System Lab - Mr. Rahul Rawat, Ms. Saloni Singh\nOOPS LAB - OOPs using JAVA Lab - Mr. Irshaad Malik, Ms. Harshita Bhardwaj\nWT LAB - Web Technologies Lab - Mr. Abhishek Tiwari, Ms. Jaishree\nCCL LAB - Codetantra C Lab - Mr. Shyam Sunder Chawla",
+      "fillers": "",
+      "mains": "MFCS, DS, OS, OOPS, WT, IC"
+    },
+    "I": {
+      "label": "BCA II Sem , I Year Section - D",
+      "pairs": "MFCS - Mathematical Foundation for Computer Science II - Mr. Alok Srivastava - 3\nDS - Data Structures - Ms. Savita Goswami - 3\nOS - Operating System - Ms. Renu Kala - 3\nOOPS - OOPs using JAVA - Mr. Yash Varshney - 3\nWT - Web Technologies - Ms. Jaishree - 3\nIC - Indian Constitution - Dr. Jyoti Nagar - 3\n\nDS LAB - Data Structures Lab - Mr. Deepesh Sahu, Ms. Savita Goswami\nOS LAB - Operating System Lab - Ms. Renu Kala, Ms. Saloni Singh\nOOPS LAB - OOPs using JAVA Lab - Mr. Irshaad Malik, Mr. Yash Varshney\nWT LAB - Web Technologies Lab - Mr. Abhishek Tiwari, Ms. Jaishree\nCCL LAB - Codetantra C Lab - Mr. Shyam Sunder Chawla",
+      "fillers": "",
+      "mains": "MFCS, DS, OS, OOPS, WT, IC"
+    },
+    "J": {
+      "label": "BCA IV Sem , II Year Section - A",
+      "pairs": "CGMA - Computer Graphics & Multimedia - Mr. Rehan Ahmad - 3\nOS - Operating System - Ms. Saloni Singh - 3\nSE - Software Engineering - Ms. Shiva Triptahi - 3\nOT - Optimization Techniques - Mr. Abhishek Chouhan - 3\nMATHS - Mathematics - Ms. Priyanka Rai - 3\n\nCGMA LAB - Practical Based on CGMA - Mr. Rajesh Gupta, Ms. Vaishali\nAWS LAB - AWS - Ms. Amandeep Kaur\nCT DSA LAB - Data Structure (Code Tantra Lab) - Ms. Shiva Triptahi, Mr. Shyam Sunder Chawla\n\nSS - Soft Skill - Dr. Pragya\nAR - Aptitude & Reasoning - Mr. Abhishek Chouhan",
+      "fillers": "SS, AR",
+      "mains": "CGMA, OS, SE, OT, MATHS"
+    },
+    "K": {
+      "label": "BCA IV Sem , II Year Section - B",
+      "pairs": "CGMA - Computer Graphics & Multimedia - Mr. Rehan Ahmad - 3\nOS - Operating System - Ms. Renu Kala - 3\nSE - Software Engineering - Ms. Shiva Triptahi - 3\nOT - Optimization Techniques - Mr. Lawakush Mishra - 3\nMATHS - Mathematics - Ms. Priyanka Rai - 3\n\nCGMA LAB - Practical Based on CGMA - Mr. Rajesh Gupta, Ms. Vaishali\nAWS LAB - AWS - Ms. Amandeep Kaur\nCT DSA LAB - Data Structure (Code Tantra Lab) - Ms. Shiva Triptahi, Mr. Shyam Sunder Chawla\n\nSS - Soft Skill - Dr. Pragya\nAR - Aptitude & Reasoning - Mr. Abhishek Chouhan",
+      "fillers": "SS, AR",
+      "mains": "CGMA, OS, SE, OT, MATHS"
+    },
+    "L": {
+      "label": "BCA IV Sem , II Year Section - C",
+      "pairs": "CGMA - Computer Graphics & Multimedia - Mr. Rehan Ahmad - 3\nOS - Operating System - Mr. Rahul Rawat - 3\nSE - Software Engineering - Mr. Munna Kr. Jha - 3\nOT - Optimization Techniques - Mr. Lawakush Mishra - 3\nMATHS - Mathematics - Ms. Priyanka Rai - 3\n\nCGMA LAB - Practical Based on CGMA - Mr. Rajesh Gupta, Ms. Harshita\nAWS LAB - AWS - Ms. Amandeep Kaur\nCT DSA LAB - Data Structure (Code Tantra Lab) - Ms. Shiva Triptahi, Mr. Shyam Sunder Chawla\n\nSS - Soft Skill - Dr. Pragya\nAR - Aptitude & Reasoning - Mr. Abhishek Chouhan",
+      "fillers": "SS, AR",
+      "mains": "CGMA, OS, SE, OT, MATHS"
+    },
+    "M": {
+      "label": "BCA IV Sem , II Year Section - D",
+      "pairs": "CGMA - Computer Graphics & Multimedia - Mr. Rehan Ahmad - 3\nOS - Operating System - Ms. Renu Kala - 3\nSE - Software Engineering - Mr. Munna Kr. Jha - 3\nOT - Optimization Techniques - Mr. Abhishek Chouhan - 3\nMATHS - Mathematics - Mr. Divyanshu Sharma - 3\n\nCGMA LAB - Practical Based on CGMA - Mr. Rajesh Gupta, Ms. Harshita\nAWS LAB - AWS - Ms. Amandeep Kaur\nCT DSA LAB - Data Structure (Code Tantra Lab) - Ms. Jyotsna Tyagi, Mr. Shyam Sunder Chawla\n\nSS - Soft Skill - Dr. Pragya\nAR - Aptitude & Reasoning - Mr. Abhishek Chouhan",
+      "fillers": "SS, AR",
+      "mains": "CGMA, OS, SE, OT, MATHS"
+    },
+    "N": {
+      "label": "BCA VI Sem , III Year Section - A",
+      "pairs": "CNS - Computer Network Security - Ms. Vaishali - 3\nISAD - Information System: Analysis Design & Implementation - Mr. Alok Bansal - 3\nECOM - E Commerce - Ms. Harshita - 3\nKM - Knowledge Management - Ms. Amandeep Kaur - 3\n\nPROJECT - Major Project - Not Mentioned\nPROJECT - Presentation/Seminar based on Major Project - Not Mentioned",
+      "fillers": "PROJECT",
+      "mains": "CNS, ISAD, ECOM, KM"
+    },
+    "O": {
+      "label": "BCA VI Sem , III Year Section - B",
+      "pairs": "CNS - Computer Network Security - Ms. Vaishali - 3\nISAD - Information System: Analysis Design & Implementation - Mr. Alok Bansal - 3\nECOM - E Commerce - Ms. Harshita - 3\nKM - Knowledge Management - Ms. Amandeep Kaur - 3\n\nPROJECT - Major Project - Not Mentioned\nPROJECT - Presentation/Seminar based on Major Project - Not Mentioned",
+      "fillers": "PROJECT",
+      "mains": "CNS, ISAD, ECOM, KM"
+    },
+    "P": {
+      "label": "BCA VI Sem , III Year Section - C",
+      "pairs": "CNS - Computer Network Security - Ms. Vaishali - 3\nISAD - Information System: Analysis Design & Implementation - Mr. Alok Bansal - 3\nECOM - E Commerce - Ms. Harshita - 3\nKM - Knowledge Management - Ms. Amandeep Kaur - 3\n\nPROJECT - Major Project - Not Mentioned\nPROJECT - Presentation/Seminar based on Major Project - Not Mentioned",
+      "fillers": "PROJECT",
+      "mains": "CNS, ISAD, ECOM, KM"
+    }
+  },
+  "view": "timetable"
+}

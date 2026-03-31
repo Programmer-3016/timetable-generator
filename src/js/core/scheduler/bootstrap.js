@@ -66,12 +66,35 @@ function schedulerBuildGlobalTeacherForShort({ data }) {
  * @description Reads lab capacity from the DOM; falls back to a default if unavailable.
  * @param {Object} [params]
  * @param {number} [params.defaultCapacity=3] - Default capacity when DOM value is missing.
+ * @param {number|string} [params.explicitCapacity] - Explicit caller-provided capacity override.
  * @returns {number} Lab capacity value.
  */
-function schedulerReadLabCapacityFromDom({ defaultCapacity = 3 } = {}) {
+function schedulerReadLabCapacityFromDom({
+  defaultCapacity = 3,
+  explicitCapacity = undefined,
+} = {}) {
+  /**
+   * Normalizes a capacity-like value to a positive integer.
+   * @param {*} value - Candidate capacity value.
+   * @returns {?number} Positive integer capacity, or null when invalid.
+   */
+  function normalizeCapacity(value) {
+    const parsed =
+      typeof value === "number" ? value : parseInt(String(value), 10);
+    if (!Number.isFinite(parsed) || parsed <= 0) return null;
+    return Math.round(parsed);
+  }
+
+  const explicit = normalizeCapacity(explicitCapacity);
+  if (explicit !== null) return explicit;
+
   try {
-    const v = parseInt(/** @type {HTMLInputElement | null} */ (document.getElementById("labCount"))?.value, 10);
-    return Number.isFinite(v) && v > 0 ? v : defaultCapacity;
+    const domValue = normalizeCapacity(
+      /** @type {HTMLInputElement | null} */ (
+        document.getElementById("labCount")
+      )?.value
+    );
+    return domValue !== null ? domValue : defaultCapacity;
   } catch (_e) {
     return defaultCapacity;
   }

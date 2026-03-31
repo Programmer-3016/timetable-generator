@@ -136,6 +136,52 @@ describe("buildFacultyPanel", () => {
     expect(optionValues).toContain("Dr. Brown");
     expect(optionValues.length).toBe(2);
   });
+
+  test("re-renders the previously selected teacher after rebuilding", () => {
+    buildFacultyPanel();
+    const sel = /** @type {HTMLSelectElement} */ (document.getElementById("facultySelect"));
+    sel.value = "Dr. Smith";
+    renderFacultyTimetable("Dr. Smith");
+    expect(document.getElementById("facultyTT").textContent).toContain("PHY");
+
+    global.gSchedules = {
+      A: [
+        ["CHE", "CHE", "CHE"],
+        ["CHE", "CHE", "CHE"],
+        ["CHE", "CHE", "CHE"],
+        ["CHE", "CHE", "CHE"],
+        ["CHE", "CHE", "CHE"],
+      ],
+    };
+    global.gTeacherForShort = {
+      A: { CHE: "Dr. Smith" },
+    };
+    global.gSubjectByShort = {
+      A: {
+        CHE: { subject: "Chemistry", teachers: ["Dr. Smith"] },
+      },
+    };
+
+    buildFacultyPanel();
+    expect(sel.value).toBe("Dr. Smith");
+    expect(document.getElementById("facultyTT").textContent).toContain("CHE");
+    expect(document.getElementById("facultyTT").textContent).not.toContain("PHY");
+  });
+
+  test("clears stale faculty timetable when previous selection is no longer available", () => {
+    buildFacultyPanel();
+    const sel = /** @type {HTMLSelectElement} */ (document.getElementById("facultySelect"));
+    sel.value = "Dr. Smith";
+    renderFacultyTimetable("Dr. Smith");
+    expect(document.getElementById("facultyTT").textContent).toContain("PHY");
+
+    global.reportData = [{ teacher: "Prof. Jones" }];
+    buildFacultyPanel();
+
+    expect(sel.value).toBe("");
+    expect(document.getElementById("facultyTT").textContent).toContain("Faculty view");
+    expect(document.getElementById("facultyTT").textContent).not.toContain("PHY");
+  });
 });
 
 /* ═══════════════════════════════════════════════════════
@@ -181,6 +227,26 @@ describe("renderFacultyTimetable", () => {
     renderFacultyTimetable("Dr. Smith");
     const caption = document.getElementById("facultyTT").querySelector("caption");
     expect(caption.textContent).toContain("Dr. Smith");
+  });
+
+  test("does not fall back to configured teacher when assignedTeacher is explicitly blank", () => {
+    global.gSchedules = {
+      A: [["PHY"], [], [], [], []],
+    };
+    global.periodTimings = [
+      { type: "class", start: "9:00", end: "9:45" },
+    ];
+    global.window.gAssignedTeacher = {
+      A: [[""]],
+    };
+
+    renderFacultyTimetable("Dr. Smith");
+    const target = document.getElementById("facultyTT");
+    const freeCells = target.querySelectorAll(".fac-free");
+    const assignCells = target.querySelectorAll(".fac-assign");
+
+    expect(freeCells.length).toBe(5);
+    expect(assignCells.length).toBe(0);
   });
 
   /* ─────────────────────────────────────────────────────

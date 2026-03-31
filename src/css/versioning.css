@@ -432,8 +432,7 @@
   min-height: 0;
 }
 
-#versionDetailsView,
-#versionCompareView {
+#versionDetailsView {
   max-width: 960px;
 }
 
@@ -754,108 +753,6 @@
 }
 
 /* ═══════════════════════════════════════════════════════
-   Section: COMPARE VIEW
-═══════════════════════════════════════════════════════ */
-
-/* ───────────────────────────────────────────────────
-   Subsection: COMPARE VIEW
-─────────────────────────────────────────────────── */
-#versionCompareView {
-  margin-top: 28px;
-}
-
-.vc-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.vc-title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.vc-close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  line-height: 1;
-  color: #64748b;
-  cursor: pointer;
-}
-
-.vc-summary {
-  font-size: 14px;
-  color: #64748b;
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
-}
-
-.vc-badge {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 999px;
-  margin-left: 3px;
-}
-
-.vc-badge--valid { background: #dcfce7; color: #15803d; }
-.vc-badge--invalid { background: #fee2e2; color: #b91c1c; }
-
-.vc-class-block {
-  margin-bottom: 16px;
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 10px;
-}
-
-.vc-class-title {
-  margin: 0 0 8px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.vc-side-by-side {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.vc-table-wrap { overflow-x: auto; }
-
-.vc-table-label {
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 4px;
-  text-align: center;
-}
-
-.vc-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-}
-
-.vc-table td {
-  border: 1px solid #e2e8f0;
-  text-align: center;
-  padding: 4px 6px;
-  white-space: nowrap;
-}
-
-.vc-cell--changed {
-  background: #fef9c3 !important;
-  font-weight: 600;
-}
-
-/* ═══════════════════════════════════════════════════════
    Section: RESPONSIVE BREAKPOINTS
 ═══════════════════════════════════════════════════════ */
 
@@ -899,10 +796,6 @@
   }
 
   .ver-detail-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .vc-side-by-side {
     grid-template-columns: 1fr;
   }
 }

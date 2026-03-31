@@ -1,6 +1,6 @@
 /**
  * @file tests/unit/publish.test.js
- * @description Tests for scheduler/publish.js: aggregate stats and published state.
+ * @description Tests for scheduler/publish.js: aggregate stats, health reports, and published state.
  */
 
 /* ═══════════════════════════════════════════════════════
@@ -132,6 +132,49 @@ describe("schedulerMergeTeacherAggregateStats", () => {
       minutes: 0,
       first: 0,
     });
+  });
+});
+
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerBuildScheduleHealthReport
+═══════════════════════════════════════════════════════ */
+
+describe("schedulerBuildScheduleHealthReport", () => {
+  test("is defined as a function", () => {
+    expect(typeof schedulerBuildScheduleHealthReport).toBe("function");
+  });
+
+  test("keeps a clean strict validation healthy", () => {
+    const result = schedulerBuildScheduleHealthReport({
+      strictValidation: { valid: true, violations: [] },
+      unresolvedClashes: [],
+      compactionReport: { totalIssues: 0 },
+    });
+    expect(result.valid).toBe(true);
+    expect(result.healthy).toBe(true);
+    expect(result.violations).toEqual([]);
+  });
+
+  test("marks result invalid when unresolved clashes remain", () => {
+    const result = schedulerBuildScheduleHealthReport({
+      strictValidation: { valid: true, violations: [] },
+      unresolvedClashes: [{ teacher: "T1" }],
+      compactionReport: { totalIssues: 0 },
+    });
+    expect(result.valid).toBe(false);
+    expect(result.unresolvedClashCount).toBe(1);
+    expect(result.violations.some((line) => /unresolved teacher clashes/i.test(line))).toBe(true);
+  });
+
+  test("marks result invalid when compaction issues remain", () => {
+    const result = schedulerBuildScheduleHealthReport({
+      strictValidation: { valid: true, violations: [] },
+      unresolvedClashes: [],
+      compactionReport: { totalIssues: 3 },
+    });
+    expect(result.valid).toBe(false);
+    expect(result.compactionIssueCount).toBe(3);
+    expect(result.violations.some((line) => /compaction issues/i.test(line))).toBe(true);
   });
 });
 

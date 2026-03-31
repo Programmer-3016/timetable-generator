@@ -60,6 +60,16 @@ function mockSnapshot(seed) {
     assignedTeacher: {},
     labNumberAssigned: {},
     teacherForShortByClass: {},
+    subjectByShortByClass: {
+      A: {
+        MATH: { subject: "Mathematics" },
+        PHY: { subject: "Physics" },
+      },
+      B: {
+        ENG: { subject: "English" },
+        CS: { subject: "Computer Science" },
+      },
+    },
     weeklyQuotaByClass: {},
   };
 }
@@ -282,6 +292,7 @@ describe("version-store.js", () => {
       expect(ok).toBe(true);
       expect(gSchedules).toEqual(snap.schedulesByClass);
       expect(gEnabledKeys).toEqual(["A", "B"]);
+      expect(gSubjectByShort).toEqual(snap.subjectByShortByClass);
     });
 
     test("returns false for non-existent ID", () => {

@@ -77,6 +77,8 @@ if (typeof generateClassKeys === "function") {
 // Load parser, input validator, and scheduler modules
 loadScript("src/js/core/parser.js");
 loadScript("src/js/core/input-validator.js");
+loadScript("src/js/core/generation-layout.js");
+loadScript("src/js/core/runtime-state.js");
 loadScript("src/js/core/scheduler/teacher-helpers.js");
 loadScript("src/js/core/scheduler/counts.js");
 loadScript("src/js/core/scheduler/caps.js");
@@ -126,7 +128,7 @@ safeLoadScript("src/js/ui/sidebar-toolbar.js");
 safeLoadScript("src/js/ui/keyboard-shortcuts.js");
 safeLoadScript("src/js/ui/skeleton.js");
 safeLoadScript("src/js/ui/dragdrop.js");
+safeLoadScript("src/js/ui/teacher-cell-utils.js");
 safeLoadScript("src/js/ui/faculty-panel.js");
 safeLoadScript("src/js/versioning/version-store.js");
-safeLoadScript("src/js/versioning/version-compare.js");
 safeLoadScript("src/js/versioning/version-ui.js");

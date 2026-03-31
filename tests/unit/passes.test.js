@@ -1,8 +1,6 @@
 /**
  * @file tests/unit/passes.test.js
- * @description Tests for schedulerPlaceLabBlock, schedulerPlaceInitialLabsAcrossClasses,
- *   schedulerClampMainsToTarget, and schedulerResolveFinalTeacherClashes
- *   from core/scheduler/passes.js.
+ * @description Tests for scheduler pass-layer helpers from core/scheduler/passes.js.
  */
 
 /* ═══════════════════════════════════════════════════════
@@ -612,8 +610,12 @@ describe("schedulerResolveFinalTeacherClashes", () => {
     expect(assignedTeacher.B[0][0]).toBe("Dr. Alt");
   });
 
-  test("logs unresolved clash when all strategies fail", () => {
+  test("falls back to a teacherless theory cell when all real-teacher strategies fail", () => {
     const unresolved = [];
+    const assignedTeacher = {
+      A: [["Dr. Shared"]],
+      B: [["Dr. Shared"]],
+    };
     schedulerResolveFinalTeacherClashes({
       days: 1,
       classesPerDay: 1,
@@ -625,10 +627,7 @@ describe("schedulerResolveFinalTeacherClashes", () => {
       getTeachersForCell: () => ["Dr. Shared"],
       teacherClashKey: (t) => (t || "").toLowerCase(),
       pickTeacherForSlot: () => null,
-      assignedTeacher: {
-        A: [["Dr. Shared"]],
-        B: [["Dr. Shared"]],
-      },
+      assignedTeacher,
       lectureList: { A: [], B: [] },
       getTargetForShort: () => 5,
       countOccurrences: () => 1,
@@ -639,8 +638,8 @@ describe("schedulerResolveFinalTeacherClashes", () => {
       isLabShort: {},
       unresolvedClashes: unresolved,
     });
-    expect(unresolved.length).toBeGreaterThanOrEqual(1);
-    expect(unresolved[0]).toHaveProperty("reason");
+    expect(assignedTeacher.B[0][0]).toBe("");
+    expect(unresolved.length).toBe(0);
   });
 
   test("does not replace lab cells with other subjects", () => {
@@ -674,5 +673,71 @@ describe("schedulerResolveFinalTeacherClashes", () => {
     });
     // Lab cell should still be intact
     expect(schedules.A[0][0]).toBe("CSLAB");
+  });
+});
+
+/* ═══════════════════════════════════════════════════════
+   Section: schedulerRepairLabRoomConflicts
+═══════════════════════════════════════════════════════ */
+
+describe("schedulerRepairLabRoomConflicts", () => {
+  test("is defined as a function", () => {
+    expect(typeof schedulerRepairLabRoomConflicts).toBe("function");
+  });
+
+  test("reassigns a conflicting lab block to another free room", () => {
+    const schedules = {
+      E: [[null, null, "DSA LAB", "DSA LAB"]],
+      F: [[null, null, "JAVA LAB", "JAVA LAB"]],
+    };
+    const labNumberAssigned = {
+      E: [[null, null, 1, 1]],
+      F: [[null, null, 1, 1]],
+    };
+
+    const changed = schedulerRepairLabRoomConflicts({
+      days: 1,
+      classesPerDay: 4,
+      keys: ["E", "F"],
+      schedules,
+      isLabShort: {
+        E: { "DSA LAB": true },
+        F: { "JAVA LAB": true },
+      },
+      labNumberAssigned,
+      LAB_CAPACITY: 3,
+    });
+
+    expect(changed).toBe(true);
+    expect(labNumberAssigned.F[0][2]).toBe(2);
+    expect(labNumberAssigned.F[0][3]).toBe(2);
+  });
+
+  test("returns false when no alternate lab room exists", () => {
+    const schedules = {
+      E: [[null, "DSA LAB", "DSA LAB"]],
+      F: [[null, "JAVA LAB", "JAVA LAB"]],
+    };
+    const labNumberAssigned = {
+      E: [[null, 1, 1]],
+      F: [[null, 1, 1]],
+    };
+
+    const changed = schedulerRepairLabRoomConflicts({
+      days: 1,
+      classesPerDay: 3,
+      keys: ["E", "F"],
+      schedules,
+      isLabShort: {
+        E: { "DSA LAB": true },
+        F: { "JAVA LAB": true },
+      },
+      labNumberAssigned,
+      LAB_CAPACITY: 1,
+    });
+
+    expect(changed).toBe(false);
+    expect(labNumberAssigned.F[0][1]).toBe(1);
+    expect(labNumberAssigned.F[0][2]).toBe(1);
   });
 });

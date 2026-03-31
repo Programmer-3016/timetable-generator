@@ -15,7 +15,6 @@
    loadScheduleVersions,
    saveScheduleVersion,
    deleteScheduleVersion,
-   bulkDeleteVersions,
    renameScheduleVersion,
    updateVersionDescription,
    toggleStarVersion,
@@ -135,6 +134,7 @@ function saveScheduleVersion(snapshot, validation, label) {
       ? validation.violations.length : 0,
     enabledKeys: snapshot.keys ? snapshot.keys.slice() : [],
     classLabels: typeof gClassLabels !== "undefined" ? JSON.parse(JSON.stringify(gClassLabels)) : {},
+    fillerLabelsByClass: typeof gFillerLabelsByClass !== "undefined" ? JSON.parse(JSON.stringify(gFillerLabelsByClass)) : {},
     snapshot: JSON.parse(JSON.stringify(snapshot)),
   };
 
@@ -199,29 +199,6 @@ function updateVersionDescription(id, desc) {
 }
 
 /**
- * Delete multiple versions by IDs.
- * @param {Array<number>} ids
- * @returns {number} count of deleted versions
- */
-function bulkDeleteVersions(ids) {
-  if (!ids || !ids.length) return 0;
-  var versions = loadScheduleVersions();
-  var idSet = {};
-  for (var j = 0; j < ids.length; j++) { idSet[ids[j]] = true; }
-  var remaining = [];
-  var deleted = 0;
-  for (var i = 0; i < versions.length; i++) {
-    if (idSet[versions[i].id]) {
-      deleted++;
-    } else {
-      remaining.push(versions[i]);
-    }
-  }
-  if (deleted > 0) _saveVersionsToStorage(remaining);
-  return deleted;
-}
-
-/**
  * Toggle star status of a version.
  * @param {number} id
  * @returns {boolean|null} new starred state, or null if not found
@@ -264,71 +241,17 @@ function getVersionById(id) {
 function loadScheduleVersionById(id) {
   var version = getVersionById(id);
   if (!version || !version.snapshot) return false;
+  var restored = loadPublishedSnapshotIntoGlobals({
+    snapshot: version.snapshot,
+    classLabels: version.classLabels || null,
+    fillerLabelsByClass: version.fillerLabelsByClass || null,
+  });
+  if (!restored) return false;
 
-  var snap = version.snapshot;
-
-  // Restore core globals
-  try {
-    window.__ttLastScheduleState = snap;
-    gSchedules = snap.schedulesByClass || {};
-    gEnabledKeys = snap.keys ? snap.keys.slice() : [];
-
-    if (snap.teacherForShortByClass) {
-      gTeacherForShort = snap.teacherForShortByClass;
-    }
-    if (snap.teacherForShortGlobal) {
-      gSubjectByShort = snap.teacherForShortGlobal;
-    }
-    if (snap.labNumberAssigned) {
-      window.gLabNumberAssigned = snap.labNumberAssigned;
-    }
-    if (snap.assignedTeacher) {
-      window.gAssignedTeacher = snap.assignedTeacher;
-    }
-    if (snap.fillerShortsByClass) {
-      gFillerShortsByClass = snap.fillerShortsByClass;
-    }
-    if (version.classLabels) {
-      gClassLabels = version.classLabels;
-    }
-
-    // Restore weeklyQuota if available
-    if (snap.weeklyQuotaByClass) {
-      gWeeklyQuotaByClass = snap.weeklyQuotaByClass;
-    }
-
-    // Re-validate
-    if (typeof schedulerIsFullyValid === "function") {
-      window.__ttLastValidation = schedulerIsFullyValid(snap);
-    }
-  } catch (e) {
-    console.error("Version restore error:", e);
-    return false;
-  }
-
-  // Re-render DOM timetables
-  try {
-    if (typeof schedulerRenderClassToDOM === "function") {
-      var keys = snap.keys || [];
-      for (var i = 0; i < keys.length; i++) {
-        var k = keys[i];
-        var schedule = (snap.schedulesByClass || {})[k];
-        if (!schedule) continue;
-        /** @type {Function} */ (schedulerRenderClassToDOM)(k, schedule, snap.days, snap.classesPerDay, snap.lunchClassIndex);
-      }
-    }
-  } catch (e) {
-    console.error("Version re-render error:", e);
-  }
-
-  // Rebuild secondary panels
-  try {
-    if (typeof buildAndRenderReport === "function") buildAndRenderReport();
-    if (typeof buildFacultyPanel === "function") buildFacultyPanel();
-    if (typeof renderLabTimetables === "function") renderLabTimetables();
-  } catch (e) {
-    console.error("Version panel rebuild error:", e);
-  }
+  rerenderPublishedScheduleFromGlobals({
+    fillerLabelsByClass: version.fillerLabelsByClass || null,
+  });
+  rebuildPublishedPanels();
 
   // Enable tabs and switch
   try {

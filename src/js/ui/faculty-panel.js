@@ -14,55 +14,36 @@
  * Builds the faculty selector dropdown and populates it with teacher names.
  * @returns {void}
  */
+function renderFacultyEmptyState() {
+  const target = document.getElementById("facultyTT");
+  if (!target) return;
+  target.innerHTML =
+    '<div class="empty-state">' +
+      '<svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />' +
+        '<circle cx="9" cy="7" r="4" />' +
+        '<path d="M22 21v-2a4 4 0 0 0-3-3.87" />' +
+        '<path d="M16 3.13a4 4 0 0 1 0 7.75" />' +
+      '</svg>' +
+      '<p class="empty-state-title">Faculty view</p>' +
+      '<p class="empty-state-text">Select a faculty member to view their schedule.</p>' +
+    '</div>';
+}
+
 function buildFacultyPanel() {
   const panel = document.getElementById("facultyPanel");
   const sel = /** @type {HTMLSelectElement} */ (document.getElementById("facultySelect"));
   if (!panel || !sel) return;
-  const canonToDisplay = new Map();
-  if (Array.isArray(reportData) && reportData.length) {
-    const mergedTeachers = Array.from(
-      new Set(reportData.map((r) => r.teacher).filter(Boolean))
-    );
-    mergedTeachers.forEach((t) => {
-      const c0 = canonicalTeacherName(t);
-      if (!c0) return;
-      const master =
-        gCanonFoldMap && gCanonFoldMap[c0] ? gCanonFoldMap[c0] : c0;
-      const prev = canonToDisplay.get(master) || "";
-      if (t.length > prev.length) canonToDisplay.set(master, t);
-    });
-  } else {
-    /* ═══════════════════════════════════════════════════════
-       Section: FACULTY DATA AGGREGATION
-    ═══════════════════════════════════════════════════════ */
-    /**
-     * Pushes teacher pairs from a class into the canonToDisplay map.
-     * @param {Array<{teacher?: string}>} pairs - Teacher pair objects to process.
-     * @returns {void}
-     */
-    const pushPairs = (pairs) => {
-      (pairs || []).forEach((p) => {
-        const t = p.teacher && p.teacher.trim();
-        if (!t) return;
-        const c0 = canonicalTeacherName(t);
-        if (!c0) return;
-        const master =
-          gCanonFoldMap && gCanonFoldMap[c0] ? gCanonFoldMap[c0] : c0;
-        const prev = canonToDisplay.get(master) || "";
-        if (t.length > prev.length) canonToDisplay.set(master, t);
-      });
-    };
-    (gEnabledKeys || []).forEach((k) => {
-      const pairs = subjectTeacherPairsByClass?.[k] || [];
-      pushPairs(pairs);
-    });
-  }
+  const previousSelection = String(sel.value || "").trim();
+  const canonToDisplay = buildPublishedTeacherDisplayMap();
   gTeacherDisplayByCanon = Object.fromEntries(canonToDisplay);
   const optionDisplays = Array.from(canonToDisplay.values()).sort(
     (a, b) => a.localeCompare(b)
   );
   if (!optionDisplays.length) {
+    sel.innerHTML = '<option value="">— Select Faculty —</option>';
     panel.style.display = "none";
+    renderFacultyEmptyState();
     return;
   }
   sel.innerHTML =
@@ -77,21 +58,18 @@ function buildFacultyPanel() {
   sel.onchange = () => {
     const t = sel.value;
     if (!t) {
-      document.getElementById("facultyTT").innerHTML =
-        '<div class="empty-state">' +
-          '<svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
-            '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />' +
-            '<circle cx="9" cy="7" r="4" />' +
-            '<path d="M22 21v-2a4 4 0 0 0-3-3.87" />' +
-            '<path d="M16 3.13a4 4 0 0 1 0 7.75" />' +
-          '</svg>' +
-          '<p class="empty-state-title">Faculty view</p>' +
-          '<p class="empty-state-text">Select a faculty member to view their schedule.</p>' +
-        '</div>';
+      renderFacultyEmptyState();
       return;
     }
     renderFacultyTimetable(t);
   };
+  if (previousSelection && optionDisplays.includes(previousSelection)) {
+    sel.value = previousSelection;
+    renderFacultyTimetable(previousSelection);
+  } else {
+    sel.value = "";
+    renderFacultyEmptyState();
+  }
   renderLabUsage();
 }
 
@@ -139,29 +117,13 @@ function renderFacultyTimetable(teacher) {
         const label = gSchedules[k]?.[d]?.[c] || null;
         if (!label) continue;
         const subj = gSubjectByShort[k]?.[label] || {};
-        const isLabCell =
-          /\blab\b/i.test(label || "") || /\blab\b/i.test(subj.subject || "");
-        const configured = Array.isArray(subj.teachers) ?
-          subj.teachers.filter((t) => String(t || "").trim()) :
-          [];
-        let teacherCandidates = [];
-        if (isLabCell && configured.length) {
-          teacherCandidates = configured.slice();
-        } else {
-          let t = gTeacherForShort[k]?.[label] || "";
-          if (
-            window.gAssignedTeacher &&
-            window.gAssignedTeacher[k] &&
-            window.gAssignedTeacher[k][d]
-          ) {
-            const assignedT = window.gAssignedTeacher[k][d][c];
-            if (assignedT !== undefined) {
-              t = assignedT === null ? "" : assignedT;
-            }
-          }
-          if (t && String(t).trim()) teacherCandidates = [String(t).trim()];
-          else if (configured.length) teacherCandidates = [configured[0]];
-        }
+        const teacherCandidates = resolvePublishedTeacherCandidatesForCell({
+          key: k,
+          day: d,
+          col: c,
+          short: label,
+          subj,
+        });
         // step: check if the selected teacher matches any candidate
         const hasSelectedTeacher = teacherCandidates.some((t) => {
           const canonRaw = canonicalTeacherName(t);

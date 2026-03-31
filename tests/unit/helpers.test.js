@@ -304,6 +304,13 @@ describe("buildTeacherFoldMapFromCanonicalNames", () => {
     expect(map["sharma"]).toBe(map["sharmo"]);
   });
 
+  test("does not fold compact identifier teachers that differ only by number", () => {
+    const map = buildTeacherFoldMapFromCanonicalNames(["t1", "t2", "t3"]);
+    expect(map["t1"]).toBe("t1");
+    expect(map["t2"]).toBe("t2");
+    expect(map["t3"]).toBe("t3");
+  });
+
   test("handles null/undefined input gracefully", () => {
     expect(buildTeacherFoldMapFromCanonicalNames(null)).toEqual({});
     expect(buildTeacherFoldMapFromCanonicalNames(undefined)).toEqual({});
@@ -331,5 +338,12 @@ describe("buildTeacherFoldMapFromRawNames", () => {
 
   test("handles null/undefined gracefully", () => {
     expect(buildTeacherFoldMapFromRawNames(null)).toEqual({});
+  });
+
+  test("keeps numbered teacher codes separate after normalization", () => {
+    const map = buildTeacherFoldMapFromRawNames(["T1", "T2", "T3"]);
+    expect(map["t1"]).toBe("t1");
+    expect(map["t2"]).toBe("t2");
+    expect(map["t3"]).toBe("t3");
   });
 });

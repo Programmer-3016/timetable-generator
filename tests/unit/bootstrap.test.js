@@ -168,6 +168,22 @@ describe("schedulerReadLabCapacityFromDom", () => {
     }
   });
 
+  test("prefers explicitCapacity over DOM value and default", () => {
+    const el = document.createElement("input");
+    el.id = "labCount";
+    el.value = "3";
+    document.body.appendChild(el);
+    try {
+      const result = schedulerReadLabCapacityFromDom({
+        defaultCapacity: 2,
+        explicitCapacity: 5,
+      });
+      expect(result).toBe(5);
+    } finally {
+      document.body.removeChild(el);
+    }
+  });
+
   test("returns defaultCapacity when DOM value is not a number", () => {
     const el = document.createElement("input");
     el.id = "labCount";

@@ -1,5 +1,5 @@
 // @ts-check
-/* exported schedulerMergeTeacherAggregateStats, schedulerBuildPublishedState */
+/* exported schedulerMergeTeacherAggregateStats, schedulerBuildScheduleHealthReport, schedulerBuildPublishedState */
 
 /**
  * @module core/scheduler/publish.js
@@ -67,6 +67,63 @@ function schedulerMergeTeacherAggregateStats({
     aggregateStats[k].minutes += rawMins;
     aggregateStats[k].first += teacherFirstPeriodCount[t] || 0;
   });
+}
+
+/* ═══════════════════════════════════════════════════════
+   Section: HEALTH REPORTING
+═══════════════════════════════════════════════════════ */
+
+/**
+ * Builds the final schedule health report from strict validation plus runtime diagnostics.
+ * @param {Object} params - Validation result and runtime debug artifacts.
+ * @param {{ valid: boolean, violations: string[] }|null} params.strictValidation - Strict validator output.
+ * @param {Array<Object>} [params.unresolvedClashes=[]] - Remaining unresolved clash records.
+ * @param {{ totalIssues?: number }|null} [params.compactionReport=null] - Post-compaction diagnostics.
+ * @returns {{ valid: boolean, healthy: boolean, violations: string[], unresolvedClashCount: number, compactionIssueCount: number }}
+ */
+function schedulerBuildScheduleHealthReport({
+  strictValidation,
+  unresolvedClashes = [],
+  compactionReport = null,
+}) {
+  const base = strictValidation && typeof strictValidation === "object" ?
+    strictValidation :
+    {
+      valid: false,
+      violations: ["Missing strict validation result"],
+    };
+  const violations = Array.isArray(base.violations) ?
+    base.violations.slice() :
+    [];
+  const unresolvedClashCount = Array.isArray(unresolvedClashes) ?
+    unresolvedClashes.filter(Boolean).length :
+    0;
+  const compactionIssueCount =
+    compactionReport && Number.isFinite(compactionReport.totalIssues) ?
+    Number(compactionReport.totalIssues) :
+    0;
+
+  if (unresolvedClashCount > 0) {
+    violations.push(
+      `Unresolved teacher clashes remain (${unresolvedClashCount})`
+    );
+  }
+  if (compactionIssueCount > 0) {
+    violations.push(
+      `Post-lunch compaction issues remain (${compactionIssueCount})`
+    );
+  }
+
+  const healthy =
+    !!base.valid && unresolvedClashCount === 0 && compactionIssueCount === 0;
+
+  return {
+    valid: healthy,
+    healthy,
+    violations,
+    unresolvedClashCount,
+    compactionIssueCount,
+  };
 }
 
 /* ═══════════════════════════════════════════════════════

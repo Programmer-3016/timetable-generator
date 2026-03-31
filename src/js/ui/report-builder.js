@@ -14,52 +14,6 @@
    Section: TEACHER CANDIDATE RESOLUTION
 ═══════════════════════════════════════════════════════ */
 
-/**
- * Checks whether a teacher name is valid for inclusion in reports (filters out blanks and "Not Mentioned").
- * @param {string} name - Teacher name to validate
- * @returns {boolean} True if the name is reportable
- */
-function isReportableTeacherName(name) {
-  const t = String(name || "").trim();
-  if (!t) return false;
-  if (/^not\s*mentioned$/i.test(t)) return false;
-  return true;
-}
-
-/**
- * Resolves the list of teacher names assigned to a specific timetable cell, considering lab and assignment overrides.
- * @param {string} key - Class key
- * @param {number} day - Day index
- * @param {number} col - Column (period) index
- * @param {string} short - Subject short code
- * @param {Object} subj - Subject info object
- * @returns {string[]} Array of resolved teacher names for this cell
- */
-function reportTeacherCandidatesForCell(key, day, col, short, subj) {
-  const isLabCell =
-    /\blab\b/i.test(short || "") || /\blab\b/i.test(subj?.subject || "");
-  const configured = Array.isArray(subj?.teachers) ?
-    subj.teachers.filter((t) => isReportableTeacherName(t)) :
-    [];
-
-  if (isLabCell && configured.length) return configured.slice();
-
-  let teacher = gTeacherForShort?.[key]?.[short] || "";
-  if (
-    window.gAssignedTeacher &&
-    window.gAssignedTeacher[key] &&
-    window.gAssignedTeacher[key][day]
-  ) {
-    const assigned = window.gAssignedTeacher[key][day][col];
-    if (assigned !== undefined) {
-      teacher = assigned === null ? "" : assigned;
-    }
-  }
-  if (isReportableTeacherName(teacher)) return [String(teacher).trim()];
-  if (configured.length) return [configured[0]];
-  return [];
-}
-
 /* ═══════════════════════════════════════════════════════
    Section: AGGREGATE STATS
 ═══════════════════════════════════════════════════════ */
@@ -95,7 +49,13 @@ function rebuildAggregateStatsFromPublishedSchedule() {
         const startsLabBlock =
           isLabCell && !(prevShort && prevShort === short && prevIsLab);
 
-        const teachers = reportTeacherCandidatesForCell(key, d, c, short, subj);
+        const teachers = resolvePublishedTeacherCandidatesForCell({
+          key,
+          day: d,
+          col: c,
+          short,
+          subj,
+        });
         if (!teachers.length) continue;
 
         teachers.forEach((rawName) => {

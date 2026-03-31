@@ -1,5 +1,5 @@
 // @ts-check
-/* exported schedulerPlaceLabBlock, schedulerPlaceInitialLabsAcrossClasses, schedulerClampMainsToTarget, schedulerResolveFinalTeacherClashes */
+/* exported schedulerPlaceLabBlock, schedulerPlaceInitialLabsAcrossClasses, schedulerClampMainsToTarget, schedulerResolveFinalTeacherClashes, schedulerRepairLabRoomConflicts */
 
 /**
  * @module core/scheduler/passes.js
@@ -471,6 +471,7 @@ function schedulerClampMainsToTarget({
  * @param {Object} opts.fillerTargetsByClass - Target counts for filler subjects per class.
  * @param {Object} opts.fillerCountsByClass - Current counts for filler subjects per class.
  * @param {Object} opts.isLabShort - Map indicating whether a short is a lab subject per class.
+ * @param {Object} [opts.fixedSlotsByClass={}] - Imported fixed slots keyed by class.
  * @param {Array} opts.unresolvedClashes - Array to collect unresolved clash records.
  * @returns {boolean} True if any schedule change was made.
  */
@@ -491,9 +492,27 @@ function schedulerResolveFinalTeacherClashes({
   fillerTargetsByClass,
   fillerCountsByClass,
   isLabShort,
+  fixedSlotsByClass = {},
   unresolvedClashes,
 }) {
   let changed = false;
+  const isExplicitFixedTeacherCell = (key, day, col, short) => {
+    const locks = Array.isArray(fixedSlotsByClass?.[key]) ? fixedSlotsByClass[key] : [];
+    return locks.some((lock) => {
+      const fixedTeacher = String(lock?.teacher || "").trim();
+      const fixedShort = String(lock?.short || "")
+        .toUpperCase()
+        .replace(/\s+/g, " ")
+        .trim();
+      return (
+        Number(lock?.day) === day &&
+        Number(lock?.slot) === col &&
+        fixedShort === short &&
+        fixedTeacher &&
+        !/^not\s*mentioned$/i.test(fixedTeacher)
+      );
+    });
+  };
   for (let d = 0; d < days; d++) {
     for (let c = 0; c < classesPerDay; c++) {
       const byTeacher = {};
@@ -784,6 +803,17 @@ function schedulerResolveFinalTeacherClashes({
           }
 
           if (!fixed && unresolvedClashes) {
+            if (
+              !(isLabShort?.[key]?.[short]) &&
+              !isExplicitFixedTeacherCell(key, d, c, short)
+            ) {
+              assignedTeacher[key][d][c] = "";
+              fixed = true;
+              changed = true;
+            }
+          }
+
+          if (!fixed && unresolvedClashes) {
             unresolvedClashes.push({
               day: d, col: c, key, short, teacher: arr[i].teacher,
               reason: keepCurrentMain ? "main_at_target_no_replacement" : "all_strategies_exhausted",
@@ -793,5 +823,102 @@ function schedulerResolveFinalTeacherClashes({
       });
     }
   }
+  return changed;
+}
+
+/**
+ * Repairs final lab-room conflicts by reassigning one conflicting lab block
+ * to another free room that is available for the whole block.
+ * @param {Object} params - Strict conflict repair parameters.
+ * @param {number} params.days - Number of schedule days.
+ * @param {number} params.classesPerDay - Number of periods per day.
+ * @param {string[]} params.keys - Enabled class keys.
+ * @param {Object} params.schedules - Published schedules by class.
+ * @param {Object} params.isLabShort - Lab-short lookup per class.
+ * @param {Object} params.labNumberAssigned - Assigned lab room numbers.
+ * @param {number} params.LAB_CAPACITY - Maximum room count.
+ * @returns {boolean} True when at least one conflicting block was repaired.
+ */
+function schedulerRepairLabRoomConflicts({
+  days,
+  classesPerDay,
+  keys,
+  schedules,
+  isLabShort,
+  labNumberAssigned,
+  LAB_CAPACITY,
+}) {
+  const handledBlocks = new Set();
+  let changed = false;
+
+  const getBlockCols = (key, day, col, short) => {
+    const row = schedules?.[key]?.[day];
+    if (!Array.isArray(row) || !short) return [col];
+    if (col > 0 && row[col - 1] === short) return [col - 1, col];
+    if (col + 1 < classesPerDay && row[col + 1] === short) return [col, col + 1];
+    return [col];
+  };
+
+  const isRoomFreeForBlock = (room, day, blockCols, ignoreKey) => {
+    for (const dc of blockCols) {
+      for (const otherKey of keys) {
+        if (otherKey === ignoreKey) continue;
+        const otherShort = schedules?.[otherKey]?.[day]?.[dc] || null;
+        if (
+          !otherShort ||
+          !(isLabShort?.[otherKey] && isLabShort[otherKey][otherShort])
+        ) {
+          continue;
+        }
+        const otherRoom = labNumberAssigned?.[otherKey]?.[day]?.[dc];
+        if (otherRoom === null || otherRoom === undefined || otherRoom === "") continue;
+        if (String(otherRoom) === String(room)) return false;
+      }
+    }
+    return true;
+  };
+
+  for (let d = 0; d < days; d++) {
+    for (let c = 0; c < classesPerDay; c++) {
+      const byRoom = {};
+      keys.forEach((key) => {
+        const short = schedules?.[key]?.[d]?.[c] || null;
+        if (!short || !(isLabShort?.[key] && isLabShort[key][short])) return;
+        const room = labNumberAssigned?.[key]?.[d]?.[c];
+        if (room === null || room === undefined || room === "") return;
+        const roomKey = String(room);
+        if (!byRoom[roomKey]) byRoom[roomKey] = [];
+        byRoom[roomKey].push({ key, short, room });
+      });
+
+      Object.values(byRoom).forEach((entries) => {
+        if (!entries || entries.length <= 1) return;
+        for (let i = 1; i < entries.length; i++) {
+          const item = entries[i];
+          const blockCols = getBlockCols(item.key, d, c, item.short);
+          const blockId = `${item.key}|${d}|${blockCols[0]}|${item.short}`;
+          if (handledBlocks.has(blockId)) continue;
+          handledBlocks.add(blockId);
+
+          let replacementRoom = null;
+          for (let room = 1; room <= LAB_CAPACITY; room++) {
+            if (String(room) === String(item.room)) continue;
+            if (isRoomFreeForBlock(room, d, blockCols, item.key)) {
+              replacementRoom = room;
+              break;
+            }
+          }
+          if (replacementRoom === null) continue;
+          blockCols.forEach((dc) => {
+            if (labNumberAssigned?.[item.key]?.[d]) {
+              labNumberAssigned[item.key][d][dc] = replacementRoom;
+            }
+          });
+          changed = true;
+        }
+      });
+    }
+  }
+
   return changed;
 }

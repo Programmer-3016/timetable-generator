@@ -19,6 +19,7 @@
  * @param {Object} params.fillerCreditsByClass - Credit-based filler targets per class.
  * @param {Object} params.mainShortsByClass - Sets of main subject shorts per class.
  * @param {Object} params.fixedSlotsByClass - Pre-assigned fixed slots per class.
+ * @param {number} [params.labCapacity] - Explicit lab-room capacity from the UI layer.
  * @param {*} [params.seed] - Optional RNG seed for deterministic scheduling.
  */
 function schedulerRenderMultiClassesEngine({
@@ -30,8 +31,17 @@ function schedulerRenderMultiClassesEngine({
   fillerCreditsByClass = {},
   mainShortsByClass = {},
   fixedSlotsByClass = {},
+  labCapacity = undefined,
   seed = undefined,
 }) {
+  try {
+    window.__ttLastValidation = undefined;
+    window.__ttLastScheduleState = undefined;
+    window.__ttUnresolvedClashes = [];
+    window.__ttPostLunchCompactReport = undefined;
+  } catch (_e) {
+    // Diagnostic globals are best-effort only.
+  }
   const classIndices = periodTimings
     .map((p, i) => (p.type === "class" ? i : -1))
     .filter((i) => i !== -1);
@@ -224,6 +234,7 @@ function schedulerRenderMultiClassesEngine({
   const TEACHER_THEORY_MAX = 5; // per class
   const LAB_CAPACITY = schedulerReadLabCapacityFromDom({
     defaultCapacity: 3,
+    explicitCapacity: labCapacity,
   });
   const MAX_FILLERS_PER_WEEK = 2;
   const MAX_FILLERS_PER_SUBJECT_PER_WEEK = 2;
@@ -1227,6 +1238,7 @@ function fillRemaining(key) {
       fillerTargetsByClass,
       fillerCountsByClass,
       isLabShort,
+      fixedSlotsByClass: importedFixedSlotsByClass,
       unresolvedClashes,
     });
   }
@@ -1390,6 +1402,36 @@ function fillRemaining(key) {
     rebuildTrackingFromSchedule();
   }
 
+  /**
+   * Repairs final strict conflicts that can still survive the main convergence loop,
+   * especially teacherless-safe theory clashes and lab room collisions after compaction.
+   * @returns {boolean} True if any strict repair was applied.
+   */
+  function repairFinalStrictConflicts() {
+    let changed = false;
+    if (resolveFinalTeacherClashes()) changed = true;
+    if (hasFn(schedulerRepairLabRoomConflicts)) {
+      if (
+        schedulerRepairLabRoomConflicts({
+          days,
+          classesPerDay,
+          keys,
+          schedules,
+          isLabShort,
+          labNumberAssigned,
+          LAB_CAPACITY,
+        })
+      ) {
+        changed = true;
+      }
+    }
+    return changed;
+  }
+  for (let pass = 0; pass < 3; pass++) {
+    if (!repairFinalStrictConflicts()) break;
+    rebuildTrackingFromSchedule();
+  }
+
   // Surface unresolved clashes for the validation report.
   if (unresolvedClashes.length) {
     try {
@@ -1494,7 +1536,23 @@ function fillRemaining(key) {
   };
   try {
     window.__ttLastScheduleState = strictSnapshot;
-    window.__ttLastValidation = schedulerIsFullyValid(strictSnapshot);
+    const strictValidation = schedulerIsFullyValid(strictSnapshot);
+    const unresolvedClashesForReport = Array.isArray(window.__ttUnresolvedClashes) ?
+      window.__ttUnresolvedClashes :
+      [];
+    const compactionReport =
+      window.__ttPostLunchCompactReport &&
+      typeof window.__ttPostLunchCompactReport === "object" ?
+      window.__ttPostLunchCompactReport :
+      null;
+    window.__ttLastValidation =
+      typeof schedulerBuildScheduleHealthReport === "function" ?
+      schedulerBuildScheduleHealthReport({
+        strictValidation,
+        unresolvedClashes: unresolvedClashesForReport,
+        compactionReport,
+      }) :
+      strictValidation;
   } catch (_e) {
     // Snapshot publication is diagnostic only.
   }

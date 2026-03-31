@@ -121,8 +121,10 @@ function schedulerGetTeachersForValidationCell(state, key, short, day, col) {
     state.assignedTeacher[key][day] ?
     state.assignedTeacher[key][day][col] :
     undefined;
-  if (assigned !== undefined && assigned !== null && isReal(assigned)) {
-    return [String(assigned).trim()];
+  if (assigned !== undefined) {
+    const normalizedAssigned =
+      assigned === null ? "" : String(assigned || "").trim();
+    return isReal(normalizedAssigned) ? [normalizedAssigned] : [];
   }
   const fallback =
     (state?.teacherForShortByClass &&

@@ -14,7 +14,7 @@
 /**
  * Scores a candidate schedule on quality metrics like teacher balance and constraint satisfaction.
  * @param {Object} scheduleState - The schedule state to evaluate.
- * @param {{ valid: boolean, violations: string[] }|null} [validationResult=null] - Pre-computed validation result.
+ * @param {{ valid?: boolean, healthy?: boolean, violations?: string[], unresolvedClashCount?: number, compactionIssueCount?: number }|null} [validationResult=null] - Pre-computed validation result.
  * @returns {number} Numeric quality score (higher is better).
  */
 function schedulerScoreCandidateObjective(scheduleState, validationResult = null) {

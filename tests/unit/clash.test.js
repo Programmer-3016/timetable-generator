@@ -612,6 +612,16 @@ describe("schedulerGetTeachersForValidationCell", () => {
     expect(teachers).toEqual(["Dr. Fallback"]);
   });
 
+  test("respects an explicit blank assigned teacher without falling back", () => {
+    const state = {
+      isLabShortByClass: { A: {} },
+      assignedTeacher: { A: [{ 0: "" }] },
+      teacherForShortByClass: { A: { MATH: "Dr. Fallback" } },
+    };
+    const teachers = schedulerGetTeachersForValidationCell(state, "A", "MATH", 0, 0);
+    expect(teachers).toEqual([]);
+  });
+
   test("falls back to teacherForShortGlobal when class-level not found", () => {
     const state = {
       isLabShortByClass: { A: {} },
