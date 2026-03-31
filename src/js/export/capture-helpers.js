@@ -45,28 +45,51 @@ function withStickyDisabled(fn) {
   style.id = "export-temp-style";
   style.textContent = `
     /* Force full opacity for everything in timetable while exporting */
-    .timetable-area, .timetable-area * { opacity: 1 !important; filter: none !important; box-shadow: none !important; }
+    .timetable-area,
+    .timetable-area *,
+    .export-capture-shell,
+    .export-capture-shell * {
+      opacity: 1 !important;
+      filter: none !important;
+      box-shadow: none !important;
+    }
     .timetable-area thead th,
     .timetable-area tbody td:first-child,
-    .timetable-area thead th:first-child {
+    .timetable-area thead th:first-child,
+    .export-capture-shell thead th,
+    .export-capture-shell tbody td:first-child,
+    .export-capture-shell thead th:first-child {
       position: static !important;
       left: auto !important;
       z-index: auto !important;
     }
     /* Stronger borders/contrast during capture */
-    .timetable-area table { border: 3px solid #000 !important; }
-    .timetable-area th, .timetable-area td {
+    .timetable-area table,
+    .export-capture-shell table { border: 3px solid #000 !important; }
+    .timetable-area th, .timetable-area td,
+    .export-capture-shell th, .export-capture-shell td {
       border: 1.5px solid #222 !important;
       color: #000 !important;
       background: #ffffff !important;
       font-weight: 600 !important;
     }
     /* Remove zebra background for higher clarity */
-    .timetable-area table tbody tr:nth-child(even) td { background: #ffffff !important; }
+    .timetable-area table tbody tr:nth-child(even) td,
+    .export-capture-shell table tbody tr:nth-child(even) td {
+      background: #ffffff !important;
+    }
     /* Keep lunch visible but slightly stronger */
-    .timetable-area .break { background: #fff1a6 !important; color: #6b5800 !important; }
+    .timetable-area .break,
+    .export-capture-shell .break {
+      background: #fff1a6 !important;
+      color: #6b5800 !important;
+    }
     /* Make subject cells bold and dark */
-    .timetable-area .subject-cell { color: #000 !important; font-weight: 700 !important; }
+    .timetable-area .subject-cell,
+    .export-capture-shell .subject-cell {
+      color: #000 !important;
+      font-weight: 700 !important;
+    }
     /* Hide visual layout-only lines to keep export clean */
     body.fullwide #timetableWrap::before { display: none !important; }
     .class-block::after { display: none !important; }

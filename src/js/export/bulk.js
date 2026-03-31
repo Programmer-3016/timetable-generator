@@ -15,6 +15,66 @@
 ═══════════════════════════════════════════════════════ */
 
 /**
+ * Builds a tight offscreen export shell for one class and captures it.
+ * This avoids exporting the live grid wrapper, which can carry subgrid height
+ * and create large blank gaps inside JPG/PDF output.
+ * @param {string} classKey
+ * @param {number} targetWidthPx
+ * @returns {Promise<HTMLCanvasElement|null>}
+ */
+async function captureClassExportCanvas(classKey, targetWidthPx) {
+  const gridCell = getClassBlockElement(classKey);
+  if (!gridCell) return null;
+
+  const timetableBlock = /** @type {HTMLElement|null} */ (gridCell.querySelector(".class-block"));
+  const subjectBlock = /** @type {HTMLElement|null} */ (gridCell.querySelector(`[id^=subjectInfo${classKey}Block]`));
+  if (!timetableBlock) return null;
+
+  const shell = document.createElement("div");
+  shell.className = "export-capture-shell timetable-area";
+  shell.style.width = `${targetWidthPx}px`;
+  shell.style.maxWidth = "none";
+  shell.style.position = "fixed";
+  shell.style.left = "-20000px";
+  shell.style.top = "0";
+  shell.style.zIndex = "-1";
+  shell.style.pointerEvents = "none";
+  shell.style.display = "flex";
+  shell.style.flexDirection = "column";
+  shell.style.gap = "16px";
+  shell.style.padding = "0";
+  shell.style.margin = "0";
+  shell.style.background = "#ffffff";
+  shell.style.boxSizing = "border-box";
+
+  const timetableClone = /** @type {HTMLElement} */ (timetableBlock.cloneNode(true));
+  shell.appendChild(timetableClone);
+
+  if (subjectBlock) {
+    const subjectClone = /** @type {HTMLElement} */ (subjectBlock.cloneNode(true));
+    subjectClone.style.display = "block";
+    shell.appendChild(subjectClone);
+  }
+
+  document.body.appendChild(shell);
+  try {
+    return await html2canvas(shell, {
+      scale: 2.0,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+      windowWidth: targetWidthPx,
+    });
+  } finally {
+    try {
+      shell.remove();
+    } catch {
+      // Ignore cleanup failures after offscreen capture.
+    }
+  }
+}
+
+/**
  * Captures all visible class timetable blocks and composites them into a single JPG image for download.
  * @async
  * @returns {Promise<void>}
@@ -51,35 +111,14 @@ async function exportAllTimetablesAsOneJPG() {
     // step: capture each class block as an html2canvas snapshot
     const captures = [];
     for (const k of keys) {
-      const el = getClassBlockElement(k);
-      if (!el) continue;
-      const subjInfo = /** @type {HTMLElement|null} */ (el.querySelector(`[id^=subjectInfo${k}Block]`));
-      let prevDisplay = null;
-      if (
-        subjInfo &&
-        subjInfo.style &&
-        subjInfo.style.display === "none"
-      ) {
-        prevDisplay = subjInfo.style.display;
-        subjInfo.style.display = "block";
-      }
       try {
-        const canvas = await withTempWidth(el, pick.targetWidthPx, () =>
-          html2canvas(el, {
-            scale: 2.0, // slightly lower scale for reliability
-            useCORS: true,
-            backgroundColor: "#ffffff",
-            logging: false,
-          })
-        );
+        const canvas = await captureClassExportCanvas(k, pick.targetWidthPx);
+        if (!canvas) continue;
         captures.push({
           key: k,
           canvas
         });
-      } catch (e) { console.warn("[Export] JPG capture failed for class", k, e); } finally {
-        if (subjInfo && prevDisplay !== null)
-          subjInfo.style.display = prevDisplay;
-      }
+      } catch (e) { console.warn("[Export] JPG capture failed for class", k, e); }
     }
     if (!captures.length) {
       showToast("Capture failed.", {
@@ -166,6 +205,7 @@ async function exportAllTimetablesAsPDF() {
     });
     return;
   }
+  const pick = decidePdfFormatAndWidth(keys);
   const pdfName = ensureFilenameExtension(
     `All_Classes_PDF-${new Date().toISOString().replace(/[:\.]/g, "-")}`,
     "pdf"
@@ -204,35 +244,14 @@ async function exportAllTimetablesAsPDF() {
     const jsPDFCtor = await ensureJsPDF();
     const captures = [];
     for (const k of keys) {
-      const el = getClassBlockElement(k);
-      if (!el) continue;
-      const subjInfo = /** @type {HTMLElement|null} */ (el.querySelector(`[id^=subjectInfo${k}Block]`));
-      let prevDisplay = null;
-      if (
-        subjInfo &&
-        subjInfo.style &&
-        subjInfo.style.display === "none"
-      ) {
-        prevDisplay = subjInfo.style.display;
-        subjInfo.style.display = "block";
-      }
       try {
-        const canvas = await withTempWidth(el, 1300, () =>
-          html2canvas(el, {
-            scale: 2.0,
-            useCORS: true,
-            backgroundColor: "#ffffff",
-            logging: false,
-          })
-        );
+        const canvas = await captureClassExportCanvas(k, pick.targetWidthPx);
+        if (!canvas) continue;
         captures.push({
           key: k,
           canvas
         });
-      } catch (e) { console.warn("[Export] PDF capture failed for class", k, e); } finally {
-        if (subjInfo && prevDisplay !== null)
-          subjInfo.style.display = prevDisplay;
-      }
+      } catch (e) { console.warn("[Export] PDF capture failed for class", k, e); }
     }
     if (!captures.length) {
       showToast("Capture failed.", {
@@ -247,14 +266,14 @@ async function exportAllTimetablesAsPDF() {
      */
     const pxToMm = (px) => (px * 25.4) / 96; // approximate CSS px to mm
     const margin = 10; // mm
-    const fmt = {
-      w: 297,
-      h: 420
-    }; // A3 portrait
+    const pdfFormat = pick.format === "a3" ? "a3" : "a4";
+    const fmt = pdfFormat === "a3"
+      ? { w: 297, h: 420 }
+      : { w: 210, h: 297 };
     const pdf = new (/** @type {any} */ (jsPDFCtor))({
       orientation: "p",
       unit: "mm",
-      format: "a3",
+      format: pdfFormat,
     });
     for (let idx = 0; idx < captures.length; idx++) {
       if (idx > 0) pdf.addPage();
