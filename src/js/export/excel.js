@@ -8,6 +8,8 @@
    Section: EXCEL EXPORT
 ═══════════════════════════════════════════════════════ */
 
+/** @typedef {{ [key: string]: any }} ExcelWorksheet */
+
 /**
  * Exports the full timetable as a multi-sheet Excel workbook including overview, per-class schedules, teacher report, and lab schedule.
  * @async
@@ -59,7 +61,7 @@ async function exportToExcel() {
 
   /**
    * Appends merge ranges to a worksheet.
-   * @param {import("xlsx").WorkSheet} worksheet
+   * @param {ExcelWorksheet} worksheet
    * @param {string[]} refs
    * @returns {void}
    */
@@ -72,7 +74,7 @@ async function exportToExcel() {
 
   /**
    * Applies worksheet row heights using zero-based row indexes.
-   * @param {import("xlsx").WorkSheet} worksheet
+   * @param {ExcelWorksheet} worksheet
    * @param {Array<{ index: number, hpx: number }>} rows
    * @returns {void}
    */
@@ -85,7 +87,7 @@ async function exportToExcel() {
 
   /**
    * Adds an autofilter range when the section contains a real header row plus data.
-   * @param {import("xlsx").WorkSheet} worksheet
+   * @param {ExcelWorksheet} worksheet
    * @param {{ startRow: number, startCol: number, rowCount: number, colCount: number }} args
    * @returns {void}
    */
