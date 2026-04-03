@@ -37,10 +37,12 @@ async function exportToExcel() {
   if (saveTarget.cancelled) return;
 
   const wb = XLSX.utils.book_new();
+  const enabledKeys = Array.isArray(gEnabledKeys) ? gEnabledKeys : [];
+  const safeReportData = Array.isArray(reportData) ? reportData : [];
   const configuredDays = parseInt(/** @type {HTMLInputElement} */ (document.getElementById("days"))?.value || "5", 10);
   const derivedDays = Math.max(
     configuredDays,
-    ...((gEnabledKeys || []).map((key) =>
+    ...(enabledKeys.map((key) =>
       Array.isArray(gSchedules?.[key]) ? gSchedules[key].length : 0
     ))
   );
@@ -98,6 +100,38 @@ async function exportToExcel() {
   }
 
   /**
+   * Returns a unique and Excel-safe worksheet name.
+   * @param {string} desiredName
+   * @returns {string}
+   */
+  function makeUniqueSheetName(desiredName) {
+    const sanitize = (value) => String(value || "Sheet")
+      .replace(/[\\\/*?\[\]:]/g, "")
+      .trim() || "Sheet";
+    const base = sanitize(desiredName).slice(0, 31) || "Sheet";
+    let candidate = base;
+    let suffix = 2;
+    while ((wb.SheetNames || []).includes(candidate)) {
+      const suffixLabel = ` (${suffix})`;
+      candidate = `${base.slice(0, Math.max(1, 31 - suffixLabel.length))}${suffixLabel}`;
+      suffix += 1;
+    }
+    return candidate;
+  }
+
+  /**
+   * Converts report severity into a readable export label.
+   * @param {{ status?: string, flags?: string[] }} row
+   * @returns {string}
+   */
+  function formatTeacherStatus(row) {
+    const flags = Array.isArray(row?.flags) ? row.flags.filter(Boolean) : [];
+    if (row?.status === "err") return flags.length ? `Error: ${flags.join(" · ")}` : "Error";
+    if (row?.status === "warn") return flags.length ? `Warning: ${flags.join(" · ")}` : "Warning";
+    return "OK";
+  }
+
+  /**
    * Measures readable column widths for a 2D array block.
    * @param {Array<Array<unknown>>} matrix
    * @param {{ min?: number, max?: number }} [options]
@@ -130,7 +164,7 @@ async function exportToExcel() {
     ["Lunch After Period", /** @type {HTMLInputElement} */ (document.getElementById("lunchPeriod"))?.value || ""],
     ["Lunch Duration (min)", /** @type {HTMLInputElement} */ (document.getElementById("lunchDuration"))?.value || ""],
     ["Lab Rooms", /** @type {HTMLInputElement} */ (document.getElementById("labCount"))?.value || ""],
-    ["Classes Generated", gEnabledKeys.length],
+    ["Classes Generated", enabledKeys.length],
   ];
   const wsOverview = XLSX.utils.aoa_to_sheet(overviewData);
   pushMerges(wsOverview, ["A1:B1"]);
@@ -145,15 +179,12 @@ async function exportToExcel() {
   ]);
   XLSX.utils.book_append_sheet(wb, wsOverview, "Overview");
 
-  gEnabledKeys.forEach((key, idx) => {
+  enabledKeys.forEach((key, idx) => {
     const label = gClassLabels[key] || `Class ${idx + 1}`;
     const parts = label.split(/[\s-]+/);
     const suffix = parts.length > 1 ? parts[parts.length - 1] : "";
-    let sheetName = `C${idx + 1} ${suffix}`.replace(/[\\\/*?\[\]:]/g, "").trim().slice(0, 31);
-    const existingNames = wb.SheetNames || [];
-    if (existingNames.includes(sheetName)) {
-      sheetName = `Class ${idx + 1}`.slice(0, 31);
-    }
+    const desiredSheetName = `C${idx + 1} ${suffix}`.replace(/[\/*?\[\]:]/g, "").trim() || `Class ${idx + 1}`;
+    const sheetName = makeUniqueSheetName(desiredSheetName);
 
     const table = document.querySelector(`#timetable${key} table`);
     const scheduleByDay = Array.isArray(gSchedules[key]) ? gSchedules[key] : [];
@@ -260,27 +291,27 @@ async function exportToExcel() {
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
   });
 
-  if (reportData.length) {
+  if (safeReportData.length) {
     const statusRank = {
-      Overloaded: 0,
-      Underloaded: 1,
-      Balanced: 2
+      err: 0,
+      warn: 1,
+      ok: 2
     };
     const reportRows = [
       ["Teacher Report"],
       ["Generated on", generatedAt],
       [],
-      ["Summary", `${reportData.length} teachers exported`],
+      ["Summary", `${safeReportData.length} teachers exported`],
       ["Teacher", "Theory Slots", "Lab Slots", "Total Hours", "1st Period Count", "Status"]
     ];
-    reportData.slice().sort((a, b) => {
-      const rankA = statusRank[a.status] ?? 9;
-      const rankB = statusRank[b.status] ?? 9;
+    safeReportData.slice().sort((a, b) => {
+      const rankA = statusRank[a?.status] ?? 9;
+      const rankB = statusRank[b?.status] ?? 9;
       if (rankA !== rankB) return rankA - rankB;
-      const hoursA = (a.minutes || 0) / 60;
-      const hoursB = (b.minutes || 0) / 60;
+      const hoursA = (a?.minutes || 0) / 60;
+      const hoursB = (b?.minutes || 0) / 60;
       if (hoursB !== hoursA) return hoursB - hoursA;
-      return String(a.teacher || "").localeCompare(String(b.teacher || ""), undefined, {
+      return String(a?.teacher || "").localeCompare(String(b?.teacher || ""), undefined, {
         sensitivity: "base"
       });
     }).forEach((r) => {
@@ -290,7 +321,7 @@ async function exportToExcel() {
         r.labs,
         ((r.minutes || 0) / 60).toFixed(1),
         r.first,
-        r.status,
+        formatTeacherStatus(r),
       ]);
     });
     const wsReport = XLSX.utils.aoa_to_sheet(reportRows);
@@ -311,7 +342,7 @@ async function exportToExcel() {
     }, {
       wch: 16
     }, {
-      wch: 10
+      wch: 22
     }, ];
     setAutoFilter(wsReport, {
       startRow: 4,
@@ -324,21 +355,31 @@ async function exportToExcel() {
 
   const labPanel = document.getElementById("labPanel");
   if (labPanel) {
-    const labTables = labPanel.querySelectorAll("table");
+    const labTables = Array.from(labPanel.querySelectorAll("table"));
     const labRows = [["Lab Schedule"], ["Generated on", generatedAt], []];
+    let hasLabContent = false;
     labTables.forEach((lt) => {
+      let currentTableHasContent = false;
       const caption = lt.previousElementSibling;
-      if (caption) labRows.push([caption.textContent.trim()]);
+      if (caption?.textContent?.trim()) {
+        labRows.push([caption.textContent.trim()]);
+        hasLabContent = true;
+        currentTableHasContent = true;
+      }
       lt.querySelectorAll("tr").forEach((tr) => {
         const cells = [];
         tr.querySelectorAll("th, td").forEach((td) => {
           cells.push(td.textContent.trim());
         });
-        labRows.push(cells);
+        if (cells.some(Boolean)) {
+          labRows.push(cells);
+          hasLabContent = true;
+          currentTableHasContent = true;
+        }
       });
-      labRows.push([]);
+      if (currentTableHasContent) labRows.push([]);
     });
-    if (labRows.length) {
+    if (hasLabContent) {
       const wsLab = XLSX.utils.aoa_to_sheet(labRows);
       const labColumnCount = Math.max(1, ...labRows.map((row) => row.length || 0));
       pushMerges(wsLab, [`A1:${encodeCol(labColumnCount - 1)}1`]);
