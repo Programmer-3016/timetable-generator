@@ -531,8 +531,11 @@ document.addEventListener("DOMContentLoaded", function() {
     pdfBtn.addEventListener("click", function() {
       exportAllTimetablesAsPDF();
     });
-  const fbtn = document.getElementById("exportFacultyBtn");
-  if (fbtn) fbtn.addEventListener("click", exportFacultyJPG);
+  const facultyPdfBtn = document.getElementById("exportFacultyPdfBtn");
+  if (facultyPdfBtn) facultyPdfBtn.addEventListener("click", exportFacultyPDF);
+  const exportAllFacultyPdfBtn = document.getElementById("exportAllFacultyPdfBtn");
+  if (exportAllFacultyPdfBtn)
+    exportAllFacultyPdfBtn.addEventListener("click", exportAllFacultyPDF);
   const exportLabsBtn = document.getElementById("exportLabsBtn");
   if (exportLabsBtn)
     exportLabsBtn.addEventListener("click", () => {

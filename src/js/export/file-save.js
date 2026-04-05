@@ -1,5 +1,5 @@
 // @ts-check
-/* exported exportFacultyJPG, getClassBlockElement, exportLabJPG, exportLabPDF */
+/* exported exportFacultyPDF, exportAllFacultyPDF, getClassBlockElement, exportLabJPG, exportLabPDF */
 
 /**
  * @module export/file-save.js
@@ -108,12 +108,111 @@ async function createFileSaveTarget(suggestedFilename, options = {}) {
 }
 
 /**
- * Exports the currently selected faculty timetable as a high-resolution JPG image.
+ * Returns the faculty select element.
+ * @returns {HTMLSelectElement|null}
+ */
+function getFacultySelectElement() {
+  return /** @type {HTMLSelectElement | null} */ (document.getElementById("facultySelect"));
+}
+
+/**
+ * Returns the rendered faculty timetable table element.
+ * @returns {HTMLElement|null}
+ */
+function getRenderedFacultyTable() {
+  const container = /** @type {HTMLElement | null} */ (document.getElementById("facultyTT"));
+  if (!container) return null;
+  return /** @type {HTMLElement | null} */ (container.querySelector("table"));
+}
+
+/**
+ * Returns faculty display names available for export.
+ * @returns {string[]}
+ */
+function getFacultyExportNames() {
+  const select = getFacultySelectElement();
+  if (!select) return [];
+  return Array.from(select.options || [])
+    .map((option) => String(option.value || "").trim())
+    .filter(Boolean);
+}
+
+/**
+ * Chooses an appropriate PDF page format for a faculty timetable table.
+ * @param {HTMLElement} table
+ * @returns {{format: "a4"|"a3", targetWidthPx: number}}
+ */
+function decideFacultyPdfFormat(table) {
+  const headerCount = table.querySelectorAll("thead th").length;
+  return headerCount >= 9 ?
+    { format: "a3", targetWidthPx: 1500 } :
+    { format: "a4", targetWidthPx: 1100 };
+}
+
+/**
+ * Captures the currently rendered faculty timetable table for PDF export.
+ * @param {HTMLElement} table
+ * @param {{format: "a4"|"a3", targetWidthPx: number}} pick
+ * @returns {Promise<HTMLCanvasElement>}
+ */
+async function captureFacultyPdfCanvas(table, pick) {
+  return withTempWidth(table, pick.targetWidthPx, () =>
+    html2canvas(table, {
+      scale: 3.0,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+      windowWidth: pick.targetWidthPx,
+    })
+  );
+}
+
+/**
+ * Adds a captured timetable canvas to a PDF page.
+ * @param {any} pdf
+ * @param {[number, number]} fmt
+ * @param {HTMLCanvasElement} canvas
+ * @returns {void}
+ */
+function addCanvasToLandscapePdf(pdf, fmt, canvas) {
+  const pxToMm = (px) => (px * 25.4) / 96;
+  const margin = 10;
+  const cwmm = pxToMm(canvas.width);
+  const chmm = pxToMm(canvas.height);
+  const scale = Math.min(
+    (fmt[0] - margin * 2) / cwmm,
+    (fmt[1] - margin * 2) / chmm
+  );
+  const drawW = cwmm * scale;
+  const drawH = chmm * scale;
+
+  const flat = document.createElement("canvas");
+  flat.width = canvas.width;
+  flat.height = canvas.height;
+  const fctx = flat.getContext("2d", {
+    willReadFrequently: true
+  });
+  fctx.fillStyle = "#ffffff";
+  fctx.fillRect(0, 0, flat.width, flat.height);
+  fctx.drawImage(canvas, 0, 0);
+  const imgData = flat.toDataURL("image/jpeg", 0.95);
+  pdf.addImage(imgData, "JPEG", margin, margin, drawW, drawH, undefined, "FAST");
+
+  try {
+    flat.width = 0;
+    flat.height = 0;
+  } catch {
+    // Ignore flat-canvas cleanup failures after page render.
+  }
+}
+
+/**
+ * Exports the currently selected faculty timetable as a PDF document.
  * @async
  * @returns {Promise<void>}
  */
-async function exportFacultyJPG() {
-  const sel = /** @type {HTMLSelectElement | null} */ (document.getElementById("facultySelect"));
+async function exportFacultyPDF() {
+  const sel = getFacultySelectElement();
   const teacher = sel ? sel.value : "";
   if (!teacher) {
     showToast("Select a faculty first.", {
@@ -121,37 +220,140 @@ async function exportFacultyJPG() {
     });
     return;
   }
-  const container = document.getElementById("facultyTT");
-  if (!container) return;
-  const table = container.querySelector("table");
+  const table = getRenderedFacultyTable();
   if (!table) {
     showToast("No timetable to export.", {
       type: "warn"
     });
     return;
   }
-  const filename = ensureFilenameExtension(
+  const pick = decideFacultyPdfFormat(table);
+  const pdfName = ensureFilenameExtension(
     `${teacher}-timetable`,
-    "jpg"
+    "pdf"
   );
-  const saveTarget = await createFileSaveTarget(filename, {
-    mimeType: "image/jpeg",
-    description: "JPEG image",
+  const saveTarget = await createFileSaveTarget(pdfName, {
+    mimeType: "application/pdf",
+    description: "PDF document",
   });
   if (saveTarget.cancelled) return;
 
   await withStickyDisabled(async () => {
-    const canvas = await html2canvas(table, {
-      scale: 3.0,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-      logging: false,
+    const jsPDFCtor = await ensureJsPDFCtor();
+    const canvas = await captureFacultyPdfCanvas(table, pick);
+    /** @type {[number, number]} */
+    const fmt = pick.format === "a3" ? [420, 297] : [297, 210];
+    const pdf = new (/** @type {any} */ (jsPDFCtor))({
+      orientation: "landscape",
+      unit: "mm",
+      format: fmt,
+      compress: true,
     });
-    const blob = await canvasToBlob(canvas, "image/jpeg", 0.98);
-    await saveTarget.save(blob);
+    addCanvasToLandscapePdf(pdf, fmt, canvas);
+
+    const pdfBlob = pdf.output("blob");
+    await saveTarget.save(pdfBlob);
+
     try {
       canvas.width = 0;
       canvas.height = 0;
+    } catch {
+      // Ignore canvas cleanup failures after export completes.
+    }
+  });
+}
+
+/**
+ * Exports all faculty timetables into a single multi-page PDF document.
+ * @async
+ * @returns {Promise<void>}
+ */
+async function exportAllFacultyPDF() {
+  const facultyNames = getFacultyExportNames();
+  if (!facultyNames.length) {
+    showToast("No faculty timetables to export.", {
+      type: "warn"
+    });
+    return;
+  }
+
+  const select = getFacultySelectElement();
+  const previousSelection = select ? String(select.value || "").trim() : "";
+  const pdfName = ensureFilenameExtension(
+    `All-Faculty-Timetables-${new Date().toISOString().replace(/[:\.]/g, "-")}`,
+    "pdf"
+  );
+  const saveTarget = await createFileSaveTarget(pdfName, {
+    mimeType: "application/pdf",
+    description: "PDF document",
+  });
+  if (saveTarget.cancelled) return;
+
+  await withStickyDisabled(async () => {
+    const jsPDFCtor = await ensureJsPDFCtor();
+    /** @type {Array<{ teacher: string, canvas: HTMLCanvasElement, format: "a4"|"a3" }>} */
+    const captures = [];
+
+    try {
+      for (const teacher of facultyNames) {
+        if (select) select.value = teacher;
+        if (typeof renderFacultyTimetable === "function") {
+          renderFacultyTimetable(teacher);
+        }
+        const table = getRenderedFacultyTable();
+        if (!table) continue;
+        const pick = decideFacultyPdfFormat(table);
+        const canvas = await captureFacultyPdfCanvas(table, pick);
+        captures.push({
+          teacher,
+          canvas,
+          format: pick.format,
+        });
+      }
+    } finally {
+      if (select) {
+        select.value = previousSelection;
+      }
+      if (typeof renderFacultyTimetable === "function") {
+        if (previousSelection) {
+          renderFacultyTimetable(previousSelection);
+        } else if (typeof renderFacultyEmptyState === "function") {
+          renderFacultyEmptyState();
+        }
+      }
+    }
+
+    if (!captures.length) {
+      showToast("No faculty timetable to export.", {
+        type: "warn"
+      });
+      return;
+    }
+
+    /** @type {[number, number]} */
+    const fmt = captures.some((item) => item.format === "a3") ? [420, 297] : [297, 210];
+    const pdf = new (/** @type {any} */ (jsPDFCtor))({
+      orientation: "landscape",
+      unit: "mm",
+      format: fmt,
+      compress: true,
+    });
+
+    captures.forEach((item, index) => {
+      if (index > 0) {
+        pdf.addPage(fmt, "landscape");
+      }
+      addCanvasToLandscapePdf(pdf, fmt, item.canvas);
+    });
+
+    const pdfBlob = pdf.output("blob");
+    await saveTarget.save(pdfBlob);
+
+    try {
+      captures.forEach((item) => {
+        item.canvas.width = 0;
+        item.canvas.height = 0;
+      });
     } catch {
       // Ignore canvas cleanup failures after export completes.
     }
@@ -199,7 +401,9 @@ function getClassBlockElement(classKey) {
 function getLabExportNodes() {
   const panel = /** @type {HTMLElement|null} */ (document.getElementById("labPanel"));
   if (!panel) return [];
-  const labNodes = Array.from(panel.querySelectorAll(".lab-table-wrap"));
+  const labNodes = Array.from(
+    /** @type {NodeListOf<HTMLElement>} */ (panel.querySelectorAll(".lab-table-wrap"))
+  );
   return labNodes.length ? labNodes : [panel];
 }
 
