@@ -166,6 +166,53 @@ function isInvalidStringArray(arr) {
 }
 
 /**
+ * @description Validates one backend-imported class entry for required structure and string arrays.
+ * @param {*} cls - Candidate class entry from backend payload.
+ * @returns {boolean} True when the class entry shape is acceptable.
+ */
+function isValidBackendImportClassEntry(cls) {
+  if (!isPlainObject(cls)) return false;
+  if (typeof cls.label !== "string") return false;
+  if (!Array.isArray(cls.subjects) || !Array.isArray(cls.mains) || !Array.isArray(cls.fillers)) {
+    return false;
+  }
+  if (
+    isInvalidStringArray(cls.subjects) ||
+    isInvalidStringArray(cls.mains) ||
+    isInvalidStringArray(cls.fillers)
+  ) {
+    return false;
+  }
+  if (cls.ltpByShort !== undefined && !isPlainObject(cls.ltpByShort)) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * @description Shows the appropriate backend validation modal for a failed import payload check.
+ * @param {{ type?: string, message?: string }} validation - Validation result from validateBackendImportPayload().
+ * @returns {void}
+ */
+function showBackendImportValidationError(validation) {
+  if (validation.type === "backend_reject") {
+    showImportErrorModal("Import Blocked", validation.message);
+    return;
+  }
+  if (validation.type === "malformed_class_data") {
+    showImportErrorModal(
+      "Invalid Backend Response",
+      "Backend returned unexpected or malformed class data."
+    );
+    return;
+  }
+  showImportErrorModal(
+    "Invalid Backend Response",
+    "Backend returned unexpected data format. Please check backend implementation."
+  );
+}
+
+/**
  * @description Validates the structure and content of a backend import response payload.
  * @param {Object} payload - Raw backend response object.
  * @returns {{ ok: boolean, type?: string, message?: string, data?: Object }} Validation result.
@@ -191,21 +238,9 @@ function validateBackendImportPayload(payload) {
 
   const classes = payload.data.classes;
   for (let i = 0; i < classes.length; i++) {
-    const cls = classes[i];
-    if (!isPlainObject(cls)) return { ok: false, type: "invalid_format" };
-    if (typeof cls.label !== "string") return { ok: false, type: "malformed_class_data" };
-    if (!Array.isArray(cls.subjects) || !Array.isArray(cls.mains) || !Array.isArray(cls.fillers)) {
+    if (!isPlainObject(classes[i])) return { ok: false, type: "invalid_format" };
+    if (!isValidBackendImportClassEntry(classes[i])) {
       return { ok: false, type: "malformed_class_data" };
-    }
-    if (
-      isInvalidStringArray(cls.subjects) ||
-      isInvalidStringArray(cls.mains) ||
-      isInvalidStringArray(cls.fillers)
-    ) {
-      return { ok: false, type: "malformed_class_data" };
-    }
-    if (cls.ltpByShort !== undefined && !isPlainObject(cls.ltpByShort)) {
-      return { ok: false, type: "invalid_format" };
     }
   }
   return {
@@ -333,19 +368,7 @@ async function runBackendImportFlow(file, importBtn) {
 
     const validation = validateBackendImportPayload(payload);
     if (!validation.ok) {
-      if (validation.type === "backend_reject") {
-        showImportErrorModal("Import Blocked", validation.message);
-      } else if (validation.type === "malformed_class_data") {
-        showImportErrorModal(
-          "Invalid Backend Response",
-          "Backend returned unexpected or malformed class data."
-        );
-      } else {
-        showImportErrorModal(
-          "Invalid Backend Response",
-          "Backend returned unexpected data format. Please check backend implementation."
-        );
-      }
+      showBackendImportValidationError(validation);
       return;
     }
 

@@ -266,6 +266,100 @@ function pdfImportNormalizeFixedSlots(rawList) {
   return out;
 }
 
+/**
+ * @description Applies resolved timetable settings into the existing DOM inputs.
+ * @param {Object} settings - Resolved settings object from pdfImportResolveSettings().
+ * @returns {void}
+ */
+function pdfImportApplyResolvedSettings(settings) {
+  if (settings.days) pdfImportSetInputValue("days", String(settings.days));
+  if (settings.startTime) pdfImportSetInputValue("startTime", settings.startTime);
+  if (settings.slots) pdfImportSetInputValue("slots", String(settings.slots));
+  if (Number.isFinite(settings.duration))
+    pdfImportSetInputValue("duration", String(settings.duration));
+  if (Number.isFinite(settings.lunchPeriod))
+    pdfImportSetInputValue("lunchPeriod", String(settings.lunchPeriod));
+  if (Number.isFinite(settings.lunchDuration))
+    pdfImportSetInputValue("lunchDuration", String(settings.lunchDuration));
+  if (Number.isFinite(settings.labCount))
+    pdfImportSetInputValue("labCount", String(settings.labCount));
+}
+
+/**
+ * @description Clears import-derived class maps before applying a fresh import payload.
+ * @returns {void}
+ */
+function pdfImportResetImportedClassMaps() {
+  gImportedLtpByClass = {};
+  gImportedFixedSlotsByClass = {};
+}
+
+/**
+ * @description Normalizes an imported class LTP map into the internal short-code keyed structure.
+ * @param {Object} rawLtpMap - Raw ltpByShort object from parsed class payload.
+ * @returns {Object} Normalized short-code keyed LTP map.
+ */
+function pdfImportNormalizeImportedLtpMap(rawLtpMap) {
+  const source =
+    rawLtpMap && typeof rawLtpMap === "object" && !Array.isArray(rawLtpMap) ?
+    rawLtpMap :
+    {};
+  const classLtpMap = {};
+  Object.entries(source).forEach(([shortRaw, meta]) => {
+    const short = pdfImportNormalizeShort(shortRaw);
+    const ltp = pdfImportNormalizeLtpTriplet(meta?.ltp || meta || "");
+    if (!short || !ltp) return;
+    classLtpMap[short] = {
+      ltp,
+      subjectKey: pdfImportNormalizeLine(meta?.subjectKey || "").toLowerCase(),
+    };
+  });
+  return classLtpMap;
+}
+
+/**
+ * @description Resolves textarea/input IDs for a class row based on zero-based class index.
+ * @param {string} key - Class key (A, B, C...).
+ * @param {number} index - Zero-based class index.
+ * @returns {{ pairsId: string, fillerId: string, mainId: string }} Resolved DOM IDs.
+ */
+function pdfImportResolveClassFieldIds(key, index) {
+  return {
+    pairsId: index === 0 ? "pairs" : `pairs${key}`,
+    fillerId: index === 0 ? "fillerShorts" : `fillerShorts${key}`,
+    mainId: index === 0 ? "mainShorts" : `mainShorts${key}`,
+  };
+}
+
+/**
+ * @description Applies a single normalized class payload into the timetable form and import maps.
+ * @param {string} key - Class key (A, B, C...).
+ * @param {Object} cls - Parsed class payload.
+ * @param {number} index - Zero-based class index.
+ * @returns {void}
+ */
+function pdfImportApplyClassPayload(key, cls, index) {
+  const classLtpMap = pdfImportNormalizeImportedLtpMap(cls?.ltpByShort);
+  const fixedSlots = pdfImportNormalizeFixedSlots(cls && cls.fixedSlots);
+  const {
+    pairsId,
+    fillerId,
+    mainId,
+  } = pdfImportResolveClassFieldIds(key, index);
+
+  gImportedLtpByClass[key] = classLtpMap;
+  gImportedFixedSlotsByClass[key] = fixedSlots;
+
+  pdfImportSetInputValue(`class${key}Label`, cls?.label || `Class ${index + 1}`);
+  const sanitizedSubjects = String(cls?.subjects || "")
+    .split(/\r?\n/)
+    .map((line) => pdfImportNormalizeImportedPairLine(line))
+    .join("\n");
+  pdfImportSetInputValue(pairsId, sanitizedSubjects);
+  pdfImportSetInputValue(fillerId, cls?.fillers || "");
+  pdfImportSetInputValue(mainId, cls?.mains || "");
+}
+
 /* ═══════════════════════════════════════════════════════
    Section: DATA APPLICATION
 ═══════════════════════════════════════════════════════ */
@@ -284,55 +378,13 @@ async function pdfImportApplyParsedData(parsed) {
   await pdfImportEnsureRows(safeClassCount);
 
   const settings = pdfImportResolveSettings(parsed.settings || {});
-  if (settings.days) pdfImportSetInputValue("days", String(settings.days));
-  if (settings.startTime) pdfImportSetInputValue("startTime", settings.startTime);
-  if (settings.slots) pdfImportSetInputValue("slots", String(settings.slots));
-  if (Number.isFinite(settings.duration))
-    pdfImportSetInputValue("duration", String(settings.duration));
-  if (Number.isFinite(settings.lunchPeriod))
-    pdfImportSetInputValue("lunchPeriod", String(settings.lunchPeriod));
-  if (Number.isFinite(settings.lunchDuration))
-    pdfImportSetInputValue("lunchDuration", String(settings.lunchDuration));
-  if (Number.isFinite(settings.labCount))
-    pdfImportSetInputValue("labCount", String(settings.labCount));
+  pdfImportApplyResolvedSettings(settings);
 
-  // Reset import-derived LTP map before applying fresh PDF data.
-  gImportedLtpByClass = {};
-  gImportedFixedSlotsByClass = {};
+  pdfImportResetImportedClassMaps();
 
   for (let i = 0; i < safeClassCount; i++) {
     const key = CLASS_KEYS[i];
-    const cls = classes[i];
-    const rawLtpMap =
-      cls && typeof cls.ltpByShort === "object" && cls.ltpByShort ?
-      cls.ltpByShort :
-      {};
-    const classLtpMap = {};
-    Object.entries(rawLtpMap).forEach(([shortRaw, meta]) => {
-      const short = pdfImportNormalizeShort(shortRaw);
-      const ltp = pdfImportNormalizeLtpTriplet(meta?.ltp || meta || "");
-      if (!short || !ltp) return;
-      classLtpMap[short] = {
-        ltp,
-        subjectKey: pdfImportNormalizeLine(meta?.subjectKey || "").toLowerCase(),
-      };
-    });
-    gImportedLtpByClass[key] = classLtpMap;
-    gImportedFixedSlotsByClass[key] = pdfImportNormalizeFixedSlots(
-      cls && cls.fixedSlots
-    );
-
-    pdfImportSetInputValue(`class${key}Label`, cls.label || `Class ${i + 1}`);
-    const pairsId = i === 0 ? "pairs" : `pairs${key}`;
-    const fillerId = i === 0 ? "fillerShorts" : `fillerShorts${key}`;
-    const mainId = i === 0 ? "mainShorts" : `mainShorts${key}`;
-    const sanitizedSubjects = String(cls.subjects || "")
-      .split(/\r?\n/)
-      .map((line) => pdfImportNormalizeImportedPairLine(line))
-      .join("\n");
-    pdfImportSetInputValue(pairsId, sanitizedSubjects);
-    pdfImportSetInputValue(fillerId, cls.fillers || "");
-    pdfImportSetInputValue(mainId, cls.mains || "");
+    pdfImportApplyClassPayload(key, classes[i], i);
   }
   return true;
 }
