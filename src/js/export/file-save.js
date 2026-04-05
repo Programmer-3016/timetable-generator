@@ -1,5 +1,5 @@
 // @ts-check
-/* exported exportFacultyJPG, getClassBlockElement, exportLabJPG */
+/* exported exportFacultyJPG, getClassBlockElement, exportLabJPG, exportLabPDF */
 
 /**
  * @module export/file-save.js
@@ -192,6 +192,79 @@ function getClassBlockElement(classKey) {
 }
 
 /**
+ * Returns the currently rendered lab export nodes.
+ * Falls back to the lab panel itself when per-lab wrappers are not present yet.
+ * @returns {HTMLElement[]}
+ */
+function getLabExportNodes() {
+  const panel = /** @type {HTMLElement|null} */ (document.getElementById("labPanel"));
+  if (!panel) return [];
+  const labNodes = Array.from(panel.querySelectorAll(".lab-table-wrap"));
+  return labNodes.length ? labNodes : [panel];
+}
+
+/**
+ * Chooses a PDF page format and target width based on lab table column count.
+ * @param {HTMLElement[]} labNodes
+ * @returns {{format: "a4"|"a3", targetWidthPx: number}}
+ */
+function decideLabPdfFormatAndWidth(labNodes) {
+  let maxCols = 0;
+  labNodes.forEach((node) => {
+    const table = node.querySelector("table");
+    const cols = table ? table.querySelectorAll("thead th").length : 0;
+    if (cols > maxCols) maxCols = cols;
+  });
+  if (maxCols >= 11) {
+    return {
+      format: "a3",
+      targetWidthPx: 1600,
+    };
+  }
+  return {
+    format: "a4",
+    targetWidthPx: 1100,
+  };
+}
+
+/**
+ * Captures a lab section at a fixed export width.
+ * @param {HTMLElement} node
+ * @param {number} targetWidthPx
+ * @returns {Promise<HTMLCanvasElement>}
+ */
+async function captureLabExportCanvas(node, targetWidthPx) {
+  return withTempWidth(node, targetWidthPx, () =>
+    html2canvas(node, {
+      scale: 3.0,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+      windowWidth: targetWidthPx,
+    })
+  );
+}
+
+/**
+ * Lazily loads the jsPDF constructor if it is not already available.
+ * @returns {Promise<Function>}
+ */
+async function ensureJsPDFCtor() {
+  if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+  if (window.jsPDF) return window.jsPDF;
+  await new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+    s.onload = () => resolve();
+    s.onerror = (e) => reject(e);
+    document.head.appendChild(s);
+  });
+  if (window.jspdf && window.jspdf.jsPDF) return window.jspdf.jsPDF;
+  if (window.jsPDF) return window.jsPDF;
+  throw new Error("jsPDF failed to load");
+}
+
+/**
  * Exports all lab timetable sections as a single combined JPG image.
  * @async
  * @returns {Promise<void>}
@@ -208,16 +281,12 @@ async function exportLabJPG() {
   } catch {
     // Export can continue using the currently rendered lab panel.
   }
-  const panel = document.getElementById("labPanel");
-  if (!panel) {
+  const labNodes = getLabExportNodes();
+  if (!labNodes.length) {
     showToast("No lab timetable to export.", {
       type: "warn"
     });
     return;
-  }
-  const labNodes = Array.from(panel.querySelectorAll(".lab-table-wrap"));
-  if (!labNodes.length) {
-    labNodes.push(panel);
   }
   const safeName = ensureFilenameExtension(
     `Labs-${new Date().toISOString().replace(/[:\.]/g, "-")}`,
@@ -230,20 +299,10 @@ async function exportLabJPG() {
   if (saveTarget.cancelled) return;
 
   await withStickyDisabled(async () => {
-    const pick = {
-      targetWidthPx: 1100
-    };
+    const pick = decideLabPdfFormatAndWidth(labNodes);
     const captures = [];
     for (const node of labNodes) {
-      const canvas = await (async () =>
-        withTempWidth(/** @type {HTMLElement} */ (node), pick.targetWidthPx, () =>
-          html2canvas(node, {
-            scale: 3.0,
-            useCORS: true,
-            backgroundColor: "#ffffff",
-            logging: false,
-          })
-        ))();
+      const canvas = await captureLabExportCanvas(/** @type {HTMLElement} */ (node), pick.targetWidthPx);
       captures.push({
         canvas
       });
@@ -302,6 +361,121 @@ async function exportLabJPG() {
       } catch {
         // Ignore fallback export failure; caller already handled the main error path.
       }
+    }
+  });
+}
+
+/**
+ * Exports all lab timetable sections as a multi-page PDF document.
+ * @async
+ * @returns {Promise<void>}
+ */
+async function exportLabPDF() {
+  if (!generated) {
+    showToast("Generate timetable first.", {
+      type: "warn"
+    });
+    return;
+  }
+  try {
+    renderLabTimetables();
+  } catch {
+    // Export can continue using the currently rendered lab panel.
+  }
+
+  const labNodes = getLabExportNodes();
+  if (!labNodes.length) {
+    showToast("No lab timetable to export.", {
+      type: "warn"
+    });
+    return;
+  }
+
+  const pdfName = ensureFilenameExtension(
+    `Labs_PDF-${new Date().toISOString().replace(/[:\.]/g, "-")}`,
+    "pdf"
+  );
+  const saveTarget = await createFileSaveTarget(pdfName, {
+    mimeType: "application/pdf",
+    description: "PDF document",
+  });
+  if (saveTarget.cancelled) return;
+
+  await withStickyDisabled(async () => {
+    const pick = decideLabPdfFormatAndWidth(labNodes);
+    const jsPDFCtor = await ensureJsPDFCtor();
+    const captures = [];
+
+    for (const node of labNodes) {
+      try {
+        const canvas = await captureLabExportCanvas(/** @type {HTMLElement} */ (node), pick.targetWidthPx);
+        captures.push({ canvas });
+      } catch (e) {
+        console.warn("[Export] PDF capture failed for lab section", e);
+      }
+    }
+
+    if (!captures.length) {
+      showToast("Capture failed.", {
+        type: "error"
+      });
+      return;
+    }
+
+    const pxToMm = (px) => (px * 25.4) / 96;
+    const margin = 10;
+    const pdfFormat = pick.format === "a3" ? "a3" : "a4";
+    const fmt = pdfFormat === "a3" ? [420, 297] : [297, 210];
+    const pdf = new (/** @type {any} */ (jsPDFCtor))({
+      orientation: "landscape",
+      unit: "mm",
+      format: fmt,
+      compress: true,
+    });
+
+    for (let idx = 0; idx < captures.length; idx++) {
+      const { canvas } = captures[idx];
+      if (idx > 0) pdf.addPage(fmt, "landscape");
+
+      const cwmm = pxToMm(canvas.width);
+      const chmm = pxToMm(canvas.height);
+      const scale = Math.min(
+        (fmt[0] - margin * 2) / cwmm,
+        (fmt[1] - margin * 2) / chmm
+      );
+      const drawW = cwmm * scale;
+      const drawH = chmm * scale;
+
+      const flat = document.createElement("canvas");
+      flat.width = canvas.width;
+      flat.height = canvas.height;
+      const fctx = flat.getContext("2d", {
+        willReadFrequently: true
+      });
+      fctx.fillStyle = "#ffffff";
+      fctx.fillRect(0, 0, flat.width, flat.height);
+      fctx.drawImage(canvas, 0, 0);
+      const imgData = flat.toDataURL("image/jpeg", 0.95);
+      pdf.addImage(imgData, "JPEG", margin, margin, drawW, drawH, undefined, "FAST");
+
+      try {
+        flat.width = 0;
+        flat.height = 0;
+      } catch {
+        // Ignore flat-canvas cleanup failures after page render.
+      }
+    }
+
+    const pdfBlob = pdf.output("blob");
+    await saveTarget.save(pdfBlob);
+
+    try {
+      captures.forEach((item) => {
+        item.canvas.width = 0;
+        item.canvas.height = 0;
+      });
+    } catch {
+      // Ignore canvas cleanup failures after export completes.
     }
   });
 }

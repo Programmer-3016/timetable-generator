@@ -332,6 +332,10 @@ function renderReport() {
   panel.querySelectorAll(".report-row").forEach((tr) => {
     const t = tr.getAttribute("data-teacher");
     tr.addEventListener("click", () => {
+      panel.querySelectorAll(".report-row--active").forEach((row) => {
+        row.classList.remove("report-row--active");
+      });
+      tr.classList.add("report-row--active");
       focusTeacherCell(t);
     });
   });
@@ -473,7 +477,7 @@ function focusTeacherCell(teacher) {
   const c0 = canonicalTeacherName(teacher);
   // Canonical fold key for the teacher being focused
   const targetKey = (gCanonFoldMap && gCanonFoldMap[c0]) || c0;
-  const target = cells.find((c) => {
+  const matches = cells.filter((c) => {
     // Raw teacher name from the cell's data attribute
     const el = /** @type {HTMLElement} */ (c);
     const raw = (el.dataset && el.dataset.teacher) || "";
@@ -482,12 +486,34 @@ function focusTeacherCell(teacher) {
     const key1 = (gCanonFoldMap && gCanonFoldMap[c1]) || c1;
     return key1 && key1 === targetKey;
   });
-  if (target)
-    target.scrollIntoView({
+
+  document.querySelectorAll(".report-focus-cell").forEach((cell) => {
+    cell.classList.remove("report-focus-cell");
+  });
+  document.querySelectorAll(".report-focus-block").forEach((block) => {
+    block.classList.remove("report-focus-block");
+  });
+
+  if (matches.length) {
+    const firstTarget = /** @type {HTMLElement} */ (matches[0]);
+    matches.forEach((cell) => {
+      cell.classList.add("report-focus-cell");
+      const wrapper = /** @type {HTMLElement|null} */ (cell.closest(".class-grid-cell"));
+      const block = /** @type {HTMLElement|null} */ (cell.closest(".class-block"));
+      if (wrapper && wrapper.style.display === "none") {
+        wrapper.style.display = "";
+      }
+      if (block) {
+        block.classList.add("report-focus-block");
+      }
+    });
+
+    firstTarget.scrollIntoView({
       behavior: "smooth",
       block: "nearest",
       inline: "nearest",
     });
+  }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -516,6 +542,16 @@ document.addEventListener("DOMContentLoaded", function() {
         // Export still proceeds with the latest rendered lab view.
       }
       exportLabJPG();
+    });
+  const exportLabsPdfBtn = document.getElementById("exportLabsPdfBtn");
+  if (exportLabsPdfBtn)
+    exportLabsPdfBtn.addEventListener("click", () => {
+      try {
+        renderLabTimetables();
+      } catch {
+        // Export still proceeds with the latest rendered lab view.
+      }
+      exportLabPDF();
     });
 
   const labCountEl = document.getElementById("labCount");
