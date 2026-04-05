@@ -384,22 +384,6 @@ function schedulerCompactInitialLabWindows({
     }
   };
 
-  const chooseRoomForStart = (day, start, preferredRoom) => {
-    if (
-      preferredRoom &&
-      !labsInUse[day][start].has(preferredRoom) &&
-      !labsInUse[day][start + 1].has(preferredRoom)
-    ) {
-      return preferredRoom;
-    }
-    for (let room = 1; room <= LAB_CAPACITY; room++) {
-      if (labsInUse[day][start].has(room)) continue;
-      if (labsInUse[day][start + 1].has(room)) continue;
-      return room;
-    }
-    return null;
-  };
-
   const hasTeacherClashAtStart = (day, start, key, teachers) => {
     const canonicalTeachers = (teachers || [])
       .map((teacher) => (teacherClashKey ? teacherClashKey(teacher) : ""))
