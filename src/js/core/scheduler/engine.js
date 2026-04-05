@@ -580,6 +580,7 @@ function schedulerRenderMultiClassesEngine({
       teacherLabMinutes,
       teacherFirstPeriodCount,
       ensureTP,
+      randomFn: seededRandom,
     });
   }
 
@@ -590,6 +591,23 @@ function schedulerRenderMultiClassesEngine({
     keys,
     labsBlocksPerDayAcross,
     placeLabBlock,
+    randomFn: seededRandom,
+  });
+
+  schedulerCompactInitialLabWindows({
+    days,
+    classesPerDay,
+    lunchClassIndex,
+    keys,
+    schedules,
+    assignedTeacher,
+    labNumberAssigned,
+    labsAtSlot,
+    labsInUse,
+    LAB_CAPACITY,
+    isLabShort,
+    getTeachersForCell,
+    teacherClashKey,
   });
 
   const teacherSet = {};
@@ -910,7 +928,11 @@ function schedulerRenderMultiClassesEngine({
     teacherListForShort,
     importedFixedSlotsByClass,
     subjectByShort,
+    labsAtSlot,
+    labsInUse,
+    LAB_CAPACITY,
   });
+
 /**
  * Attempts to place remaining unscheduled lectures into empty slots.
  * @param {string} key - Class identifier.
@@ -1429,6 +1451,162 @@ function fillRemaining(key) {
   }
   for (let pass = 0; pass < 3; pass++) {
     if (!repairFinalStrictConflicts()) break;
+    rebuildTrackingFromSchedule();
+  }
+
+  /**
+   * Final filler-only gap closure after late repairs.
+   * Earlier convergence can reopen empty post-lunch slots before labs.
+   * At this stage we avoid lecture-list dependent passes and only use
+   * safe filler-based sweeps, then rebuild tracking for reports/export.
+   * @returns {boolean} True if total empty slots decreased.
+   */
+  function closeFinalVisualGaps() {
+    const fillContinuousPostLunchGaps = () => {
+      let changed = false;
+      for (const k of keys) {
+        const fillerShorts =
+          (fillerShortsByClass && fillerShortsByClass[k]) || new Set();
+        if (!fillerShorts.size) continue;
+        const targets = fillerTargetsByClass[k] || {};
+        for (let d = 0; d < days; d++) {
+          let lastOccupied = -1;
+          for (let c = lunchClassIndex; c < classesPerDay; c++) {
+            if (schedules[k][d][c] !== null) lastOccupied = c;
+          }
+          if (lastOccupied <= lunchClassIndex) continue;
+
+          for (let c = lunchClassIndex; c < lastOccupied; c++) {
+            if (schedules[k][d][c] !== null) continue;
+            let filled = false;
+            const ranked = Array.from(fillerShorts)
+              .map((short) => ({
+                short,
+                deficit: (targets[short] || 0) - countOccurrences(k, short),
+                perDay: schedules[k][d].filter((value) => value === short).length,
+              }))
+              .sort((a, b) => {
+                if (b.deficit !== a.deficit) return b.deficit - a.deficit;
+                if (a.perDay !== b.perDay) return a.perDay - b.perDay;
+                const aIsAR = a.short === "AR";
+                const bIsAR = b.short === "AR";
+                if (aIsAR && !bIsAR) return -1;
+                if (!aIsAR && bIsAR) return 1;
+                return a.short.localeCompare(b.short);
+              });
+
+            for (const candidate of ranked) {
+              const preferredTeacher =
+                (teacherForShort[k] && teacherForShort[k][candidate.short]) ||
+                teacherForShortGlobal[candidate.short] ||
+                null;
+              const chosen = pickTeacherForSlot(k, candidate.short, d, c, {
+                allowNoTeacher: true,
+                allowOverClassCap: true,
+                allowOverPerDayByClassCap: true,
+                allowOverFillerTarget: true,
+                teacherOverride: preferredTeacher,
+              });
+              if (chosen === null) continue;
+              schedules[k][d][c] = candidate.short;
+              assignedTeacher[k][d][c] = chosen;
+              if (!fillerCountsByClass[k]) fillerCountsByClass[k] = {};
+              fillerCountsByClass[k][candidate.short] =
+                (fillerCountsByClass[k][candidate.short] || 0) + 1;
+              if (chosen) {
+                teacherMinutes[chosen] = (teacherMinutes[chosen] || 0) + minsPerPeriod;
+                if (c === 0) {
+                  teacherFirstPeriodCount[chosen] =
+                    (teacherFirstPeriodCount[chosen] || 0) + 1;
+                }
+                teacherAssignedPerDayByClass[k][d][chosen] =
+                  (teacherAssignedPerDayByClass[k][d][chosen] || 0) + 1;
+                ensureTP(k, chosen)[c < lunchClassIndex ? "pre" : "post"]++;
+              }
+              changed = true;
+              filled = true;
+              break;
+            }
+            if (filled) continue;
+
+            const mainCandidates = Array.from(
+              (mainShortsByClass && mainShortsByClass[k]) || []
+            )
+              .filter(
+                (short) => short && !(isLabShort[k] && isLabShort[k][short])
+              )
+              .map((short) => ({
+                short,
+                deficit: getTargetForShort(k, short) - countOccurrences(k, short),
+                perDay: schedules[k][d].filter((value) => value === short).length,
+              }))
+              .sort((a, b) => {
+                if (b.deficit !== a.deficit) return b.deficit - a.deficit;
+                if (a.perDay !== b.perDay) return a.perDay - b.perDay;
+                return a.short.localeCompare(b.short);
+              });
+
+            for (const candidate of mainCandidates) {
+              const chosen = pickTeacherForSlot(k, candidate.short, d, c, {
+                allowNoTeacher: false,
+                allowOverClassCap: true,
+                allowOverPerDayByClassCap: true,
+                allowMoreThanOneMainPostLunch: true,
+              });
+              if (chosen === null) continue;
+              schedules[k][d][c] = candidate.short;
+              assignedTeacher[k][d][c] = chosen;
+              teacherMinutes[chosen] = (teacherMinutes[chosen] || 0) + minsPerPeriod;
+              teacherTheoryCount[chosen] = (teacherTheoryCount[chosen] || 0) + 1;
+              teacherTheoryCountByClass[k][chosen] =
+                (teacherTheoryCountByClass[k][chosen] || 0) + 1;
+              if (c === 0) {
+                teacherFirstPeriodCount[chosen] =
+                  (teacherFirstPeriodCount[chosen] || 0) + 1;
+              }
+              teacherAssignedPerDayByClass[k][d][chosen] =
+                (teacherAssignedPerDayByClass[k][d][chosen] || 0) + 1;
+              ensureTP(k, chosen)[c < lunchClassIndex ? "pre" : "post"]++;
+              recordMainPostLunchIfNeeded(k, candidate.short, c);
+              changed = true;
+              break;
+            }
+          }
+        }
+      }
+      return changed;
+    };
+
+    const countEmptySlots = () => {
+      let total = 0;
+      for (const k of keys) {
+        for (let d = 0; d < days; d++) {
+          for (let c = 0; c < classesPerDay; c++) {
+            if (schedules[k][d][c] === null) total++;
+          }
+        }
+      }
+      return total;
+    };
+
+    const before = countEmptySlots();
+    if (fillContinuousPostLunchGaps()) {
+      rebuildTrackingFromSchedule();
+    }
+    for (const k of keys) {
+      postLunchFillerSweep(k);
+      if (window.guaranteeFilledP5 !== false && hasFn(schedulerAbsoluteNoGapSweep)) {
+        schedulerAbsoluteNoGapSweep({ ctx: getAdvancedPassCtx(), key: k });
+      }
+    }
+    return countEmptySlots() < before;
+  }
+  for (let pass = 0; pass < 2; pass++) {
+    if (!closeFinalVisualGaps()) break;
+    rebuildTrackingFromSchedule();
+    for (let _fc = 0; _fc < 2; _fc++) {
+      if (!resolveFinalTeacherClashes()) break;
+    }
     rebuildTrackingFromSchedule();
   }
 

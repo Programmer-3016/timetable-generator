@@ -32,6 +32,136 @@
 ═══════════════════════════════════════════════════════ */
 
 /**
+ * Tries to shift intact 2-slot lab blocks left inside one half-day window to close interior gaps.
+ * The shift is only applied when the previous slot is empty and the move keeps
+ * teacher clashes, lab-room occupancy, and half-day boundaries valid.
+ * @param {Object} params
+ * @param {string} params.key
+ * @param {Object} params.schedules
+ * @param {Object} params.assignedTeacher
+ * @param {Object} params.labNumberAssigned
+ * @param {Array<Array<number>>} params.labsAtSlot
+ * @param {Array<Array<Set<number>>>} params.labsInUse
+ * @param {number} params.LAB_CAPACITY
+ * @param {string[]} params.keys
+ * @param {Function} params.isLabCell
+ * @param {Function} params.getTeachersForCell
+ * @param {Function} params.teacherClashKey
+ * @param {number} params.days
+ * @param {number} params.windowStart
+ * @param {number} params.windowEnd
+ * @returns {boolean}
+ */
+function schedulerShiftLabBlocksEarlierInWindow({
+  key,
+  schedules,
+  assignedTeacher,
+  labNumberAssigned,
+  labsAtSlot,
+  labsInUse,
+  LAB_CAPACITY,
+  keys,
+  isLabCell,
+  getTeachersForCell,
+  teacherClashKey,
+  days,
+  windowStart,
+  windowEnd,
+}) {
+  if (!Number.isFinite(windowStart) || !Number.isFinite(windowEnd)) return false;
+  if (windowEnd - windowStart < 3) return false;
+
+  let changed = false;
+  for (let d = 0; d < days; d++) {
+    let movedThisDay = true;
+    while (movedThisDay) {
+      movedThisDay = false;
+      for (let start = windowStart + 1; start < windowEnd - 1; start++) {
+        const short = schedules[key]?.[d]?.[start];
+        if (!isLabCell(short)) continue;
+        if (schedules[key]?.[d]?.[start + 1] !== short) continue;
+
+        const prev = start - 1;
+        if (prev < windowStart) continue;
+        if (schedules[key]?.[d]?.[prev] !== null) continue;
+
+        const labRoom =
+          labNumberAssigned?.[key]?.[d]?.[start] ??
+          labNumberAssigned?.[key]?.[d]?.[start + 1] ??
+          null;
+        if (labRoom == null) continue;
+
+        if ((labsAtSlot?.[d]?.[prev] || 0) >= LAB_CAPACITY) continue;
+        if (labsInUse?.[d]?.[prev]?.has?.(labRoom)) continue;
+
+        const teachers = getTeachersForCell ? getTeachersForCell(key, short, d, start) : [];
+        let clash = false;
+        for (const ok of keys || []) {
+          if (ok === key) continue;
+          const otherShort = schedules?.[ok]?.[d]?.[prev];
+          if (!otherShort) continue;
+          const otherTeachers =
+            getTeachersForCell ? getTeachersForCell(ok, otherShort, d, prev) : [];
+          for (const teacher of teachers) {
+            const canonical = teacherClashKey ? teacherClashKey(teacher) : "";
+            if (!canonical) continue;
+            if (
+              otherTeachers.some((otherTeacher) =>
+                teacherClashKey && teacherClashKey(otherTeacher) === canonical
+              )
+            ) {
+              clash = true;
+              break;
+            }
+          }
+          if (clash) break;
+        }
+        if (clash) continue;
+
+        const carryTeacher =
+          assignedTeacher?.[key]?.[d]?.[start] ??
+          assignedTeacher?.[key]?.[d]?.[start + 1] ??
+          null;
+
+        schedules[key][d][prev] = short;
+        schedules[key][d][start] = short;
+        schedules[key][d][start + 1] = null;
+
+        if (assignedTeacher?.[key]?.[d]) {
+          assignedTeacher[key][d][prev] = carryTeacher;
+          assignedTeacher[key][d][start] = carryTeacher;
+          assignedTeacher[key][d][start + 1] = null;
+        }
+
+        if (labNumberAssigned?.[key]?.[d]) {
+          labNumberAssigned[key][d][prev] = labRoom;
+          labNumberAssigned[key][d][start] = labRoom;
+          labNumberAssigned[key][d][start + 1] = null;
+        }
+
+        if (labsAtSlot?.[d]) {
+          labsAtSlot[d][prev] = (labsAtSlot[d][prev] || 0) + 1;
+          labsAtSlot[d][start + 1] = Math.max(
+            0,
+            (labsAtSlot[d][start + 1] || 0) - 1
+          );
+        }
+        if (labsInUse?.[d]) {
+          labsInUse[d][prev]?.add?.(labRoom);
+          labsInUse[d][start + 1]?.delete?.(labRoom);
+        }
+
+        changed = true;
+        movedThisDay = true;
+        break;
+      }
+    }
+  }
+
+  return changed;
+}
+
+/**
  * Fills remaining empty slots with unscheduled lectures.
  * @param {Object} params - Destructured parameters.
  * @param {Object} params.ctx - Shared scheduling engine context.
@@ -1867,6 +1997,13 @@ function schedulerPassCompactPostLunch({ ctx, key }) {
     assignedTeacher,
     isLabShort,
     postLunchCompactDebugByClass,
+    labNumberAssigned,
+    labsAtSlot,
+    labsInUse,
+    LAB_CAPACITY,
+    keys,
+    getTeachersForCell,
+    teacherClashKey,
   } = ctx;
 
   const fillerSet =
@@ -1919,6 +2056,26 @@ function schedulerPassCompactPostLunch({ ctx, key }) {
     moveReverted: 0,
     noCandidate: 0,
   };
+  if (
+    schedulerShiftLabBlocksEarlierInWindow({
+      key,
+      schedules,
+      assignedTeacher,
+      labNumberAssigned,
+      labsAtSlot,
+      labsInUse,
+      LAB_CAPACITY,
+      keys,
+      isLabCell,
+      getTeachersForCell,
+      teacherClashKey,
+      days,
+      windowStart: lunchClassIndex,
+      windowEnd: classesPerDay,
+    })
+  ) {
+    changed = true;
+  }
   for (let d = 0; d < days; d++) {
     for (let c = lunchClassIndex; c < classesPerDay; c++) {
       const currentShort = schedules[key][d][c];
@@ -2065,6 +2222,13 @@ function schedulerPassCompactPreLunch({ ctx, key }) {
     pickTeacherForSlot,
     assignedTeacher,
     isLabShort,
+    labNumberAssigned,
+    labsAtSlot,
+    labsInUse,
+    LAB_CAPACITY,
+    keys,
+    getTeachersForCell,
+    teacherClashKey,
   } = ctx;
 
   if (!Number.isFinite(lunchClassIndex) || lunchClassIndex <= 1) return false;
@@ -2110,6 +2274,26 @@ function schedulerPassCompactPreLunch({ ctx, key }) {
   };
 
   let changed = false;
+  if (
+    schedulerShiftLabBlocksEarlierInWindow({
+      key,
+      schedules,
+      assignedTeacher,
+      labNumberAssigned,
+      labsAtSlot,
+      labsInUse,
+      LAB_CAPACITY,
+      keys,
+      isLabCell,
+      getTeachersForCell,
+      teacherClashKey,
+      days,
+      windowStart: 0,
+      windowEnd: lunchClassIndex,
+    })
+  ) {
+    changed = true;
+  }
   for (let d = 0; d < days; d++) {
     for (let c = 0; c < lunchClassIndex; c++) {
       const currentShort = schedules[key][d][c];

@@ -654,18 +654,21 @@ function schedulerValidateCompaction({ ctx }) {
 
   for (const key of keys) {
     for (let d = 0; d < days; d++) {
-      // Among movable post-lunch cells (non-lab), gaps should stay at end.
+      // Post-lunch gaps should stay at the end. Labs get their own issue type
+      // so visual lab-start gaps are surfaced instead of silently skipped.
       let seenGap = false;
       for (let c = lunchClassIndex; c < classesPerDay; c++) {
         const sh = schedules[key][d][c];
-        if (sh && isLabShort[key] && isLabShort[key][sh]) continue;
         if (!sh) {
           seenGap = true;
           continue;
         }
         if (seenGap) {
           issues.push({
-            type: "mid_gap_post_lunch",
+            type:
+              isLabShort[key] && isLabShort[key][sh] ?
+                "gap_before_lab_post_lunch" :
+                "mid_gap_post_lunch",
             key,
             day: d,
             col: c,

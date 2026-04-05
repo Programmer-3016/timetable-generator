@@ -133,6 +133,7 @@ function schedulerCanAssign({
     allowNoTeacher = false,
     allowOverPerDayByClassCap = false,
     allowMoreThanOneMainPostLunch = false,
+    allowOverFillerTarget = false,
     ultraRelaxed = false, // final fallback loosens most constraints
     ignoreCrossClassClash = false,
     teacherOverride = undefined,
@@ -193,7 +194,7 @@ function schedulerCanAssign({
   const isFillerShortForCap = fillersForClassCap.has(short);
   if (isFillerShortForCap) {
     const fillerTarget = getTargetForShort(key, short);
-    if (countOccurrences(key, short) >= fillerTarget) {
+    if (!allowOverFillerTarget && countOccurrences(key, short) >= fillerTarget) {
       return failWith("Filler target cap");
     }
   }

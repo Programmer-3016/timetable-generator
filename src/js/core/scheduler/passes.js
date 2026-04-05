@@ -1,5 +1,5 @@
 // @ts-check
-/* exported schedulerPlaceLabBlock, schedulerPlaceInitialLabsAcrossClasses, schedulerClampMainsToTarget, schedulerResolveFinalTeacherClashes, schedulerRepairLabRoomConflicts */
+/* exported schedulerPlaceLabBlock, schedulerPlaceInitialLabsAcrossClasses, schedulerCompactInitialLabWindows, schedulerClampMainsToTarget, schedulerResolveFinalTeacherClashes, schedulerRepairLabRoomConflicts */
 
 /**
  * @module core/scheduler/passes.js
@@ -43,6 +43,7 @@
  * @param {Object} opts.teacherLabMinutes - Lab minutes per teacher.
  * @param {Object} opts.teacherFirstPeriodCount - First-period assignment counts per teacher.
  * @param {Function} opts.ensureTP - Ensures teacher presence tracking is initialized.
+ * @param {Function} [opts.randomFn] - Seeded tie-break random source used only when candidates score equally.
  * @returns {boolean} True if a lab block was successfully placed.
  */
 function schedulerPlaceLabBlock({
@@ -73,6 +74,7 @@ function schedulerPlaceLabBlock({
   teacherLabMinutes,
   teacherFirstPeriodCount,
   ensureTP,
+  randomFn = null,
 }) {
   if (labPeriodsUsedPerDay[key][day] >= 2) return false;
   const labTeachers = getShortTeacherList(key, label);
@@ -86,31 +88,40 @@ function schedulerPlaceLabBlock({
   const allowedStarts = [];
   for (let s = 0; s < classesPerDay - 1; s++) {
     if (s === lunchClassIndex - 1) continue; // exclude cross-lunch start
-    allowedStarts.push(s);
+    allowedStarts.push({
+      start: s,
+      tieBreak:
+        typeof randomFn === "function" ?
+          randomFn() :
+          0,
+    });
   }
   const preBlocks = labPrePostBlocksByClass[key].pre;
   const postBlocks = labPrePostBlocksByClass[key].post;
   allowedStarts.sort((a, b) => {
-    const aSidePost = a >= lunchClassIndex;
-    const bSidePost = b >= lunchClassIndex;
+    const aSidePost = a.start >= lunchClassIndex;
+    const bSidePost = b.start >= lunchClassIndex;
     if (preBlocks !== postBlocks && aSidePost !== bSidePost) {
       const favorPost = postBlocks < preBlocks; // need more post
       if (favorPost) return aSidePost ? -1 : 1;
       const favorPre = preBlocks < postBlocks; // need more pre
       if (favorPre) return aSidePost ? 1 : -1;
     }
-    const ua = labStartCountsByClass[key][a] || 0;
-    const ub = labStartCountsByClass[key][b] || 0;
+    const ua = labStartCountsByClass[key][a.start] || 0;
+    const ub = labStartCountsByClass[key][b.start] || 0;
     if (ua !== ub) return ua - ub; // fewer previous starts first
     // total lab-slot load across both periods for candidate start a
-    const la = (labsAtSlot[day][a] || 0) + (labsAtSlot[day][a + 1] || 0);
+    const la = (labsAtSlot[day][a.start] || 0) + (labsAtSlot[day][a.start + 1] || 0);
     // total lab-slot load across both periods for candidate start b
-    const lb = (labsAtSlot[day][b] || 0) + (labsAtSlot[day][b + 1] || 0);
+    const lb = (labsAtSlot[day][b.start] || 0) + (labsAtSlot[day][b.start + 1] || 0);
     if (la !== lb) return la - lb;
-    return a - b; // earlier start as final tiebreaker
+    if (a.start !== b.start) return a.start - b.start; // keep labs compact within the chosen half-day
+    if (a.tieBreak !== b.tieBreak) return a.tieBreak - b.tieBreak;
+    return 0;
   });
 
-  for (const c of allowedStarts) {
+  for (const candidate of allowedStarts) {
+    const c = candidate.start;
     if (schedules[key][day][c] === null && schedules[key][day][c + 1] === null) {
       const prevCol = c - 1;
       if (
@@ -235,6 +246,7 @@ function schedulerPlaceLabBlock({
  * @param {string[]} opts.keys - Array of all class keys.
  * @param {number[]} opts.labsBlocksPerDayAcross - Lab block counts per day across all classes.
  * @param {Function} opts.placeLabBlock - Callback to place a single lab block.
+ * @param {Function} [opts.randomFn] - Seeded tie-break random source used only for equal-ranked day choices.
  */
 function schedulerPlaceInitialLabsAcrossClasses({
   data,
@@ -243,6 +255,7 @@ function schedulerPlaceInitialLabsAcrossClasses({
   keys,
   labsBlocksPerDayAcross,
   placeLabBlock,
+  randomFn = null,
 }) {
   data.forEach(({ key, pairs }) => {
     const labEntries = pairs.filter((p) => isLabPair(p));
@@ -250,19 +263,33 @@ function schedulerPlaceInitialLabsAcrossClasses({
     labEntries.forEach((p) => {
       if (!teacherLabShort[p.teacher]) teacherLabShort[p.teacher] = p.short;
     });
-    const classOffset = Math.max(0, keys.indexOf(key));
+    const baseClassOffset = Math.max(0, keys.indexOf(key));
+    const randomDayOffset =
+      typeof randomFn === "function" && days > 1 ?
+        Math.floor(randomFn() * days) % days :
+        0;
+    const classOffset = (baseClassOffset + randomDayOffset) % Math.max(days, 1);
 
     /** Returns day indices sorted by fewest lab blocks, with class-offset tiebreaker. */
     function dayOrder() {
-      return Array.from({ length: days }, (_, i) => i).sort((a, b) => {
-        if (labsBlocksPerDayAcross[a] !== labsBlocksPerDayAcross[b]) {
-          return labsBlocksPerDayAcross[a] - labsBlocksPerDayAcross[b];
+      const dayEntries = Array.from({ length: days }, (_, i) => ({
+        day: i,
+        tieBreak:
+          typeof randomFn === "function" ?
+            randomFn() :
+            0,
+      }));
+      return dayEntries.sort((a, b) => {
+        if (labsBlocksPerDayAcross[a.day] !== labsBlocksPerDayAcross[b.day]) {
+          return labsBlocksPerDayAcross[a.day] - labsBlocksPerDayAcross[b.day];
         }
         // rotated offset for even distribution across classes
-        const ra = (a - classOffset + days) % days;
-        const rb = (b - classOffset + days) % days;
-        return ra - rb;
-      });
+        const ra = (a.day - classOffset + days) % days;
+        const rb = (b.day - classOffset + days) % days;
+        if (ra !== rb) return ra - rb;
+        if (a.tieBreak !== b.tieBreak) return a.tieBreak - b.tieBreak;
+        return a.day - b.day;
+      }).map((entry) => entry.day);
     }
 
     Object.entries(teacherLabShort).forEach(([, short]) => {
@@ -274,6 +301,326 @@ function schedulerPlaceInitialLabsAcrossClasses({
       }
     });
   });
+}
+
+/**
+ * Re-packs already placed lab blocks inside each half-day window before theory
+ * scheduling starts. This uses only lab-side constraints, allowing later-start
+ * labs to move into earlier feasible slots while later lecture passes are still
+ * free to adapt around them.
+ * @param {Object} opts
+ * @param {number} opts.days
+ * @param {number} opts.classesPerDay
+ * @param {number} opts.lunchClassIndex
+ * @param {string[]} opts.keys
+ * @param {Object} opts.schedules
+ * @param {Object} opts.assignedTeacher
+ * @param {Object} opts.labNumberAssigned
+ * @param {Array<Array<number>>} opts.labsAtSlot
+ * @param {Array<Array<Set<number>>>} opts.labsInUse
+ * @param {number} opts.LAB_CAPACITY
+ * @param {Object} opts.isLabShort
+ * @param {Function} opts.getTeachersForCell
+ * @param {Function} opts.teacherClashKey
+ * @returns {boolean}
+ */
+function schedulerCompactInitialLabWindows({
+  days,
+  classesPerDay,
+  lunchClassIndex,
+  keys,
+  schedules,
+  assignedTeacher,
+  labNumberAssigned,
+  labsAtSlot,
+  labsInUse,
+  LAB_CAPACITY,
+  isLabShort,
+  getTeachersForCell,
+  teacherClashKey,
+}) {
+  const windows = [];
+  if (lunchClassIndex > 1) windows.push({ start: 0, end: lunchClassIndex });
+  if (classesPerDay - lunchClassIndex > 1) {
+    windows.push({ start: lunchClassIndex, end: classesPerDay });
+  }
+  if (!windows.length) return false;
+
+  const isLabCellForKey = (key, short) =>
+    !!(short && isLabShort && isLabShort[key] && isLabShort[key][short]);
+
+  const cloneLabSetRow = (row) => row.map((entry) => new Set(entry));
+
+  const restoreDay = (day, snapshots, slotSnapshot, roomSnapshot) => {
+    snapshots.forEach(({ key, scheduleRow, teacherRow, roomRow }) => {
+      schedules[key][day] = scheduleRow.slice();
+      if (assignedTeacher[key] && assignedTeacher[key][day]) {
+        assignedTeacher[key][day] = teacherRow.slice();
+      }
+      if (labNumberAssigned[key] && labNumberAssigned[key][day]) {
+        labNumberAssigned[key][day] = roomRow.slice();
+      }
+    });
+    labsAtSlot[day] = slotSnapshot.slice();
+    labsInUse[day] = cloneLabSetRow(roomSnapshot);
+  };
+
+  const rebuildDayOccupancy = (day) => {
+    labsAtSlot[day] = Array(classesPerDay).fill(0);
+    labsInUse[day] = Array.from({ length: classesPerDay }, () => new Set());
+    for (const key of keys) {
+      for (let c = 0; c < classesPerDay; c++) {
+        const short = schedules[key][day][c];
+        if (!isLabCellForKey(key, short)) continue;
+        const room =
+          (labNumberAssigned[key] &&
+            labNumberAssigned[key][day] &&
+            labNumberAssigned[key][day][c]) ||
+          null;
+        if (!room) continue;
+        labsAtSlot[day][c] = (labsAtSlot[day][c] || 0) + 1;
+        labsInUse[day][c].add(room);
+      }
+    }
+  };
+
+  const chooseRoomForStart = (day, start, preferredRoom) => {
+    if (
+      preferredRoom &&
+      !labsInUse[day][start].has(preferredRoom) &&
+      !labsInUse[day][start + 1].has(preferredRoom)
+    ) {
+      return preferredRoom;
+    }
+    for (let room = 1; room <= LAB_CAPACITY; room++) {
+      if (labsInUse[day][start].has(room)) continue;
+      if (labsInUse[day][start + 1].has(room)) continue;
+      return room;
+    }
+    return null;
+  };
+
+  const hasTeacherClashAtStart = (day, start, key, teachers) => {
+    const canonicalTeachers = (teachers || [])
+      .map((teacher) => (teacherClashKey ? teacherClashKey(teacher) : ""))
+      .filter(Boolean);
+    if (!canonicalTeachers.length) return false;
+
+    for (const otherKey of keys) {
+      if (otherKey === key) continue;
+      for (const col of [start, start + 1]) {
+        const otherShort = schedules[otherKey][day][col];
+        if (!otherShort) continue;
+        const otherTeachers =
+          typeof getTeachersForCell === "function" ?
+            getTeachersForCell(otherKey, otherShort, day, col) :
+            [];
+        for (const otherTeacher of otherTeachers || []) {
+          const otherCanonical = teacherClashKey ? teacherClashKey(otherTeacher) : "";
+          if (otherCanonical && canonicalTeachers.includes(otherCanonical)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  };
+
+  let changed = false;
+
+  for (let day = 0; day < days; day++) {
+    for (const window of windows) {
+      const blocks = [];
+      for (const key of keys) {
+        for (let start = window.start; start < window.end - 1; start++) {
+          const short = schedules[key][day][start];
+          if (!isLabCellForKey(key, short)) continue;
+          if (schedules[key][day][start + 1] !== short) continue;
+          if (start > window.start && schedules[key][day][start - 1] === short) continue;
+          blocks.push({
+            key,
+            short,
+            start,
+            teachers:
+              typeof getTeachersForCell === "function" ?
+                getTeachersForCell(key, short, day, start) || [] :
+                [],
+            primaryTeacher:
+              (assignedTeacher[key] &&
+                assignedTeacher[key][day] &&
+                (assignedTeacher[key][day][start] ||
+                  assignedTeacher[key][day][start + 1])) ||
+              "",
+            room:
+              (labNumberAssigned[key] &&
+                labNumberAssigned[key][day] &&
+                (labNumberAssigned[key][day][start] ||
+                  labNumberAssigned[key][day][start + 1])) ||
+              null,
+          });
+        }
+      }
+
+      if (blocks.length <= 1) continue;
+
+      const originalScore = blocks.reduce((sum, block) => sum + block.start, 0);
+      const snapshots = keys.map((key) => ({
+        key,
+        scheduleRow: schedules[key][day].slice(),
+        teacherRow:
+          assignedTeacher[key] && assignedTeacher[key][day] ?
+            assignedTeacher[key][day].slice() :
+            Array(classesPerDay).fill(null),
+        roomRow:
+          labNumberAssigned[key] && labNumberAssigned[key][day] ?
+            labNumberAssigned[key][day].slice() :
+            Array(classesPerDay).fill(null),
+      }));
+      const slotSnapshot = labsAtSlot[day].slice();
+      const roomSnapshot = cloneLabSetRow(labsInUse[day]);
+
+      blocks.forEach((block) => {
+        schedules[block.key][day][block.start] = null;
+        schedules[block.key][day][block.start + 1] = null;
+        if (assignedTeacher[block.key] && assignedTeacher[block.key][day]) {
+          assignedTeacher[block.key][day][block.start] = null;
+          assignedTeacher[block.key][day][block.start + 1] = null;
+        }
+        if (labNumberAssigned[block.key] && labNumberAssigned[block.key][day]) {
+          labNumberAssigned[block.key][day][block.start] = null;
+          labNumberAssigned[block.key][day][block.start + 1] = null;
+        }
+      });
+
+      rebuildDayOccupancy(day);
+
+      const sortedBlocks = blocks
+        .slice()
+        .sort((a, b) => b.start - a.start || a.key.localeCompare(b.key));
+
+      const placeBlock = (block, start, room) => {
+        schedules[block.key][day][start] = block.short;
+        schedules[block.key][day][start + 1] = block.short;
+        if (assignedTeacher[block.key] && assignedTeacher[block.key][day]) {
+          assignedTeacher[block.key][day][start] = block.primaryTeacher;
+          assignedTeacher[block.key][day][start + 1] = block.primaryTeacher;
+        }
+        if (labNumberAssigned[block.key] && labNumberAssigned[block.key][day]) {
+          labNumberAssigned[block.key][day][start] = room;
+          labNumberAssigned[block.key][day][start + 1] = room;
+        }
+        labsAtSlot[day][start] = (labsAtSlot[day][start] || 0) + 1;
+        labsAtSlot[day][start + 1] = (labsAtSlot[day][start + 1] || 0) + 1;
+        labsInUse[day][start].add(room);
+        labsInUse[day][start + 1].add(room);
+      };
+
+      const clearBlock = (block, start, room) => {
+        schedules[block.key][day][start] = null;
+        schedules[block.key][day][start + 1] = null;
+        if (assignedTeacher[block.key] && assignedTeacher[block.key][day]) {
+          assignedTeacher[block.key][day][start] = null;
+          assignedTeacher[block.key][day][start + 1] = null;
+        }
+        if (labNumberAssigned[block.key] && labNumberAssigned[block.key][day]) {
+          labNumberAssigned[block.key][day][start] = null;
+          labNumberAssigned[block.key][day][start + 1] = null;
+        }
+        labsAtSlot[day][start] = Math.max(0, (labsAtSlot[day][start] || 0) - 1);
+        labsAtSlot[day][start + 1] = Math.max(
+          0,
+          (labsAtSlot[day][start + 1] || 0) - 1
+        );
+        labsInUse[day][start].delete(room);
+        labsInUse[day][start + 1].delete(room);
+      };
+
+      let bestScore = originalScore;
+      /** @type {Array<{ key: string, short: string, start: number, room: number | null }> | null} */
+      let bestPlacement = null;
+      /** @type {Array<{ start: number, room: number | null }>} */
+      const currentPlacement = Array(sortedBlocks.length).fill(null);
+
+      const lowerBoundFrom = (index, runningScore) =>
+        runningScore + (sortedBlocks.length - index) * window.start;
+
+      const findRoomOptions = (start, preferredRoom) => {
+        const options = [];
+        if (
+          preferredRoom &&
+          !labsInUse[day][start].has(preferredRoom) &&
+          !labsInUse[day][start + 1].has(preferredRoom)
+        ) {
+          options.push(preferredRoom);
+        }
+        for (let room = 1; room <= LAB_CAPACITY; room++) {
+          if (room === preferredRoom) continue;
+          if (labsInUse[day][start].has(room)) continue;
+          if (labsInUse[day][start + 1].has(room)) continue;
+          options.push(room);
+        }
+        return options;
+      };
+
+      const dfs = (index, runningScore) => {
+        if (runningScore >= bestScore) return;
+        if (lowerBoundFrom(index, runningScore) >= bestScore) return;
+        if (index >= sortedBlocks.length) {
+          bestScore = runningScore;
+          bestPlacement = currentPlacement.map((entry, placementIndex) => ({
+            key: sortedBlocks[placementIndex].key,
+            short: sortedBlocks[placementIndex].short,
+            start: entry.start,
+            room: entry.room,
+          }));
+          return;
+        }
+
+        const block = sortedBlocks[index];
+        for (let start = window.start; start < window.end - 1; start++) {
+          if (schedules[block.key][day][start] !== null) continue;
+          if (schedules[block.key][day][start + 1] !== null) continue;
+          if (
+            start > window.start &&
+            schedules[block.key][day][start - 1] === block.short
+          ) {
+            continue;
+          }
+          if (
+            start + 2 < window.end &&
+            schedules[block.key][day][start + 2] === block.short
+          ) {
+            continue;
+          }
+          if (hasTeacherClashAtStart(day, start, block.key, block.teachers)) continue;
+
+          const roomOptions = findRoomOptions(start, block.room);
+          for (const room of roomOptions) {
+            placeBlock(block, start, room);
+            currentPlacement[index] = { start, room };
+            dfs(index + 1, runningScore + start);
+            currentPlacement[index] = null;
+            clearBlock(block, start, room);
+          }
+        }
+      };
+
+      dfs(0, 0);
+
+      if (!bestPlacement || bestScore >= originalScore) {
+        restoreDay(day, snapshots, slotSnapshot, roomSnapshot);
+        continue;
+      }
+
+      bestPlacement.forEach((placement, placementIndex) => {
+        const block = sortedBlocks[placementIndex];
+        placeBlock(block, placement.start, placement.room);
+      });
+      changed = true;
+    }
+  }
+
+  return changed;
 }
 
 /* ═══════════════════════════════════════════════════════
